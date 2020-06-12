@@ -13,11 +13,23 @@ public class Element {
         this.nodeN = nodeOut;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public double getVoltage(double time) {
         return 0;
     }
 
     public double getCurrent() {
         return 0;
+    }
+
+    public Node getNodeP() {
+        return nodeP;
+    }
+
+    public Node getNodeN() {
+        return nodeN;
     }
 }
