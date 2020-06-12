@@ -1,4 +1,8 @@
-Iin 1   0   5   0   0   0
-R1  1   0   3k
-R2  1   2   3k
-R3  0   2   1k
+Iin     1       0       5       0       0       0
+R1      1       0       3k
+R2      1       2       3k
+R3      0       2       1k
+dV      1m
+dI      1m
+dT      10u
+.tran   15m

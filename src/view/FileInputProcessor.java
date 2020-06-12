@@ -30,6 +30,14 @@ public abstract class FileInputProcessor {
             return addVoltageControlledVoltageSource(split[0], split[1], split[2], split[3], split[4], split[5]);
         } else if (CommandsRegex.CURRENT_CONTROLLED_VOLTAGE_SOURCE.getMatcher(command).matches()) {
             return addCurrentControlledVoltageSource(split[0], split[1], split[2], split[3], split[4]);
+        } else if (CommandsRegex.DELTA_VOLTAGE.getMatcher(command).matches()) {
+            return addDeltaVoltage(split[1]);
+        } else if (CommandsRegex.DELTA_CURRENT.getMatcher(command).matches()) {
+            return addDeltaCurrent(split[1]);
+        } else if (CommandsRegex.DELTA_TIME.getMatcher(command).matches()) {
+            return addDeltaTime(split[1]);
+        } else if (CommandsRegex.TRAN.getMatcher(command).matches()) {
+            return addTran(split[1]);
         } else {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid command!");
@@ -45,25 +53,8 @@ public abstract class FileInputProcessor {
         }
         Node nodeP = new Node(node1);
         Node nodeN = new Node(node2);
-        char unit = s_value.charAt(s_value.length() - 1);
-        double factor = controller.getUnit(unit);
-        double value;
-        try {
-            if (factor == -2) {
-                System.err.println("error :");
-                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-                return false;
-            } else if (factor == -1) {
-                value = Double.parseDouble(s_value);
-            } else {
-                value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-            return false;
-        }
-        if (value < 0) {
+        double value = controller.getValueOfString(s_value);
+        if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
@@ -81,25 +72,8 @@ public abstract class FileInputProcessor {
         }
         Node nodeP = new Node(node1);
         Node nodeN = new Node(node2);
-        char unit = s_value.charAt(s_value.length() - 1);
-        double factor = controller.getUnit(unit);
-        double value;
-        try {
-            if (factor == -2) {
-                System.err.println("error :");
-                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-                return false;
-            } else if (factor == -1) {
-                value = Double.parseDouble(s_value);
-            } else {
-                value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-            return false;
-        }
-        if (value < 0) {
+        double value = controller.getValueOfString(s_value);
+        if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
@@ -117,25 +91,8 @@ public abstract class FileInputProcessor {
         }
         Node nodeP = new Node(node1);
         Node nodeN = new Node(node2);
-        char unit = s_value.charAt(s_value.length() - 1);
-        double factor = controller.getUnit(unit);
-        double value;
-        try {
-            if (factor == -2) {
-                System.err.println("error :");
-                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-                return false;
-            } else if (factor == -1) {
-                value = Double.parseDouble(s_value);
-            } else {
-                value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
-            return false;
-        }
-        if (value < 0) {
+        double value = controller.getValueOfString(s_value);
+        if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
@@ -180,6 +137,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
+
     }
 
     private static boolean addVoltageControlledCurrentSource(String name, String node1, String node2,
@@ -204,6 +162,50 @@ public abstract class FileInputProcessor {
 
     private static boolean addCurrentControlledVoltageSource(String name, String node1, String node2,
                                                           String branch, String gain) {
+        return true;
+    }
+
+    private static boolean addDeltaVoltage(String deltaVoltage) {
+        double value = controller.getValueOfString(deltaVoltage);
+        if (value == -1) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        controller.setDeltaV(value);
+        return true;
+    }
+
+    private static boolean addDeltaCurrent(String deltaCurrent) {
+        double value = controller.getValueOfString(deltaCurrent);
+        if (value == -1) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        controller.setDeltaI(value);
+        return true;
+    }
+
+    private static boolean addDeltaTime(String deltaTime) {
+        double value = controller.getValueOfString(deltaTime);
+        if (value == -1) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        controller.setDeltaT(value);
+        return true;
+    }
+
+    private static boolean addTran(String time) {
+        double value = controller.getValueOfString(time);
+        if (value == -1) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        controller.setTranTime(value);
         return true;
     }
 }

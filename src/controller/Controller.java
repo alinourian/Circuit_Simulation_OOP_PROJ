@@ -1,6 +1,7 @@
 package controller;
 
 import model.*;
+import view.FileInputProcessor;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,6 +22,11 @@ public class Controller {
     ArrayList<Inductor> inductors = new ArrayList<>();
     ArrayList<CurrentSource> currentSources = new ArrayList<>();
     ArrayList<VoltageSource> voltageSources = new ArrayList<>();
+
+    private double deltaV = 0;
+    private double deltaI = 0;
+    private double deltaT = 0;
+    private double tranTime = 0;
 
     public void addElement(Element element) {
         if (findNode(element.getNodeP().getName()) == null) {
@@ -102,6 +108,27 @@ public class Controller {
         return null;
     }
 
+    public double getValueOfString(String string) {
+        char unit = string.charAt(string.length() - 1);
+        double factor = getUnit(unit);
+        double value;
+        try {
+            if (factor == -2) {
+                return -1;
+            } else if (factor == -1) {
+                value = Double.parseDouble(string);
+            } else {
+                value = Double.parseDouble(string.substring(0, string.length() - 1)) * factor;
+            }
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+        if (value < 0) {
+            return -1;
+        }
+        return value;
+    }
+
     public double getUnit(char unit) {
         if (unit == 'p') {
             return Math.pow(10, -12);
@@ -125,5 +152,39 @@ public class Controller {
         }
     }
 
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
 
+    public double getDeltaV() {
+        return deltaV;
+    }
+
+    public double getDeltaI() {
+        return deltaI;
+    }
+
+    public double getDeltaT() {
+        return deltaT;
+    }
+
+    public double getTranTime() {
+        return tranTime;
+    }
+
+    public void setDeltaV(double deltaV) {
+        this.deltaV = deltaV;
+    }
+
+    public void setDeltaI(double deltaI) {
+        this.deltaI = deltaI;
+    }
+
+    public void setDeltaT(double deltaT) {
+        this.deltaT = deltaT;
+    }
+
+    public void setTranTime(double tranTime) {
+        this.tranTime = tranTime;
+    }
 }

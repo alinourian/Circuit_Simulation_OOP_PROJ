@@ -15,7 +15,12 @@ public enum CommandsRegex {
     //PART 2 - VOLTAGE SOURCES
     VOLTAGE_SOURCE("(V\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     VOLTAGE_CONTROLLED_VOLTAGE_SOURCE("(E\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
-    CURRENT_CONTROLLED_VOLTAGE_SOURCE("(H\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*");
+    CURRENT_CONTROLLED_VOLTAGE_SOURCE("(H\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
+    //PART 3 - ANALYSIS PROPERTIES
+    DELTA_VOLTAGE("dV\\s+(\\S+)\\s*"),
+    DELTA_CURRENT("dI\\s+(\\S+)\\s*"),
+    DELTA_TIME("dT\\s+(\\S+)\\s*"),
+    TRAN("\\.tran\\s+(\\S+)\\s*");
 
     private final Pattern commandPattern;
 

@@ -1,5 +1,7 @@
 package view;
 
+import controller.Controller;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -16,10 +18,25 @@ public abstract class FileScanner {
                 if (!FileInputProcessor.inputProcess(line, counter)) {
                     return false;
                 }
+                if (scanner.hasNextLine() && line.startsWith(".tran")) {
+                    System.err.println("error :");
+                    System.err.println("Line " + counter + " : <.tran> is in wrong line");
+                    return false;
+                } else if (!scanner.hasNextLine() && !line.startsWith(".tran")) {
+                    System.err.println("error :");
+                    System.err.println("Line " + counter + " : <.tran> not found!");
+                    return false;
+                }
                 counter++;
             } while (scanner.hasNextLine());
         } catch (FileNotFoundException e) {
             System.err.println(e);
+            return false;
+        }
+        if (Controller.getInstance().getDeltaV() == 0 ||
+                Controller.getInstance().getDeltaI() == 0 || Controller.getInstance().getDeltaT() == 0) {
+            System.err.println("error :");
+            System.err.println("<dV, dI, dT> not initialised!");
             return false;
         }
         System.out.println("File successfully uploaded.");
