@@ -3,12 +3,12 @@ package view;
 import controller.Controller;
 import model.*;
 
-public abstract class InputProcessor {
+public abstract class FileInputProcessor {
     private static final Controller controller = Controller.getInstance();
     public static int COMMANDLINE = 0;
 
     public static void inputProcess(String command, int commandLine) {
-        InputProcessor.COMMANDLINE = commandLine;
+        FileInputProcessor.COMMANDLINE = commandLine;
         String[] split = command.split("\\s+");
         if (CommandsRegex.COMMENT_COMMAND.getMatcher(command).matches()) {
             System.out.println(commandLine + ".Comment line");
@@ -36,7 +36,7 @@ public abstract class InputProcessor {
     private static void addResistor(String name, String node1, String node2, String s_value) {
         if (controller.findResistor(name) != null) {
             System.err.println("error :");
-            System.err.println("Line " + InputProcessor.COMMANDLINE + " : Similar name found!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
         } else {
             Node nodeP = new Node(node1);
             Node nodeN = new Node(node2);
@@ -48,22 +48,22 @@ public abstract class InputProcessor {
                     value = Double.parseDouble(s_value);
                 } else if (factor == -2) {
                     System.err.println("error :");
-                    System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                    System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                     return;
                 } else {
                     value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
                 }
             } catch (NumberFormatException e) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                 return;
             }
             if (value < 0) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             } else {
                 Resistor resistor = new Resistor(name, nodeP, nodeN, value);
-                controller.addResistor(resistor);
+                controller.addElement(resistor);
             }
         }
     }
@@ -71,7 +71,7 @@ public abstract class InputProcessor {
     private static void addCapacitor(String name, String node1, String node2, String s_value) {
         if (controller.findCapacitor(name) != null) {
             System.err.println("error :");
-            System.err.println("Line " + InputProcessor.COMMANDLINE + " : Similar name found!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
         } else {
             Node nodeP = new Node(node1);
             Node nodeN = new Node(node2);
@@ -83,22 +83,22 @@ public abstract class InputProcessor {
                     value = Double.parseDouble(s_value);
                 } else if (factor == -2) {
                     System.err.println("error :");
-                    System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                    System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                     return;
                 } else {
                     value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
                 }
             } catch (NumberFormatException e) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                 return;
             }
             if (value < 0) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             } else {
                 Capacitor capacitor = new Capacitor(name, nodeP, nodeN, value);
-                controller.addCapacitor(capacitor);
+                controller.addElement(capacitor);
             }
         }
     }
@@ -106,7 +106,7 @@ public abstract class InputProcessor {
     private static void addInductor(String name, String node1, String node2, String s_value) {
         if (controller.findInductor(name) != null) {
             System.err.println("error :");
-            System.err.println("Line " + InputProcessor.COMMANDLINE + " : Similar name found!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
         } else {
             Node nodeP = new Node(node1);
             Node nodeN = new Node(node2);
@@ -118,22 +118,22 @@ public abstract class InputProcessor {
                     value = Double.parseDouble(s_value);
                 } else if (factor == -2) {
                     System.err.println("error :");
-                    System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                    System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                     return;
                 } else {
                     value = Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * factor;
                 }
             } catch (NumberFormatException e) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                 return;
             }
             if (value < 0) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             } else {
                 Inductor inductor = new Inductor(name, nodeP, nodeN, value);
-                controller.addInductor(inductor);
+                controller.addElement(inductor);
             }
         }
     }
@@ -142,7 +142,7 @@ public abstract class InputProcessor {
                                          String s_amplitude, String s_frequency, String s_phase) {
         if (controller.findCurrentSource(name) != null) {
             System.err.println("error :");
-            System.err.println("Line " + InputProcessor.COMMANDLINE + " : Similar name found!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
         } else {
             Node nodeP = new Node(node1);
             Node nodeN = new Node(node2);
@@ -152,7 +152,7 @@ public abstract class InputProcessor {
             double phaseFactor = controller.getUnit(s_phase.charAt(s_phase.length() - 1));
             if (valueFactor == -2 || amplitudeFactor == -2 || frequencyFactor == -2 || phaseFactor == -2) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
                 return;
             }
             try {
@@ -165,10 +165,10 @@ public abstract class InputProcessor {
                 double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                         Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
                 CurrentSource currentSource = new CurrentSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
-                controller.addCurrentSource(currentSource);
+                controller.addElement(currentSource);
             } catch (NumberFormatException e) {
                 System.err.println("error :");
-                System.err.println("Line " + InputProcessor.COMMANDLINE + " : Invalid value!");
+                System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             }
         }
     }

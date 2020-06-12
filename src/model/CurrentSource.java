@@ -14,4 +14,9 @@ public class CurrentSource extends Element {
         this.frequency = frequency;
         this.phase = phase;
     }
+
+    @Override
+    public String getType() {
+        return "currentSource";
+    }
 }

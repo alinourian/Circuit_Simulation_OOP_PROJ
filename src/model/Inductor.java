@@ -7,4 +7,9 @@ public class Inductor extends Element{
         super(name, nodeP, nodeN);
         this.leadInductance = leadInductance;
     }
+
+    @Override
+    public String getType() {
+        return "inductor";
+    }
 }

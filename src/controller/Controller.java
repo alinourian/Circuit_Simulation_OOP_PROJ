@@ -22,20 +22,30 @@ public class Controller {
     ArrayList<CurrentSource> currentSources = new ArrayList<>();
     ArrayList<VoltageSource> voltageSources = new ArrayList<>();
 
-    public void addResistor(Resistor resistor) {
-
-    }
-
-    public void addCapacitor(Capacitor capacitor) {
-
-    }
-
-    public void addInductor(Inductor inductor) {
-
-    }
-
-    public void addCurrentSource(CurrentSource currentSource) {
-
+    public void addElement(Element element) {
+        if (findNode(element.getNodeP().getName()) == null) {
+            nodes.add(element.getNodeP());
+        }
+        if (findNode(element.getNodeN().getName()) == null) {
+            nodes.add(element.getNodeN());
+        }
+        if (!element.getNodeP().getNeighborNodes().contains(element.getNodeN())) {
+            element.getNodeP().getNeighborNodes().add(element.getNodeN());
+        }
+        if (!element.getNodeN().getNeighborNodes().contains(element.getNodeP())) {
+            element.getNodeN().getNeighborNodes().add(element.getNodeP());
+        }
+        if (element.getType().equalsIgnoreCase("resistor")) {
+            resistors.add((Resistor) element);
+        } else if (element.getType().equalsIgnoreCase("capacitor")) {
+            capacitors.add((Capacitor) element);
+        } else if (element.getType().equalsIgnoreCase("inductor")) {
+            inductors.add((Inductor) element);
+        } else if (element.getType().equalsIgnoreCase("currentSource")) {
+            currentSources.add((CurrentSource) element);
+        } else if (element.getType().equalsIgnoreCase("voltageSource")) {
+            voltageSources.add((VoltageSource) element);
+        }
     }
 
     public Node findNode(String name) {
@@ -93,26 +103,25 @@ public class Controller {
     }
 
     public double getUnit(char unit) {
-        switch (unit) {
-            case 'p':
-                return Math.pow(10, -12);
-            case 'n':
-                return Math.pow(10, -9);
-            case 'u':
-                return Math.pow(10, -6);
-            case 'm':
-                return Math.pow(10, -3);
-            case 'k':
-                return Math.pow(10, 3);
-            case 'M':
-                return Math.pow(10, 6);
-            case 'G':
-                return Math.pow(10, 9);
-            case '0' | '1' | '2' | '3' | '4' |
-                    '5' | '6' | '7' | '8' | '9':
-                return -1;
-            default:
-                return -2;
+        if (unit == 'p') {
+            return Math.pow(10, -12);
+        } else if (unit == 'n') {
+            return Math.pow(10, -9);
+        } else if (unit == 'u') {
+            return Math.pow(10, -6);
+        } else if (unit == 'm') {
+            return Math.pow(10, -3);
+        } else if (unit == 'k') {
+            return Math.pow(10, 3);
+        } else if (unit == 'M') {
+            return Math.pow(10, 6);
+        } else if (unit == 'G') {
+            return Math.pow(10, 9);
+        } else if (unit == '0' || unit == '1' || unit == '2' || unit == '3' || unit == '4' ||
+                unit == '5' || unit == '6' || unit == '7' || unit == '8' || unit == '9') {
+            return -1;
+        } else {
+            return -2;
         }
     }
 

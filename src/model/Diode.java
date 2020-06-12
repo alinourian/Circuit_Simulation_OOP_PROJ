@@ -6,4 +6,9 @@ public class Diode extends Element {
     public Diode(String name, Node nodeP, Node nodeN) {
         super(name, nodeP, nodeN);
     }
+
+    @Override
+    public String getType() {
+        return "diode";
+    }
 }

@@ -23,4 +23,9 @@ public class VoltageSource extends Element {
         this.frequency = frequency;
     }
 
+    @Override
+    public String getType() {
+        return "voltageSource";
+    }
+
 }

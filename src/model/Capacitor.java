@@ -9,4 +9,9 @@ public class Capacitor extends Element {
         this.current = 0;
     }
 
+    @Override
+    public String getType() {
+        return "capacitor";
+    }
+
 }

@@ -1,7 +1,7 @@
 package model;
 
 public class Element {
-    protected String name;
+    protected final String name;
     protected Node nodeP;
     protected Node nodeN;
     protected double voltage;
@@ -31,5 +31,9 @@ public class Element {
 
     public Node getNodeN() {
         return nodeN;
+    }
+
+    public String getType() {
+        return "Element";
     }
 }

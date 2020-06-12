@@ -8,6 +8,11 @@ public class Resistor extends Element {
         this.resistance = resistance;
     }
 
+    @Override
+    public String getType() {
+        return "resistor";
+    }
+
     public double getResistance() {
         return resistance;
     }

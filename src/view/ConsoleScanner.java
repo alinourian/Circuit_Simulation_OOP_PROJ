@@ -1,4 +1,7 @@
 package view;
 
-public class ConsoleScanner {
+public abstract class ConsoleScanner {
+    public static void run() {
+
+    }
 }
