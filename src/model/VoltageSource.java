@@ -1,26 +1,23 @@
 package model;
 
-public class VoltageSource extends Element {
+public class VoltageSource extends Source {
     private double voltageDC;
-    private boolean isDC;
-    private double amplitudeVoltage;
+    private double amplitude;
     private double frequency;
+    private double phase;
 
-
-    public VoltageSource(String name, Node nodeP, Node nodeN, double voltageDC) {
+    public VoltageSource(String name, Node nodeP, Node nodeN, double voltageDC,
+                         double amplitude, double frequency, double phase) {
         super(name, nodeP, nodeN);
-        this.isDC = true;
         this.voltageDC = voltageDC;
-        this.amplitudeVoltage = 0;
-        this.frequency = 0;
+        this.amplitude = amplitude;
+        this.frequency = frequency;
+        this.phase = phase;
     }
 
-    public VoltageSource(String name, Node nodeP, Node nodeN, double voltageDC, double amplitudeVoltage, double frequency) {
-        super(name, nodeP, nodeN);
-        this.isDC = false;
-        this.voltageDC = voltageDC;
-        this.amplitudeVoltage = amplitudeVoltage;
-        this.frequency = frequency;
+    @Override
+    public double getValue(double time) {
+        return voltageDC + amplitude * Math.sin(2 * Math.PI * frequency + phase);
     }
 
     @Override

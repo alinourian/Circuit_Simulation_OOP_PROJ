@@ -1,10 +1,10 @@
 package view;
 
-import controller.Controller;
+import controller.InputController;
 import model.*;
 
 public abstract class FileInputProcessor {
-    private static final Controller controller = Controller.getInstance();
+    private static final InputController controller = InputController.getInstance();
     public static int COMMANDLINE = 0;
 
     public static boolean inputProcess(String command, int commandLine) {
@@ -130,38 +130,73 @@ public abstract class FileInputProcessor {
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
             CurrentSource currentSource = new CurrentSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
-            controller.addElement(currentSource);
+            controller.addSource(currentSource);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-
     }
 
     private static boolean addVoltageControlledCurrentSource(String name, String node1, String node2,
                                                           String voltage1, String voltage2, String gain) {
+        // TODO
         return true;
     }
 
     private static boolean addCurrentControlledCurrentSource(String name, String node1, String node2,
                                                           String branch, String gain) {
+        // TODO
         return true;
     }
 
     private static boolean addVoltageSource(String name, String node1, String node2, String s_value,
-                                         String s_Amplitude, String s_Frequency, String s_Phase) {
-        return true;
+                                         String s_amplitude, String s_frequency, String s_phase) {
+        if (controller.findVoltageSource(name) != null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
+            return false;
+        }
+        Node nodeP = new Node(node1);
+        Node nodeN = new Node(node2);
+        double valueFactor = controller.getUnit(s_value.charAt(s_value.length() - 1));
+        double amplitudeFactor = controller.getUnit(s_amplitude.charAt(s_amplitude.length() - 1));
+        double frequencyFactor = controller.getUnit(s_frequency.charAt(s_frequency.length() - 1));
+        double phaseFactor = controller.getUnit(s_phase.charAt(s_phase.length() - 1));
+        if (valueFactor == -2 || amplitudeFactor == -2 || frequencyFactor == -2 || phaseFactor == -2) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        try {
+            double value = valueFactor == -1 ? Double.parseDouble(s_value) :
+                    Double.parseDouble(s_value.substring(0, s_value.length() - 1)) * valueFactor;
+            double amplitude = amplitudeFactor == -1 ? Double.parseDouble(s_amplitude) :
+                    Double.parseDouble(s_amplitude.substring(0, s_amplitude.length() - 1)) * amplitudeFactor;
+            double frequency = frequencyFactor == -1 ? Double.parseDouble(s_frequency) :
+                    Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
+            double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
+                    Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
+            VoltageSource voltageSource = new VoltageSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
+            controller.addSource(voltageSource);
+            return true;
+        } catch (NumberFormatException e) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
     }
 
     private static boolean addVoltageControlledVoltageSource(String name, String node1, String node2,
                                                           String voltage1, String voltage2, String gain) {
+        // TODO
         return true;
     }
 
     private static boolean addCurrentControlledVoltageSource(String name, String node1, String node2,
                                                           String branch, String gain) {
+        // TODO
         return true;
     }
 

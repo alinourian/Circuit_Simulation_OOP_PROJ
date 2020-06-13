@@ -1,6 +1,6 @@
 package view;
 
-import controller.Controller;
+import controller.InputController;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,8 +33,8 @@ public abstract class FileScanner {
             System.err.println(e);
             return false;
         }
-        if (Controller.getInstance().getDeltaV() == 0 ||
-                Controller.getInstance().getDeltaI() == 0 || Controller.getInstance().getDeltaT() == 0) {
+        if (InputController.getInstance().getDeltaV() == 0 ||
+                InputController.getInstance().getDeltaI() == 0 || InputController.getInstance().getDeltaT() == 0) {
             System.err.println("error :");
             System.err.println("<dV, dI, dT> not initialised!");
             return false;

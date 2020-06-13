@@ -9,13 +9,18 @@ public class Resistor extends Element {
     }
 
     @Override
-    public String getType() {
-        return "resistor";
+    public void updateElementCurrent() {
+        current = (nodeP.getVoltage() - nodeN.getVoltage()) / resistance;
     }
 
-    public double getResistance() {
+    @Override
+    public double getValue() {
         return resistance;
     }
 
+    @Override
+    public String getType() {
+        return "resistor";
+    }
     
 }

@@ -4,24 +4,31 @@ public class Element {
     protected final String name;
     protected Node nodeP;
     protected Node nodeN;
-    protected double voltage;
     protected double current;
 
     public Element(String name, Node nodeIn, Node nodeOut) {
         this.name = name;
         this.nodeP = nodeIn;
         this.nodeN = nodeOut;
+        this.current = 0;
+    }
+
+    public void updateElementCurrent() {
     }
 
     public String getName() {
         return name;
     }
 
-    public double getVoltage(double time) {
-        return 0;
+    public double getCurrent(Node node) {
+        if (node.getName().equals(nodeP.getName())) {
+            return -1 * current;
+        } else {
+            return current;
+        }
     }
 
-    public double getCurrent() {
+    public double getValue() {
         return 0;
     }
 

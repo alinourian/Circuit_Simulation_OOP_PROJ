@@ -1,9 +1,8 @@
 package model;
 
-public abstract class ReferenceNode {
-    private double voltage;
+public abstract class ReferenceNode extends Node {
 
-    public ReferenceNode(double voltage) {
-        this.voltage = voltage;
+    public ReferenceNode(String name) {
+        super(name);
     }
 }

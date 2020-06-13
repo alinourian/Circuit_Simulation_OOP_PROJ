@@ -1,17 +1,15 @@
 package controller;
 
 import model.*;
-import view.FileInputProcessor;
 
 import java.util.ArrayList;
-import java.util.Map;
 
-public class Controller {
-    private static Controller instance;
+public class InputController {
+    private static InputController instance;
 
-    public static Controller getInstance() {
+    public static InputController getInstance() {
         if(instance == null) {
-            instance = new Controller();
+            instance = new InputController();
         }
         return instance;
     }
@@ -22,6 +20,8 @@ public class Controller {
     ArrayList<Inductor> inductors = new ArrayList<>();
     ArrayList<CurrentSource> currentSources = new ArrayList<>();
     ArrayList<VoltageSource> voltageSources = new ArrayList<>();
+    ArrayList<Element> elements = new ArrayList<>();
+    ArrayList<Source> sources = new ArrayList<>();
 
     private double deltaV = 0;
     private double deltaI = 0;
@@ -42,17 +42,41 @@ public class Controller {
             element.getNodeN().getNeighborNodes().add(element.getNodeP());
         }
         if (element.getType().equalsIgnoreCase("resistor")) {
-            resistors.add((Resistor) element);
+            resistors.add((Resistor)element);
         } else if (element.getType().equalsIgnoreCase("capacitor")) {
-            capacitors.add((Capacitor) element);
+            capacitors.add((Capacitor)element);
         } else if (element.getType().equalsIgnoreCase("inductor")) {
-            inductors.add((Inductor) element);
-        } else if (element.getType().equalsIgnoreCase("currentSource")) {
-            currentSources.add((CurrentSource) element);
-        } else if (element.getType().equalsIgnoreCase("voltageSource")) {
-            voltageSources.add((VoltageSource) element);
+            inductors.add((Inductor)element);
         }
+        element.getNodeP().getElements().add(element);
+        element.getNodeN().getElements().add(element);
+        elements.add(element);
     }
+
+    public void addSource(Source source) {
+        if (findNode(source.getNodeP().getName()) == null) {
+            nodes.add(source.getNodeP());
+        }
+        if (findNode(source.getNodeN().getName()) == null) {
+            nodes.add(source.getNodeN());
+        }
+        if (!source.getNodeP().getNeighborNodes().contains(source.getNodeN())) {
+            source.getNodeP().getNeighborNodes().add(source.getNodeN());
+        }
+        if (!source.getNodeN().getNeighborNodes().contains(source.getNodeP())) {
+            source.getNodeN().getNeighborNodes().add(source.getNodeP());
+        }
+        if (source.getType().equalsIgnoreCase("currentSource")) {
+            currentSources.add((CurrentSource)source);
+        } else if (source.getType().equalsIgnoreCase("voltageSource")) {
+            voltageSources.add((VoltageSource)source);
+        }
+        source.getNodeP().getSources().add(source);
+        source.getNodeN().getSources().add(source);
+        sources.add(source);
+    }
+
+    //SEARCH METHODS
 
     public Node findNode(String name) {
         for (Node node : nodes) {
@@ -151,6 +175,8 @@ public class Controller {
             return -2;
         }
     }
+
+    //GETTERS AND SETTERS
 
     public ArrayList<Node> getNodes() {
         return nodes;
