@@ -1,42 +1,53 @@
 package model;
 
+import controller.InputController;
+
 import java.util.ArrayList;
 
 public class Node {
     protected final String name;
-    protected int voltage = 0;
+    protected double voltage;
+    boolean visited;
     protected ArrayList<Node> neighborNodes;
-    protected ArrayList<Double> currents = new ArrayList<>();
-    protected ArrayList<Element> elements = new ArrayList<>();
-    protected ArrayList<Source> sources = new ArrayList<>();
+    protected ArrayList<Element> elements;
+    protected ArrayList<Source> sources;
 
     public Node (String name) {
         this.name = name;
-        neighborNodes = new ArrayList<>();
+        this.voltage = 0;
+        this.visited = false;
+        this.neighborNodes = new ArrayList<>();
+        this.elements = new ArrayList<>();
+        this.sources = new ArrayList<>();
+    }
+
+    public double getTotalCurrent(double time){
+        double totalCurrent = 0;
+        for (Element element : elements){
+            totalCurrent += element.getCurrent(InputController.getInstance().findNode(name));
+        }
+        for (Source source : sources) {
+            totalCurrent += source.getCurrent(InputController.getInstance().findNode(name), time);
+        }
+        return totalCurrent;
+    }
+
+    public static void resetNodes(){
+        for (Node node: InputController.getInstance().getNodes()){
+            node.visited = false;
+        }
     }
 
     public String getName() {
         return name;
     }
 
-    public int getVoltage() {
+    public double getVoltage() {
         return voltage;
     }
 
     public ArrayList<Node> getNeighborNodes() {
         return neighborNodes;
-    }
-
-    public void setNeighborNodes(ArrayList<Node> neighborNodes) {
-        this.neighborNodes = neighborNodes;
-    }
-
-    public ArrayList<Double> getCurrents() {
-        return currents;
-    }
-
-    public void setCurrents(ArrayList<Double> currents) {
-        this.currents = currents;
     }
 
     public ArrayList<Element> getElements() {
@@ -45,5 +56,19 @@ public class Node {
 
     public ArrayList<Source> getSources() {
         return sources;
+    }
+
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
+    public void setVoltage(double voltage) {
+        if (!name.equals("0")) {
+            this.voltage = voltage;
+        }
     }
 }

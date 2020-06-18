@@ -3,7 +3,7 @@ package model;
 import controller.InputController;
 
 public class Inductor extends Element{
-    private double inductance;
+    private final double inductance;
     private double V_p;
     private double V_n;
 

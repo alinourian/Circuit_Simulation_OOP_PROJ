@@ -11,6 +11,10 @@ public class Source {
         this.nodeN = nodeOut;
     }
 
+    public double getCurrent(Node node, double time) {
+        return 0;
+    }
+
     public String getName() {
         return name;
     }

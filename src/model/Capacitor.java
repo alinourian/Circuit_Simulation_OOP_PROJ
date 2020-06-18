@@ -3,7 +3,7 @@ package model;
 import controller.InputController;
 
 public class Capacitor extends Element {
-    private double capacity;
+    private final double capacity;
     private double V_p;
     private double V_n;
 

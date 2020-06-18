@@ -16,6 +16,15 @@ public class CurrentSource extends Source {
     }
 
     @Override
+    public double getCurrent(Node node, double time) {
+        if (node.getName().equals(nodeP.getName())) {
+            return getValue(time);
+        } else {
+            return -1 * getValue(time);
+        }
+    }
+
+    @Override
     public double getValue(double time) {
         return currentDC + amplitude * Math.sin(2 * Math.PI * frequency + phase);
     }

@@ -51,16 +51,13 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
             return false;
         }
-        Node nodeP = new Node(node1);
-        Node nodeN = new Node(node2);
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        Resistor resistor = new Resistor(name, nodeP, nodeN, value);
-        controller.addElement(resistor);
+        controller.addElement(name, node1, node2, value, "resistor");
         return true;
     }
 
@@ -70,16 +67,13 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
             return false;
         }
-        Node nodeP = new Node(node1);
-        Node nodeN = new Node(node2);
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        Capacitor capacitor = new Capacitor(name, nodeP, nodeN, value);
-        controller.addElement(capacitor);
+        controller.addElement(name, node1, node2, value, "capacitor");
         return true;
     }
 
@@ -89,16 +83,13 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
             return false;
         }
-        Node nodeP = new Node(node1);
-        Node nodeN = new Node(node2);
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        Inductor inductor = new Inductor(name, nodeP, nodeN, value);
-        controller.addElement(inductor);
+        controller.addElement(name, node1, node2, value, "inductor");
         return true;
     }
 
@@ -109,8 +100,6 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
             return false;
         }
-        Node nodeP = new Node(node1);
-        Node nodeN = new Node(node2);
         double valueFactor = controller.getUnit(s_value.charAt(s_value.length() - 1));
         double amplitudeFactor = controller.getUnit(s_amplitude.charAt(s_amplitude.length() - 1));
         double frequencyFactor = controller.getUnit(s_frequency.charAt(s_frequency.length() - 1));
@@ -129,8 +118,7 @@ public abstract class FileInputProcessor {
                     Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
-            CurrentSource currentSource = new CurrentSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
-            controller.addSource(currentSource);
+            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, "currentSource");
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -158,8 +146,6 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
             return false;
         }
-        Node nodeP = new Node(node1);
-        Node nodeN = new Node(node2);
         double valueFactor = controller.getUnit(s_value.charAt(s_value.length() - 1));
         double amplitudeFactor = controller.getUnit(s_amplitude.charAt(s_amplitude.length() - 1));
         double frequencyFactor = controller.getUnit(s_frequency.charAt(s_frequency.length() - 1));
@@ -178,8 +164,7 @@ public abstract class FileInputProcessor {
                     Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
-            VoltageSource voltageSource = new VoltageSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
-            controller.addSource(voltageSource);
+            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, "voltageSource");
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");

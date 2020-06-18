@@ -14,66 +14,77 @@ public class InputController {
         return instance;
     }
 
-    ArrayList<Node> nodes = new ArrayList<>();
-    ArrayList<Resistor> resistors = new ArrayList<>();
-    ArrayList<Capacitor> capacitors = new ArrayList<>();
-    ArrayList<Inductor> inductors = new ArrayList<>();
-    ArrayList<CurrentSource> currentSources = new ArrayList<>();
-    ArrayList<VoltageSource> voltageSources = new ArrayList<>();
-    ArrayList<Element> elements = new ArrayList<>();
-    ArrayList<Source> sources = new ArrayList<>();
+    private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ArrayList<Resistor> resistors = new ArrayList<>();
+    private final ArrayList<Capacitor> capacitors = new ArrayList<>();
+    private final ArrayList<Inductor> inductors = new ArrayList<>();
+    private final ArrayList<CurrentSource> currentSources = new ArrayList<>();
+    private final ArrayList<VoltageSource> voltageSources = new ArrayList<>();
+    private final ArrayList<Element> elements = new ArrayList<>();
+    private final ArrayList<Source> sources = new ArrayList<>();
 
     private double deltaV = 0;
     private double deltaI = 0;
     private double deltaT = 0;
     private double tranTime = 0;
 
-    public void addElement(Element element) {
-        if (findNode(element.getNodeP().getName()) == null) {
-            nodes.add(element.getNodeP());
+    public void addElement(String name, String node1, String node2, double value, String type) {
+        Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);;
+        if (!nodes.contains(nodeP)) nodes.add(nodeP);
+        if (!nodes.contains(nodeN)) nodes.add(nodeN);
+        if (!nodeP.getNeighborNodes().contains(nodeN)) {
+            nodeP.getNeighborNodes().add(nodeN);
         }
-        if (findNode(element.getNodeN().getName()) == null) {
-            nodes.add(element.getNodeN());
+        if (!nodeN.getNeighborNodes().contains(nodeP)) {
+            nodeN.getNeighborNodes().add(nodeP);
         }
-        if (!element.getNodeP().getNeighborNodes().contains(element.getNodeN())) {
-            element.getNodeP().getNeighborNodes().add(element.getNodeN());
+        if (type.equalsIgnoreCase("resistor")) {
+            Resistor resistor = new Resistor(name, nodeP, nodeN, value);
+            resistors.add(resistor);
+            elements.add(resistor);
+            nodeP.getElements().add(resistor);
+            nodeN.getElements().add(resistor);
+        } else if (type.equalsIgnoreCase("capacitor")) {
+            Capacitor capacitor = new Capacitor(name, nodeP, nodeN, value);
+            capacitors.add(capacitor);
+            elements.add(capacitor);
+            nodeP.getElements().add(capacitor);
+            nodeN.getElements().add(capacitor);
+        } else if (type.equalsIgnoreCase("inductor")) {
+            Inductor inductor = new Inductor(name, nodeP, nodeN, value);
+            inductors.add(inductor);
+            elements.add(inductor);
+            nodeP.getElements().add(inductor);
+            nodeN.getElements().add(inductor);
         }
-        if (!element.getNodeN().getNeighborNodes().contains(element.getNodeP())) {
-            element.getNodeN().getNeighborNodes().add(element.getNodeP());
-        }
-        if (element.getType().equalsIgnoreCase("resistor")) {
-            resistors.add((Resistor)element);
-        } else if (element.getType().equalsIgnoreCase("capacitor")) {
-            capacitors.add((Capacitor)element);
-        } else if (element.getType().equalsIgnoreCase("inductor")) {
-            inductors.add((Inductor)element);
-        }
-        element.getNodeP().getElements().add(element);
-        element.getNodeN().getElements().add(element);
-        elements.add(element);
     }
 
-    public void addSource(Source source) {
-        if (findNode(source.getNodeP().getName()) == null) {
-            nodes.add(source.getNodeP());
+    public void addSource(String name, String node1, String node2, double value,
+                          double amplitude, double frequency, double phase, String type) {
+        Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);;
+        if (!nodes.contains(nodeP)) nodes.add(nodeP);
+        if (!nodes.contains(nodeN)) nodes.add(nodeN);
+        if (!nodeP.getNeighborNodes().contains(nodeN)) {
+            nodeP.getNeighborNodes().add(nodeN);
         }
-        if (findNode(source.getNodeN().getName()) == null) {
-            nodes.add(source.getNodeN());
+        if (!nodeN.getNeighborNodes().contains(nodeP)) {
+            nodeN.getNeighborNodes().add(nodeP);
         }
-        if (!source.getNodeP().getNeighborNodes().contains(source.getNodeN())) {
-            source.getNodeP().getNeighborNodes().add(source.getNodeN());
+        if (type.equalsIgnoreCase("currentSource")) {
+            CurrentSource currentSource = new CurrentSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
+            currentSources.add(currentSource);
+            sources.add(currentSource);
+            nodeP.getSources().add(currentSource);
+            nodeN.getSources().add(currentSource);
+        } else if (type.equalsIgnoreCase("voltageSource")) {
+            VoltageSource voltageSource = new VoltageSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
+            voltageSources.add(voltageSource);
+            sources.add(voltageSource);
+            nodeP.getSources().add(voltageSource);
+            nodeN.getSources().add(voltageSource);
         }
-        if (!source.getNodeN().getNeighborNodes().contains(source.getNodeP())) {
-            source.getNodeN().getNeighborNodes().add(source.getNodeP());
-        }
-        if (source.getType().equalsIgnoreCase("currentSource")) {
-            currentSources.add((CurrentSource)source);
-        } else if (source.getType().equalsIgnoreCase("voltageSource")) {
-            voltageSources.add((VoltageSource)source);
-        }
-        source.getNodeP().getSources().add(source);
-        source.getNodeN().getSources().add(source);
-        sources.add(source);
     }
 
     //SEARCH METHODS
@@ -178,8 +189,37 @@ public class InputController {
 
     //GETTERS AND SETTERS
 
+
+    public ArrayList<Resistor> getResistors() {
+        return resistors;
+    }
+
+    public ArrayList<Capacitor> getCapacitors() {
+        return capacitors;
+    }
+
+    public ArrayList<Inductor> getInductors() {
+        return inductors;
+    }
+
+    public ArrayList<CurrentSource> getCurrentSources() {
+        return currentSources;
+    }
+
+    public ArrayList<VoltageSource> getVoltageSources() {
+        return voltageSources;
+    }
+
     public ArrayList<Node> getNodes() {
         return nodes;
+    }
+
+    public ArrayList<Element> getElements() {
+        return elements;
+    }
+
+    public ArrayList<Source> getSources() {
+        return sources;
     }
 
     public double getDeltaV() {
