@@ -7,15 +7,8 @@ public class Solver {
     private final InputController controller = InputController.getInstance();
     private double time = 0;
     private int step = 0;
-    public void run() {
-        for (Node node : controller.getNodes()) {
-            System.out.println(node.getName() + " : " + node.getVoltage());
-        }
-        System.out.println("_______________*****_______________");
-        start();
-    }
 
-    public void start() {
+    public void run() {
         Node groundNode = null;
         for (Node node : controller.getNodes()) {
             if (node.getName().equals("0")) {
@@ -30,6 +23,12 @@ public class Solver {
             step++;
             time += controller.getDeltaT();
             System.out.println("time = " + time);
+            solve();
+        } while (time <= controller.getTranTime());
+    }
+
+    public void solve() {
+        do {
             for (Node node : controller.getNodes()) {
                 if (!node.getName().equals("0")) {
                     updateElementsCurrent();
@@ -48,10 +47,10 @@ public class Solver {
                             (Math.abs(totalCurrent1) - Math.abs(totalCurrent2)) / controller.getDeltaI()
                                     * controller.getDeltaV();
                     node.setVoltage(voltage);
-                    System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
+                    //System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
                 }
             }
-            System.out.println();
+            //System.out.println();
         } while (!checkKCL());
         printVoltages();
     }
@@ -59,10 +58,10 @@ public class Solver {
     private boolean checkKCL() {
         double measurementError = 0;
         for (Node node : controller.getNodes()) {
-            measurementError += Math.pow(node.getTotalCurrent(time), 2);
+            measurementError += Math.abs(node.getTotalCurrent(time));
         }
-        //System.out.println("error : " + measurementError);
-        return measurementError < Math.pow(10, -5);
+        System.out.println("error : " + measurementError);
+        return measurementError < Math.pow(10, -2);
     }
 
     private void updateElementsCurrent() {
