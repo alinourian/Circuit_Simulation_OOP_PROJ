@@ -5,6 +5,7 @@ public class Element {
     protected Node nodeP;
     protected Node nodeN;
     protected double current;
+    protected double helpCurrent;
 
     public Element(String name, Node nodeIn, Node nodeOut) {
         this.name = name;
@@ -14,6 +15,10 @@ public class Element {
     }
 
     public void updateElementCurrent() {
+    }
+
+    public void setBackElementCurrent() {
+
     }
 
     public String getName() {

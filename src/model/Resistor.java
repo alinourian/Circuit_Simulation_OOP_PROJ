@@ -10,7 +10,13 @@ public class Resistor extends Element {
 
     @Override
     public void updateElementCurrent() {
+        helpCurrent = current;
         current = (nodeP.getVoltage() - nodeN.getVoltage()) / resistance;
+    }
+
+    @Override
+    public void setBackElementCurrent() {
+        current = helpCurrent;
     }
 
     @Override

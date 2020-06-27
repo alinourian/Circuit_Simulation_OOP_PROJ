@@ -40,18 +40,20 @@ public class Solver {
                     double totalCurrent2 = node.getTotalCurrent(time);
                     //System.out.println("totalCurrent2 = " + totalCurrent2);
                     //
-                    node.setVoltage(node.getVoltage() - controller.getDeltaV());
-                    updateElementsCurrent();
+                    //node.setVoltage(node.getVoltage() - controller.getDeltaV());
+                    setBackElementCurrent();
                     //
-                    double voltage = node.getVoltage() +
+                    double voltage = node.getVoltage() - controller.getDeltaV() +
                             (Math.abs(totalCurrent1) - Math.abs(totalCurrent2)) / controller.getDeltaI()
                                     * controller.getDeltaV();
                     node.setVoltage(voltage);
+                    //updateElementsCurrent();
                     //System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
                 }
             }
-            //System.out.println();
+            System.out.println();
         } while (!checkKCL());
+        updateElementsCurrent();
         printVoltages();
     }
 
@@ -70,9 +72,15 @@ public class Solver {
         }
     }
 
+    private void setBackElementCurrent() {
+        for (Element element : controller.getElements()) {
+            element.setBackElementCurrent();
+        }
+    }
+
     private void printVoltages() {
         for (Node node : controller.getNodes()) {
-            System.out.printf(node.getName() + " => voltage : %.2f\n", node.getVoltage());
+            System.out.printf(node.getName() + " => voltage : %.3f\n", node.getVoltage());
         }
     }
 
