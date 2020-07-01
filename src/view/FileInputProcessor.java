@@ -140,7 +140,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+        if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
             return false;
@@ -170,7 +170,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+        if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
             return false;
@@ -234,7 +234,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+        if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
             return false;
@@ -264,7 +264,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+        if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
             return false;
