@@ -6,6 +6,7 @@ public class Inductor extends Element{
     private final double inductance;
     private double V_p;
     private double V_n;
+    private double[] voltageAtEachStep;
 
     public Inductor(String name, Node nodeP, Node nodeN, double inductance) {
         super(name, nodeP, nodeN);

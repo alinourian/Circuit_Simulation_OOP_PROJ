@@ -33,6 +33,7 @@ public class Element {
         }
     }
 
+
     public double getValue() {
         return 0;
     }

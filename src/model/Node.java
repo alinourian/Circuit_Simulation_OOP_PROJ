@@ -11,6 +11,8 @@ public class Node {
     protected ArrayList<Node> neighborNodes;
     protected ArrayList<Element> elements;
     protected ArrayList<Source> sources;
+    private Node parentNode;
+    private Union includingUnion;
 
     public Node (String name) {
         this.name = name;

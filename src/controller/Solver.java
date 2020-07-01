@@ -2,11 +2,12 @@ package controller;
 
 import model.Element;
 import model.Node;
+import model.Resistor;
 
 public class Solver {
     private final InputController controller = InputController.getInstance();
     private double time = 0;
-    private int step = 0;
+    public static int step = 0;
 
     public void run() {
         Node groundNode = null;
@@ -31,13 +32,16 @@ public class Solver {
         do {
             for (Node node : controller.getNodes()) {
                 if (!node.getName().equals("0")) {
+
                     updateElementsCurrent();
                     double totalCurrent1 = node.getTotalCurrent(time);
                     //System.out.println("totalCurrent1 = " + totalCurrent1);
                     node.setVoltage(node.getVoltage() + controller.getDeltaV());
+
                     updateElementsCurrent();
 
                     double totalCurrent2 = node.getTotalCurrent(time);
+
                     //System.out.println("totalCurrent2 = " + totalCurrent2);
                     //
                     //node.setVoltage(node.getVoltage() - controller.getDeltaV());
@@ -48,7 +52,7 @@ public class Solver {
                                     * controller.getDeltaV();
                     node.setVoltage(voltage);
                     //updateElementsCurrent();
-                    //System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
+                    System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
                 }
             }
             System.out.println();
@@ -62,14 +66,16 @@ public class Solver {
         for (Node node : controller.getNodes()) {
             measurementError += Math.abs(node.getTotalCurrent(time));
         }
-        System.out.println("error : " + measurementError);
+        System.out.println("error: " + measurementError);
         return measurementError < Math.pow(10, -2);
     }
 
     private void updateElementsCurrent() {
         for (Element element : controller.getElements()) {
             element.updateElementCurrent();
+
         }
+
     }
 
     private void setBackElementCurrent() {

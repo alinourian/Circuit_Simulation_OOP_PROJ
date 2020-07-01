@@ -128,7 +128,7 @@ public abstract class FileInputProcessor {
     }
 
     private static boolean addVoltageControlledCurrentSource(String name, String node1, String node2,
-                                                          String voltage1, String voltage2, String gain) {
+                                                          String voltage2, String voltage1, String gain) {
         // TODO
         return true;
     }

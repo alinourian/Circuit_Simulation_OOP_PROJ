@@ -33,12 +33,13 @@ public abstract class FileScanner {
             System.err.println(e);
             return false;
         }
-        if (InputController.getInstance().getDeltaV() == 0 ||
-                InputController.getInstance().getDeltaI() == 0 || InputController.getInstance().getDeltaT() == 0) {
+        if (InputController.getInstance().getDeltaV() <= 0 ||
+                InputController.getInstance().getDeltaI() <= 0 || InputController.getInstance().getDeltaT() <= 0) {
             System.err.println("error :");
-            System.err.println("<dV, dI, dT> not initialised!");
+            System.err.println("<dV, dI, dT> not initialised correctly!");
             return false;
         }
+
         System.out.println("File successfully uploaded.");
         return true;
     }

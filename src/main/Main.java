@@ -2,7 +2,9 @@ package main;
 
 import controller.InputController;
 import controller.Solver;
+import model.Element;
 import model.Node;
+import model.Resistor;
 import view.FileScanner;
 
 public class Main {

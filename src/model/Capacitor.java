@@ -8,6 +8,7 @@ public class Capacitor extends Element {
     private double V_n;
     private double help_V_p;
     private double help_V_n;
+    private double[] currentAtEachStep;
 
     public Capacitor(String name, Node nodeP, Node nodeN, double capacity) {
         super(name, nodeP, nodeN);
