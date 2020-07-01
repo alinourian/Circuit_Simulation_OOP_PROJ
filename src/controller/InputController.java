@@ -63,7 +63,7 @@ public class InputController {
     public void addSource(String name, String node1, String node2, double value,
                           double amplitude, double frequency, double phase, String type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
-        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);;
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
         if (!nodes.contains(nodeN)) nodes.add(nodeN);
         if (!nodeP.getNeighborNodes().contains(nodeN)) {
@@ -84,6 +84,72 @@ public class InputController {
             sources.add(voltageSource);
             nodeP.getSources().add(voltageSource);
             nodeN.getSources().add(voltageSource);
+        }
+    }
+
+    public void addVoltageControlledSource(String name, String node1, String node2,
+                                           double gain, String controllerNode1, String controllerNode2, String type) {
+        Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
+        Node controllerNodeP = findNode(controllerNode1);
+        Node controllerNodeN = findNode(controllerNode2);
+        if (!nodes.contains(nodeP)) nodes.add(nodeP);
+        if (!nodes.contains(nodeN)) nodes.add(nodeN);
+        if (!nodeP.getNeighborNodes().contains(nodeN)) {
+            nodeP.getNeighborNodes().add(nodeN);
+        }
+        if (!nodeN.getNeighborNodes().contains(nodeP)) {
+            nodeN.getNeighborNodes().add(nodeP);
+        }
+        if (type.equalsIgnoreCase("VoltageControlledCurrentSource")) {
+            VoltageControlledCurrentSource V_C_C_S;
+            V_C_C_S = new VoltageControlledCurrentSource(name, nodeP, nodeN, gain, controllerNodeP, controllerNodeN);
+            currentSources.add(V_C_C_S);
+            sources.add(V_C_C_S);
+            nodeP.getSources().add(V_C_C_S);
+            nodeN.getSources().add(V_C_C_S);
+        } else if (type.equalsIgnoreCase("voltageControlledVoltageSource")) {
+            VoltageControlledVoltageSource V_C_V_S;
+            V_C_V_S = new VoltageControlledVoltageSource(name, nodeP, nodeN, gain, controllerNodeP, controllerNodeN);
+            voltageSources.add(V_C_V_S);
+            sources.add(V_C_V_S);
+            nodeP.getSources().add(V_C_V_S);
+            nodeN.getSources().add(V_C_V_S);
+        }
+    }
+
+    public void addCurrentControlledSource(String name, String node1, String node2,
+                                           double gain, String s_Branch, String type) {
+        Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
+        if (!nodes.contains(nodeP)) nodes.add(nodeP);
+        if (!nodes.contains(nodeN)) nodes.add(nodeN);
+        if (!nodeP.getNeighborNodes().contains(nodeN)) {
+            nodeP.getNeighborNodes().add(nodeN);
+        }
+        if (!nodeN.getNeighborNodes().contains(nodeP)) {
+            nodeN.getNeighborNodes().add(nodeP);
+        }
+        Branch branch;
+        if (findElement(s_Branch) != null) {
+            branch = findElement(s_Branch);
+        } else {
+            branch = findSource(s_Branch);
+        }
+        if (type.equalsIgnoreCase("currentControlledCurrentSource")) {
+            CurrentControlledCurrentSource C_C_C_S;
+            C_C_C_S = new CurrentControlledCurrentSource(name, nodeP, nodeN, gain, branch);
+            currentSources.add(C_C_C_S);
+            sources.add(C_C_C_S);
+            nodeP.getSources().add(C_C_C_S);
+            nodeN.getSources().add(C_C_C_S);
+        } else if (type.equalsIgnoreCase("currentControlledVoltageSource")) {
+            CurrentControlledVoltageSource C_C_V_S;
+            C_C_V_S = new CurrentControlledVoltageSource(name, nodeP, nodeN, gain, branch);
+            voltageSources.add(C_C_V_S);
+            sources.add(C_C_V_S);
+            nodeP.getSources().add(C_C_V_S);
+            nodeN.getSources().add(C_C_V_S);
         }
     }
 
@@ -138,6 +204,24 @@ public class InputController {
         for (VoltageSource voltageSource : voltageSources) {
             if (voltageSource.getName().equals(name)) {
                 return voltageSource;
+            }
+        }
+        return null;
+    }
+
+    public Element findElement(String name) {
+        for (Element element : elements) {
+            if (element.getName().equals(name)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    public Source findSource(String name) {
+        for (Source source : sources) {
+            if (source.getName().equals(name)) {
+                return source;
             }
         }
         return null;

@@ -29,7 +29,10 @@ public class Node {
             totalCurrent += element.getCurrent(InputController.getInstance().findNode(name));
         }
         for (Source source : sources) {
-            totalCurrent += source.getCurrent(InputController.getInstance().findNode(name), time);
+            if (source instanceof CurrentSource) {
+                CurrentSource currentSource = (CurrentSource)source;
+                totalCurrent += currentSource.getCurrent(InputController.getInstance().findNode(name), time);
+            }
         }
         return totalCurrent;
     }

@@ -15,9 +15,23 @@ public class VoltageSource extends Source {
         this.phase = phase;
     }
 
+    public VoltageSource(String name, Node nodeP, Node nodeN) {
+        super(name, nodeP, nodeN);
+    }
+
     @Override
-    public double getValue(double time) {
-        return voltageDC + amplitude * Math.sin(2 * Math.PI * frequency + phase);
+    public double getVoltage(Node node, double time) {
+        double value = voltageDC + amplitude * Math.sin(2 * Math.PI * frequency * time + phase);
+        if (node.getName().equals(nodeP.getName())) {
+            return value;
+        } else {
+            return -1 * value;
+        }
+    }
+
+    @Override
+    public double getValue(Node node, double time) {
+        return getVoltage(node, time);
     }
 
     @Override

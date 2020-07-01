@@ -1,7 +1,6 @@
 package view;
 
 import controller.InputController;
-import model.*;
 
 public abstract class FileInputProcessor {
     private static final InputController controller = InputController.getInstance();
@@ -127,16 +126,65 @@ public abstract class FileInputProcessor {
         }
     }
 
+    //check node before add all nodes!!
     private static boolean addVoltageControlledCurrentSource(String name, String node1, String node2,
-                                                          String voltage2, String voltage1, String gain) {
-        // TODO
-        return true;
+                                                          String voltage1, String voltage2, String value) {
+        if (controller.findCurrentSource(name) != null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
+            return false;
+        }
+        double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
+        if (valueFactor == -2) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
+            return false;
+        }
+        try {
+            double gain = valueFactor == -1 ? Double.parseDouble(value) :
+                    Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
+            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, "currentSource");
+            return true;
+        } catch (NumberFormatException e) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
     }
 
     private static boolean addCurrentControlledCurrentSource(String name, String node1, String node2,
-                                                          String branch, String gain) {
-        // TODO
-        return true;
+                                                          String branch, String value) {
+        if (controller.findCurrentSource(name) != null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
+            return false;
+        }
+        double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
+        if (valueFactor == -2) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
+            return false;
+        }
+        try {
+            double gain = valueFactor == -1 ? Double.parseDouble(value) :
+                    Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
+            controller.addCurrentControlledSource(name, node1, node2, gain, branch, "currentControlledCurrentSource");
+            return true;
+        } catch (NumberFormatException e) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
     }
 
     private static boolean addVoltageSource(String name, String node1, String node2, String s_value,
@@ -174,15 +222,63 @@ public abstract class FileInputProcessor {
     }
 
     private static boolean addVoltageControlledVoltageSource(String name, String node1, String node2,
-                                                          String voltage1, String voltage2, String gain) {
-        // TODO
-        return true;
+                                                          String voltage1, String voltage2, String value) {
+        if (controller.findVoltageSource(name) != null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
+            return false;
+        }
+        double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
+        if (valueFactor == -2) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
+            return false;
+        }
+        try {
+            double gain = valueFactor == -1 ? Double.parseDouble(value) :
+                    Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
+            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, "voltageSource");
+            return true;
+        } catch (NumberFormatException e) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
     }
 
     private static boolean addCurrentControlledVoltageSource(String name, String node1, String node2,
-                                                          String branch, String gain) {
-        // TODO
-        return true;
+                                                          String branch, String value) {
+        if (controller.findVoltageSource(name) != null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Similar name found!");
+            return false;
+        }
+        double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
+        if (valueFactor == -2) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
+        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
+            return false;
+        }
+        try {
+            double gain = valueFactor == -1 ? Double.parseDouble(value) :
+                    Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
+            controller.addCurrentControlledSource(name, node1, node2, gain, branch, "currentControlledVoltageSource");
+            return true;
+        } catch (NumberFormatException e) {
+            System.err.println("error :");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
+            return false;
+        }
     }
 
     private static boolean addDeltaVoltage(String deltaVoltage) {

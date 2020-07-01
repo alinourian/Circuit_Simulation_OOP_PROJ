@@ -1,17 +1,13 @@
 package model;
 
-public class Element {
-    protected final String name;
-    protected Node nodeP;
-    protected Node nodeN;
+public class Element extends Branch {
     protected double current;
     protected double helpCurrent;
 
-    public Element(String name, Node nodeIn, Node nodeOut) {
-        this.name = name;
-        this.nodeP = nodeIn;
-        this.nodeN = nodeOut;
+    public Element(String name, Node nodeP, Node nodeN) {
+        super(name, nodeP, nodeN);
         this.current = 0;
+        this.helpCurrent = 0;
     }
 
     public void updateElementCurrent() {
@@ -33,6 +29,9 @@ public class Element {
         }
     }
 
+    public double getVoltage() {
+        return nodeP.getVoltage() - nodeN.getVoltage();
+    }
 
     public double getValue() {
         return 0;

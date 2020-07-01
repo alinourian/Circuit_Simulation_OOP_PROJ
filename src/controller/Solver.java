@@ -2,7 +2,6 @@ package controller;
 
 import model.Element;
 import model.Node;
-import model.Resistor;
 
 public class Solver {
     private final InputController controller = InputController.getInstance();

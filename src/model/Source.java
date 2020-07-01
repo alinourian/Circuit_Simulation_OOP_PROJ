@@ -1,14 +1,13 @@
 package model;
 
-public class Source {
-    protected final String name;
-    protected Node nodeP;
-    protected Node nodeN;
+public class Source extends Branch {
 
-    public Source(String name, Node nodeIn, Node nodeOut) {
-        this.name = name;
-        this.nodeP = nodeIn;
-        this.nodeN = nodeOut;
+    public Source(String name, Node nodeP, Node nodeN) {
+        super(name, nodeP, nodeN);
+    }
+
+    public double getVoltage(Node node, double time) {
+        return 0;
     }
 
     public double getCurrent(Node node, double time) {
@@ -19,7 +18,7 @@ public class Source {
         return name;
     }
 
-    public double getValue(double time) {
+    public double getValue(Node node, double time) {
         return 0;
     }
 
