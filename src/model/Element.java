@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class Element extends Branch {
     protected double current;
     protected double helpCurrent;
@@ -45,7 +47,14 @@ public class Element extends Branch {
         return nodeN;
     }
 
-    public String getType() {
-        return "Element";
+    public Type getType() {
+        return Type.ELEMENT;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN;
     }
 }

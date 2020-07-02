@@ -35,7 +35,7 @@ public abstract class FileScanner {
         }
         if (InputController.getInstance().getDeltaV() <= 0 ||
                 InputController.getInstance().getDeltaI() <= 0 || InputController.getInstance().getDeltaT() <= 0) {
-            System.err.println("error :");
+            System.err.println("error -1 :");
             System.err.println("<dV, dI, dT> not initialised correctly!");
             return false;
         }

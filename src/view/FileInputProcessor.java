@@ -1,6 +1,7 @@
 package view;
 
 import controller.InputController;
+import enums.Type;
 
 public abstract class FileInputProcessor {
     private static final InputController controller = InputController.getInstance();
@@ -56,7 +57,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        controller.addElement(name, node1, node2, value, "resistor");
+        controller.addElement(name, node1, node2, value, Type.RESISTOR);
         return true;
     }
 
@@ -72,7 +73,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        controller.addElement(name, node1, node2, value, "capacitor");
+        controller.addElement(name, node1, node2, value, Type.CAPACITOR);
         return true;
     }
 
@@ -88,7 +89,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        controller.addElement(name, node1, node2, value, "inductor");
+        controller.addElement(name, node1, node2, value, Type.INDUCTOR);
         return true;
     }
 
@@ -117,7 +118,7 @@ public abstract class FileInputProcessor {
                     Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
-            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, "currentSource");
+            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.CURRENT_SOURCE);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -140,7 +141,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+        if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
             return false;
@@ -148,7 +149,7 @@ public abstract class FileInputProcessor {
         try {
             double gain = valueFactor == -1 ? Double.parseDouble(value) :
                     Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
-            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, "currentSource");
+            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, Type.V_C_C_S);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -170,7 +171,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+        if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
             return false;
@@ -178,7 +179,7 @@ public abstract class FileInputProcessor {
         try {
             double gain = valueFactor == -1 ? Double.parseDouble(value) :
                     Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
-            controller.addCurrentControlledSource(name, node1, node2, gain, branch, "currentControlledCurrentSource");
+            controller.addCurrentControlledSource(name, node1, node2, gain, branch, Type.C_C_C_S);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -212,7 +213,7 @@ public abstract class FileInputProcessor {
                     Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
-            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, "voltageSource");
+            controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.VOLTAGE_SOURCE);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -234,7 +235,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findNode(voltage1) == null || controller.findNode(voltage2) == null) {
+        if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
             return false;
@@ -242,7 +243,7 @@ public abstract class FileInputProcessor {
         try {
             double gain = valueFactor == -1 ? Double.parseDouble(value) :
                     Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
-            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, "voltageSource");
+            controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, Type.V_C_V_S);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");
@@ -264,7 +265,7 @@ public abstract class FileInputProcessor {
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Invalid value!");
             return false;
         }
-        if (controller.findElement(branch) == null || controller.findSource(branch) == null) {
+        if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
             System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
             return false;
@@ -272,7 +273,7 @@ public abstract class FileInputProcessor {
         try {
             double gain = valueFactor == -1 ? Double.parseDouble(value) :
                     Double.parseDouble(value.substring(0, value.length() - 1)) * valueFactor;
-            controller.addCurrentControlledSource(name, node1, node2, gain, branch, "currentControlledVoltageSource");
+            controller.addCurrentControlledSource(name, node1, node2, gain, branch, Type.C_C_V_S);
             return true;
         } catch (NumberFormatException e) {
             System.err.println("error :");

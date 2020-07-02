@@ -1,5 +1,6 @@
 package controller;
 
+import enums.Type;
 import model.*;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class InputController {
     private double deltaT = 0;
     private double tranTime = 0;
 
-    public void addElement(String name, String node1, String node2, double value, String type) {
+    public void addElement(String name, String node1, String node2, double value, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);;
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
@@ -39,19 +40,19 @@ public class InputController {
         if (!nodeN.getNeighborNodes().contains(nodeP)) {
             nodeN.getNeighborNodes().add(nodeP);
         }
-        if (type.equalsIgnoreCase("resistor")) {
+        if (type.equals(Type.RESISTOR)) {
             Resistor resistor = new Resistor(name, nodeP, nodeN, value);
             resistors.add(resistor);
             elements.add(resistor);
             nodeP.getElements().add(resistor);
             nodeN.getElements().add(resistor);
-        } else if (type.equalsIgnoreCase("capacitor")) {
+        } else if (type.equals(Type.CAPACITOR)) {
             Capacitor capacitor = new Capacitor(name, nodeP, nodeN, value);
             capacitors.add(capacitor);
             elements.add(capacitor);
             nodeP.getElements().add(capacitor);
             nodeN.getElements().add(capacitor);
-        } else if (type.equalsIgnoreCase("inductor")) {
+        } else if (type.equals(Type.INDUCTOR)) {
             Inductor inductor = new Inductor(name, nodeP, nodeN, value);
             inductors.add(inductor);
             elements.add(inductor);
@@ -61,7 +62,7 @@ public class InputController {
     }
 
     public void addSource(String name, String node1, String node2, double value,
-                          double amplitude, double frequency, double phase, String type) {
+                          double amplitude, double frequency, double phase, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
@@ -72,13 +73,13 @@ public class InputController {
         if (!nodeN.getNeighborNodes().contains(nodeP)) {
             nodeN.getNeighborNodes().add(nodeP);
         }
-        if (type.equalsIgnoreCase("currentSource")) {
+        if (type.equals(Type.CURRENT_SOURCE)) {
             CurrentSource currentSource = new CurrentSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
             currentSources.add(currentSource);
             sources.add(currentSource);
             nodeP.getSources().add(currentSource);
             nodeN.getSources().add(currentSource);
-        } else if (type.equalsIgnoreCase("voltageSource")) {
+        } else if (type.equals(Type.VOLTAGE_SOURCE)) {
             VoltageSource voltageSource = new VoltageSource(name, nodeP, nodeN, value, amplitude, frequency, phase);
             voltageSources.add(voltageSource);
             sources.add(voltageSource);
@@ -88,7 +89,7 @@ public class InputController {
     }
 
     public void addVoltageControlledSource(String name, String node1, String node2,
-                                           double gain, String controllerNode1, String controllerNode2, String type) {
+                                           double gain, String controllerNode1, String controllerNode2, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
         Node controllerNodeP = findNode(controllerNode1);
@@ -101,14 +102,14 @@ public class InputController {
         if (!nodeN.getNeighborNodes().contains(nodeP)) {
             nodeN.getNeighborNodes().add(nodeP);
         }
-        if (type.equalsIgnoreCase("VoltageControlledCurrentSource")) {
+        if (type.equals(Type.V_C_C_S)) {
             VoltageControlledCurrentSource V_C_C_S;
             V_C_C_S = new VoltageControlledCurrentSource(name, nodeP, nodeN, gain, controllerNodeP, controllerNodeN);
             currentSources.add(V_C_C_S);
             sources.add(V_C_C_S);
             nodeP.getSources().add(V_C_C_S);
             nodeN.getSources().add(V_C_C_S);
-        } else if (type.equalsIgnoreCase("voltageControlledVoltageSource")) {
+        } else if (type.equals(Type.V_C_V_S)) {
             VoltageControlledVoltageSource V_C_V_S;
             V_C_V_S = new VoltageControlledVoltageSource(name, nodeP, nodeN, gain, controllerNodeP, controllerNodeN);
             voltageSources.add(V_C_V_S);
@@ -119,7 +120,7 @@ public class InputController {
     }
 
     public void addCurrentControlledSource(String name, String node1, String node2,
-                                           double gain, String s_Branch, String type) {
+                                           double gain, String s_Branch, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
@@ -136,14 +137,14 @@ public class InputController {
         } else {
             branch = findSource(s_Branch);
         }
-        if (type.equalsIgnoreCase("currentControlledCurrentSource")) {
+        if (type.equals(Type.C_C_C_S)) {
             CurrentControlledCurrentSource C_C_C_S;
             C_C_C_S = new CurrentControlledCurrentSource(name, nodeP, nodeN, gain, branch);
             currentSources.add(C_C_C_S);
             sources.add(C_C_C_S);
             nodeP.getSources().add(C_C_C_S);
             nodeN.getSources().add(C_C_C_S);
-        } else if (type.equalsIgnoreCase("currentControlledVoltageSource")) {
+        } else if (type.equals(Type.C_C_V_S)) {
             CurrentControlledVoltageSource C_C_V_S;
             C_C_V_S = new CurrentControlledVoltageSource(name, nodeP, nodeN, gain, branch);
             voltageSources.add(C_C_V_S);

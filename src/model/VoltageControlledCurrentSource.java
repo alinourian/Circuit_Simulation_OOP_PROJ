@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class VoltageControlledCurrentSource extends CurrentSource {
     private final double gain;
     private final Node controllerNode1;
@@ -29,7 +31,17 @@ public class VoltageControlledCurrentSource extends CurrentSource {
     }
 
     @Override
-    public String getType() {
-        return "VoltageSourceControlledCurrentSource";
+    public Type getType() {
+        return Type.V_C_C_S;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                controllerNode1 + "     " +
+                controllerNode2 + "     " +
+                gain;
     }
 }

@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class Source extends Branch {
 
     public Source(String name, Node nodeP, Node nodeN) {
@@ -30,7 +32,14 @@ public class Source extends Branch {
         return nodeN;
     }
 
-    public String getType() {
-        return "Source";
+    public Type getType() {
+        return Type.SOURCE;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "        " +
+                nodeP + "       " +
+                nodeN;
     }
 }

@@ -1,8 +1,5 @@
 package model;
 
-import controller.Solver;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Circuit {
@@ -19,4 +16,6 @@ public class Circuit {
         this.dt = dt;
 
     }
+
+    // TODO: ۰۲/۰۷/۲۰۲۰
 }

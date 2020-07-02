@@ -73,4 +73,9 @@ public class Node {
             this.voltage = voltage;
         }
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
