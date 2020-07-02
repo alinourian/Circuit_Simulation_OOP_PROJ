@@ -1,10 +1,12 @@
 package model;
 
+import enums.Type;
+
 public class CurrentSource extends Source {
-    private double currentDC;
-    private double amplitude;
-    private double frequency;
-    private double phase;
+    protected double currentDC;
+    protected double amplitude;
+    protected double frequency;
+    protected double phase;
 
     public CurrentSource(String name, Node nodeP, Node nodeN, double currentDC,
                          double amplitude, double frequency, double phase) {
@@ -35,7 +37,18 @@ public class CurrentSource extends Source {
     }
 
     @Override
-    public String getType() {
-        return "currentSource";
+    public Type getType() {
+        return Type.CURRENT_SOURCE;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                currentDC + "       " +
+                amplitude + "       " +
+                frequency + "       " +
+                phase + "       ";
     }
 }

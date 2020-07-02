@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class Diode extends Element {
     private boolean hasCurrent;
 
@@ -8,7 +10,7 @@ public class Diode extends Element {
     }
 
     @Override
-    public String getType() {
-        return "diode";
+    public Type getType() {
+        return Type.DIODE;
     }
 }

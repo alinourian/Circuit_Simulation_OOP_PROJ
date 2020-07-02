@@ -1,6 +1,7 @@
 package model;
 
 import controller.InputController;
+import enums.Type;
 
 public class Capacitor extends Element {
     private final double capacity;
@@ -41,8 +42,16 @@ public class Capacitor extends Element {
     }
 
     @Override
-    public String getType() {
-        return "capacitor";
+    public Type getType() {
+        return Type.CAPACITOR;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                capacity;
     }
 
 }

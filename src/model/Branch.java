@@ -10,4 +10,8 @@ public class Branch {
         this.nodeP = nodeP;
         this.nodeN = nodeN;
     }
+
+    public String getName() {
+        return name;
+    }
 }

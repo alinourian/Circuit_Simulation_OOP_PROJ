@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class CurrentControlledCurrentSource extends CurrentSource {
     private final double gain;
     private final Branch branch;
@@ -34,7 +36,16 @@ public class CurrentControlledCurrentSource extends CurrentSource {
     }
 
     @Override
-    public String getType() {
-        return "currentSourceControlledCurrentSource";
+    public Type getType() {
+        return Type.C_C_C_S;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                branch.getName() + "      " +
+                gain;
     }
 }

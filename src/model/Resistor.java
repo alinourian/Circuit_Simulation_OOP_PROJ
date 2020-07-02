@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class Resistor extends Element {
     private final double resistance;
 
@@ -25,8 +27,15 @@ public class Resistor extends Element {
     }
 
     @Override
-    public String getType() {
-        return "resistor";
+    public Type getType() {
+        return Type.RESISTOR;
     }
-    
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                resistance;
+    }
 }

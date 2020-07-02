@@ -1,6 +1,7 @@
 package model;
 
 import controller.InputController;
+import enums.Type;
 
 public class Inductor extends Element{
     private final double inductance;
@@ -29,7 +30,15 @@ public class Inductor extends Element{
     }
 
     @Override
-    public String getType() {
-        return "inductor";
+    public Type getType() {
+        return Type.INDUCTOR;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                inductance;
     }
 }

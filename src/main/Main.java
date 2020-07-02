@@ -1,12 +1,6 @@
 package main;
 
-import com.sun.org.apache.xml.internal.serializer.ElemDesc;
-import controller.InputController;
 import controller.Solver;
-import model.Capacitor;
-import model.Element;
-import model.Node;
-import model.Resistor;
 import view.FileScanner;
 
 public class Main {
@@ -14,6 +8,7 @@ public class Main {
         if (FileScanner.run()) {
             Solver solver = new Solver();
             solver.run();
+            //ShowCircuit.showInConsole();
             //write on file
             //run console
         }

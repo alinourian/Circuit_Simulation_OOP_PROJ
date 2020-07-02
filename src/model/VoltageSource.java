@@ -1,5 +1,7 @@
 package model;
 
+import enums.Type;
+
 public class VoltageSource extends Source {
     private double voltageDC;
     private double amplitude;
@@ -35,8 +37,19 @@ public class VoltageSource extends Source {
     }
 
     @Override
-    public String getType() {
-        return "voltageSource";
+    public Type getType() {
+        return Type.VOLTAGE_SOURCE;
+    }
+
+    @Override
+    public String toString() {
+        return  name + "       " +
+                nodeP + "       " +
+                nodeN + "       " +
+                voltageDC + "       " +
+                amplitude + "       " +
+                frequency + "       " +
+                phase + "       ";
     }
 
 }
