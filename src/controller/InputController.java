@@ -322,6 +322,18 @@ public class InputController {
         return tranTime;
     }
 
+    public void setAllNodesNotVisited() {
+        for (Node node : nodes) {
+            node.setNotVisited();
+        }
+    }
+
+    public void setAllNodesVisited() {
+        for (Node node : nodes) {
+            node.setVisited();
+        }
+    }
+
     public void setDeltaV(double deltaV) {
         this.deltaV = deltaV;
     }

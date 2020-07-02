@@ -7,17 +7,17 @@ import java.util.ArrayList;
 public class Node {
     protected final String name;
     protected double voltage;
-    boolean visited;
     protected ArrayList<Node> neighborNodes;
     protected ArrayList<Element> elements;
     protected ArrayList<Source> sources;
-    private Node parentNode;
+    private Node parentNode = null;
     private Union includingUnion;
+    private int isVisited;
 
     public Node (String name) {
         this.name = name;
         this.voltage = 0;
-        this.visited = false;
+        this.isVisited = 0;
         this.neighborNodes = new ArrayList<>();
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
@@ -37,11 +37,10 @@ public class Node {
         return totalCurrent;
     }
 
-    public static void resetNodes(){
-        for (Node node: InputController.getInstance().getNodes()){
-            node.visited = false;
-        }
-    }
+
+    public int getIsVisited() { return isVisited; }
+
+    public Node getParentNode() { return parentNode; }
 
     public String getName() {
         return name;
@@ -63,13 +62,11 @@ public class Node {
         return sources;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
+    public void setVisited() { this.isVisited = 1; }
 
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
+    public void setNotVisited() {this.isVisited = 0; }
+
+    public void setParentNode(Node parentNode) { this.parentNode = parentNode; }
 
     public void setVoltage(double voltage) {
         if (!name.equals("0")) {
