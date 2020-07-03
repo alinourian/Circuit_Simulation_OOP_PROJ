@@ -16,6 +16,7 @@ public class InputController {
     }
 
     private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ArrayList<Union> unions = new ArrayList<>();
     private final ArrayList<Resistor> resistors = new ArrayList<>();
     private final ArrayList<Capacitor> capacitors = new ArrayList<>();
     private final ArrayList<Inductor> inductors = new ArrayList<>();
@@ -299,6 +300,10 @@ public class InputController {
         return nodes;
     }
 
+    public ArrayList<Union> getUnions() {
+        return unions;
+    }
+
     public ArrayList<Element> getElements() {
         return elements;
     }
@@ -321,6 +326,18 @@ public class InputController {
 
     public double getTranTime() {
         return tranTime;
+    }
+
+    public void setAllNodesNotVisited() {
+        for (Node node : nodes) {
+            node.setNotVisited();
+        }
+    }
+
+    public void setAllNodesVisited() {
+        for (Node node : nodes) {
+            node.setVisited();
+        }
     }
 
     public void setDeltaV(double deltaV) {
