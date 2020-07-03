@@ -1,35 +1,40 @@
 package model;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Union {
     private String name;
-    private ArrayList<Node> nodes;
+    private ArrayList<Node> nodes = new ArrayList<>();
     private Node fatherOfUnion;
 
-    public Union(String name, Node fatherOfUnion) {
-        this.name = new String();
+    public Union(Node fatherOfUnion) {
+        this.name = fatherOfUnion.getName();
         this.fatherOfUnion = fatherOfUnion;
         addNodeToUnion(fatherOfUnion);
+        fatherOfUnion.setIncludingUnion(this);
     }
 
+    public Union(Node fatherOfUnion,ArrayList<Node> nodes) {
+        this.name = fatherOfUnion.getName();
+        this.fatherOfUnion = fatherOfUnion;
+        addNodeToUnion(fatherOfUnion);
+        addNodesToUnion(nodes);
+        for (Node node : nodes) {
+            node.setIncludingUnion(this);
+        }
+
+    }
 
     public void addNodeToUnion(Node node){
-        nodes.add(node);
-        updateName(node.getName());
-
+        this.nodes.add(node);
     }
 
-    public void updateName(String nodeName) {
-
-        name = name + " " + nodeName;
-    }
-
-    public void setNodes(ArrayList<Node> nodes) {
-        this.nodes = nodes;
-        for (Node node : nodes) {
-            updateName(node.getName());
+    public void addNodesToUnion(ArrayList<Node> inputNodes) {
+        for (Node inputNode : inputNodes) {
+            if (this.nodes.contains(inputNode))
+                continue;
+            else
+                this.nodes.add(inputNode);
         }
     }
 

@@ -38,7 +38,13 @@ public class Node {
     }
 
 
-    public int getIsVisited() { return isVisited; }
+    public boolean getIsVisited() {
+        if(isVisited == 0)
+            return false;
+        else
+            return true;
+
+    }
 
     public Node getParentNode() { return parentNode; }
 
@@ -61,6 +67,8 @@ public class Node {
     public ArrayList<Source> getSources() {
         return sources;
     }
+
+    public void setIncludingUnion(Union includingUnion) { this.includingUnion = includingUnion; }
 
     public void setVisited() { this.isVisited = 1; }
 
