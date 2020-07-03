@@ -1,4 +1,4 @@
-package view;
+package view.fileScanner;
 
 import controller.InputController;
 import enums.Type;

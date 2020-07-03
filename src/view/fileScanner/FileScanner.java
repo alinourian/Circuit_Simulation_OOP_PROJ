@@ -1,6 +1,7 @@
-package view;
+package view.fileScanner;
 
 import controller.InputController;
+import view.fileScanner.FileInputProcessor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
