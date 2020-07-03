@@ -1,5 +1,6 @@
 package view.fxml;
 
+import controller.UnionCreator;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,8 +11,17 @@ import view.fileScanner.FileScanner;
 public class Main extends Application {
     public static void main(String[] args) {
         if (FileScanner.run()) {
+
+            UnionCreator unionCreator = new UnionCreator();
+
+            unionCreator.run();
+            //if( unionCreator.run() )
+            //{
             //Solver solver = new Solver();
             //solver.run();
+            //}
+
+
             //ShowCircuit.showInConsole();
             //write on file
             //run console

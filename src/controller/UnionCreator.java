@@ -4,7 +4,6 @@ import model.Node;
 import model.Union;
 import model.VoltageSource;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class UnionCreator {
