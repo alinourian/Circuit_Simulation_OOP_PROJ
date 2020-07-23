@@ -1,6 +1,6 @@
 package view.fxml;
 
-import controller.UnionCreator;
+import controller.Solver;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,13 +12,13 @@ public class Main extends Application {
     public static void main(String[] args) {
         if (FileScanner.run()) {
 
-            UnionCreator unionCreator = new UnionCreator();
+            //UnionCreator unionCreator = new UnionCreator();
 
-            unionCreator.run();
+            //unionCreator.run();
             //if( unionCreator.run() )
             //{
-            //Solver solver = new Solver();
-            //solver.run();
+            Solver solver = new Solver();
+            solver.run();
             //}
 
 
@@ -31,10 +31,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        System.out.println(Main.class.getResource("Graph.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("Graph.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("LoginPage.fxml"));
         Parent root = fxmlLoader.load();
+        //primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root));
+
         primaryStage.show();
     }
 }

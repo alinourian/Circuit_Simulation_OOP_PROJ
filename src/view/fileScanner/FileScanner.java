@@ -41,8 +41,6 @@ public abstract class FileScanner {
             return false;
         }
 
-        // TODO making unions
-
 
         System.out.println("File successfully uploaded.");
         return true;

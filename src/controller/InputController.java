@@ -30,9 +30,10 @@ public class InputController {
     private double deltaT = 0;
     private double tranTime = 0;
 
+    //ADD METHODS
     public void addElement(String name, String node1, String node2, double value, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
-        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);;
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
         if (!nodes.contains(nodeN)) nodes.add(nodeN);
         if (!nodeP.getNeighborNodes().contains(nodeN)) {
@@ -93,8 +94,6 @@ public class InputController {
                                            double gain, String controllerNode1, String controllerNode2, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
-        Node controllerNodeP = findNode(controllerNode1);
-        Node controllerNodeN = findNode(controllerNode2);
         if (!nodes.contains(nodeP)) nodes.add(nodeP);
         if (!nodes.contains(nodeN)) nodes.add(nodeN);
         if (!nodeP.getNeighborNodes().contains(nodeN)) {
@@ -103,6 +102,8 @@ public class InputController {
         if (!nodeN.getNeighborNodes().contains(nodeP)) {
             nodeN.getNeighborNodes().add(nodeP);
         }
+        Node controllerNodeP = findNode(controllerNode1);
+        Node controllerNodeN = findNode(controllerNode2);
         if (type.equals(Type.V_C_C_S)) {
             VoltageControlledCurrentSource V_C_C_S;
             V_C_C_S = new VoltageControlledCurrentSource(name, nodeP, nodeN, gain, controllerNodeP, controllerNodeN);
@@ -156,7 +157,6 @@ public class InputController {
     }
 
     //SEARCH METHODS
-
     public Node findNode(String name) {
         for (Node node : nodes) {
             if (node.getName().equals(name)) {
@@ -229,6 +229,8 @@ public class InputController {
         return null;
     }
 
+    //HELPING METHODS
+
     public double getValueOfString(String string) {
         char unit = string.charAt(string.length() - 1);
         double factor = getUnit(unit);
@@ -274,7 +276,6 @@ public class InputController {
     }
 
     //GETTERS AND SETTERS
-
 
     public ArrayList<Resistor> getResistors() {
         return resistors;

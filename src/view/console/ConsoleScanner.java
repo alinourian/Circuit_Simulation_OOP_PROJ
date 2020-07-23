@@ -16,4 +16,8 @@ public abstract class ConsoleScanner {
             }
         }
     }
+
+    public static Scanner getScanner() {
+        return scanner;
+    }
 }

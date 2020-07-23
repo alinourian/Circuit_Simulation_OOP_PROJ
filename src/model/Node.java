@@ -5,14 +5,17 @@ import controller.InputController;
 import java.util.ArrayList;
 
 public class Node {
-    protected final String name;
-    protected double voltage;
-    protected ArrayList<Node> neighborNodes;
-    protected ArrayList<Element> elements;
-    protected ArrayList<Source> sources;
+    private final String name;
+    private double voltage;
+    private double saveVoltage;
+    private ArrayList<Node> neighborNodes;
+    private ArrayList<Element> elements;
+    private ArrayList<Source> sources;
+    private ArrayList<Double> voltages;
     private Node parentNode = null;
     private Union includingUnion;
     private int isVisited;
+
 
     public Node (String name) {
         this.name = name;
@@ -21,6 +24,8 @@ public class Node {
         this.neighborNodes = new ArrayList<>();
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
+        this.voltages = new ArrayList<>();
+        //this.voltages.add(0.0);
     }
 
     public double getTotalCurrent(double time){
@@ -39,11 +44,12 @@ public class Node {
 
 
     public boolean getIsVisited() {
-        if(isVisited == 0)
-            return false;
-        else
-            return true;
+        return isVisited != 0;
 
+    }
+
+    public double getSaveVoltage() {
+        return saveVoltage;
     }
 
     public Node getParentNode() { return parentNode; }
@@ -66,6 +72,14 @@ public class Node {
 
     public ArrayList<Source> getSources() {
         return sources;
+    }
+
+    public ArrayList<Double> getVoltages() {
+        return voltages;
+    }
+
+    public void setSaveVoltage(double saveVoltage) {
+        this.saveVoltage = saveVoltage;
     }
 
     public void setIncludingUnion(Union includingUnion) { this.includingUnion = includingUnion; }
