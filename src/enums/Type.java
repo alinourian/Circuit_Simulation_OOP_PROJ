@@ -12,5 +12,8 @@ public enum Type {
     C_C_C_S,
     C_C_V_S,
     V_C_C_S,
-    V_C_V_S;
+    V_C_V_S,
+    VOLTAGE,
+    CURRENT,
+    POWER;
 }

@@ -35,6 +35,7 @@ public class Solver {
             solve();
             //String s = ConsoleScanner.getScanner().nextLine();
             saveVoltages();
+            saveCurrents();
             step++;
             time += controller.getDeltaT();
         } while (time <= controller.getTranTime());
@@ -111,6 +112,12 @@ public class Solver {
     private void saveVoltages() {
         for (Node node : controller.getNodes()) {
             node.getVoltages().add(node.getVoltage());
+        }
+    }
+
+    private void saveCurrents() {
+        for (Element element : controller.getElements()) {
+            element.getCurrents().add(element.getCurrent(element.getNodeP()));
         }
     }
 

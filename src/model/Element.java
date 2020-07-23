@@ -2,14 +2,18 @@ package model;
 
 import enums.Type;
 
+import java.util.ArrayList;
+
 public class Element extends Branch {
     protected double current;
     protected double helpCurrent;
+    protected ArrayList<Double> currents;
 
     public Element(String name, Node nodeP, Node nodeN) {
         super(name, nodeP, nodeN);
         this.current = 0;
         this.helpCurrent = 0;
+        this.currents = new ArrayList<>();
     }
 
     public void updateElementCurrent() {
@@ -33,6 +37,10 @@ public class Element extends Branch {
 
     public double getVoltage() {
         return nodeP.getVoltage() - nodeN.getVoltage();
+    }
+
+    public ArrayList<Double> getCurrents() {
+        return currents;
     }
 
     public double getValue() {
