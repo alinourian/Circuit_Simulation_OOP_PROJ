@@ -2,8 +2,10 @@ package controller;
 
 import model.Element;
 import model.Node;
+import view.Errors;
 import view.console.ShowCircuit;
 import view.file.SaveOnFile;
+import view.fxml.MainPageController;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,14 +23,15 @@ public class Solver {
             }
         }
         if (groundNode == null) {
-            System.err.println("ground not found!");
+            Errors.groundError();
             return;
         }
         ShowCircuit.showInConsole();
         //String s = ConsoleScanner.getScanner().nextLine();
         do {
 
-            System.out.printf("***(time = %.3f)***\n", time);
+            double _time = ((double) Math.round(time * 1000))/1000;
+            Errors.print("\n***(time = " + _time + ")***");
             //Node node = controller.findNode("1");
             //System.out.printf(node.getName() + "last voltage : %.2f\n", node.getVoltage());
             solve();
@@ -113,7 +116,9 @@ public class Solver {
 
     private void printVoltages() {
         for (Node node : controller.getNodes()) {
-            System.out.printf(node.getName() + " => voltage : %.3f\n", node.getVoltage());
+            //System.out.printf(node.getName() + " => voltage : %.3f\n", node.getVoltage());
+            double _voltage = ((double) Math.round(node.getVoltage() * 1000))/1000;
+            Errors.print(node.getName() + " => voltage : " + _voltage);
         }
     }
 
