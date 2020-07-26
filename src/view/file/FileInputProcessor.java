@@ -1,4 +1,4 @@
-package view.fileScanner;
+package view.file;
 
 import controller.InputController;
 import enums.Type;
@@ -143,7 +143,7 @@ public abstract class FileInputProcessor {
         }
         if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : MainPageController node does not initialize!");
             return false;
         }
         try {
@@ -173,7 +173,7 @@ public abstract class FileInputProcessor {
         }
         if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : MainPageController branch does not initialize!");
             return false;
         }
         try {
@@ -237,7 +237,7 @@ public abstract class FileInputProcessor {
         }
         if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
             System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller node does not initialize!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : MainPageController node does not initialize!");
             return false;
         }
         try {
@@ -267,7 +267,7 @@ public abstract class FileInputProcessor {
         }
         if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
             System.err.println("error :");
-            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!");
+            System.err.println("Line " + FileInputProcessor.COMMANDLINE + " : MainPageController branch does not initialize!");
             return false;
         }
         try {

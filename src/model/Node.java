@@ -20,12 +20,12 @@ public class Node {
     public Node (String name) {
         this.name = name;
         this.voltage = 0;
+        this.saveVoltage = 0;
         this.isVisited = 0;
         this.neighborNodes = new ArrayList<>();
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.voltages = new ArrayList<>();
-        //this.voltages.add(0.0);
     }
 
     public double getTotalCurrent(double time){

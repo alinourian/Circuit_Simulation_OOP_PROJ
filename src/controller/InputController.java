@@ -2,6 +2,7 @@ package controller;
 
 import enums.Type;
 import model.*;
+import view.file.FileInputProcessor;
 
 import java.util.ArrayList;
 
@@ -273,6 +274,28 @@ public class InputController {
         } else {
             return -2;
         }
+    }
+
+    public void restartProgram() {
+        nodes.clear();
+        unions.clear();
+        resistors.clear();
+        capacitors.clear();
+        inductors.clear();
+        currentSources.clear();
+        voltageSources.clear();
+        elements.clear();
+        sources.clear();
+
+        deltaV = 0;
+        deltaI = 0;
+        deltaT = 0;
+        tranTime = 0;
+
+        Solver.time = 0;
+        Solver.step = 0;
+
+        FileInputProcessor.COMMANDLINE = 0;
     }
 
     //GETTERS AND SETTERS

@@ -1,7 +1,7 @@
 Iin     1       0       1      0       0       0
 R1      0       1       1
 C2      0       1       1
-dV      1u
+dV      10u
 dI      10m
 dT      1m
 .tran   5

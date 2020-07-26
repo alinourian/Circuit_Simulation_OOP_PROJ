@@ -1,16 +1,14 @@
-package view.fileScanner;
+package view.file;
 
 import controller.InputController;
-import view.fileScanner.FileInputProcessor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public abstract class FileScanner {
-    private static final File file = new File("file.txt");
 
-    public static boolean run() {
+    public static boolean run(File file) {
         try {
             Scanner scanner = new Scanner(file);
             int counter = 1;
@@ -30,7 +28,7 @@ public abstract class FileScanner {
                 }
                 counter++;
             } while (scanner.hasNextLine());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | RuntimeException e) {
             System.err.println(e);
             return false;
         }

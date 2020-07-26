@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="345.0" maxWidth="620.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.LoginProcessor">
+<AnchorPane fx:id="anchorPane" maxHeight="345.0" maxWidth="620.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.LoginPageController">
    <children>
       <ImageView fx:id="imageView" fitHeight="345.0" fitWidth="620.0" pickOnBounds="true">
          <image>

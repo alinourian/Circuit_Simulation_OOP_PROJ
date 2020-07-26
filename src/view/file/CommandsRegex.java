@@ -1,4 +1,4 @@
-package view.fileScanner;
+package view.file;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
