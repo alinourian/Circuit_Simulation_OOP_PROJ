@@ -26,7 +26,7 @@ public class Solver {
             Errors.groundError();
             return;
         }
-        ShowCircuit.showInConsole();
+        //ShowCircuit.showInConsole();
         //String s = ConsoleScanner.getScanner().nextLine();
         do {
 

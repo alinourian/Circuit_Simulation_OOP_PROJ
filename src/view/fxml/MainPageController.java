@@ -55,7 +55,7 @@ public class MainPageController {
             tabPane.getSelectionModel().select(newTab);
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("No file exists! Please open or simulate your file first.");
+            alert.setContentText("File is not OK! Please open or simulate your file first.");
             alert.show();
         }
     }
@@ -83,8 +83,7 @@ public class MainPageController {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Can not simulate the file!");
             alert.show();
-            errorTextArea.setText(errorTextArea.getText() + "\n" +
-                    Errors.string + "\nERROR happened in simulation!");
+            errorTextArea.setText(Errors.string + "\nERROR happened in simulation!");
         }
     }
 
@@ -94,7 +93,7 @@ public class MainPageController {
             Scanner scanner = new Scanner(fileTextArea.getText());
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                System.out.println(line);
+                //System.out.println(line);
                 fileWriter.write(line + "\n");
             }
             scanner.close();
@@ -140,7 +139,7 @@ public class MainPageController {
         }
     }
 
-    public void Exit(ActionEvent actionEvent) {
+    public void Exit() {
         Stage.close();
     }
 

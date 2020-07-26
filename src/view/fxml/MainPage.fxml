@@ -23,7 +23,7 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
                             <children>
                                   <Button layoutX="615.0" layoutY="273.0" mnemonicParsing="false" onAction="#addNewTab" prefHeight="42.0" prefWidth="106.0" text="Draw Graph" textAlignment="CENTER" />
-                        <TextArea fx:id="errorTextArea" layoutX="450.0" layoutY="331.0" prefHeight="200.0" prefWidth="436.0">
+                        <TextArea fx:id="errorTextArea" editable="false" layoutX="450.0" layoutY="331.0" prefHeight="200.0" prefWidth="436.0">
                            <font>
                               <Font size="14.0" />
                            </font>

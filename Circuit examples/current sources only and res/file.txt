@@ -7,5 +7,4 @@ F1      2       1       R4     2
 G2      2       0       1       0       3
 dV      1m
 dI      1m
-dT      1m
 .tran   15m
