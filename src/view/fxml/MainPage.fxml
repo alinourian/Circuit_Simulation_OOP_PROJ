@@ -8,42 +8,177 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
     <children>
-        <TabPane fx:id="tabPane" layoutY="24.0" prefHeight="576.0" prefWidth="900.0" tabClosingPolicy="ALL_TABS">
+        <TabPane fx:id="tabPane" layoutY="24.0" prefHeight="576.0" prefWidth="1000.0" tabClosingPolicy="ALL_TABS">
             <tabs>
                 <Tab closable="false" text="Start Page  ">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
+                        <AnchorPane fx:id="anchorPane" minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="900.0">
                             <children>
-                                  <Button layoutX="615.0" layoutY="273.0" mnemonicParsing="false" onAction="#addNewTab" prefHeight="42.0" prefWidth="106.0" text="Draw Graph" textAlignment="CENTER" />
-                        <TextArea fx:id="errorTextArea" editable="false" layoutX="450.0" layoutY="331.0" prefHeight="200.0" prefWidth="436.0">
+                                  <Button fx:id="drawGraph" layoutX="342.0" layoutY="80.0" mnemonicParsing="false" onAction="#addNewTab" prefHeight="16.0" prefWidth="95.0" text="Draw Graph" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font></Button>
+                        <TextArea fx:id="errorTextArea" editable="false" layoutX="450.0" layoutY="306.0" prefHeight="225.0" prefWidth="534.0">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextArea>
-                        <TextArea fx:id="fileTextArea" layoutX="14.0" layoutY="14.0" prefHeight="517.0" prefWidth="423.0" />
-                        <GridPane gridLinesVisible="true" layoutX="450.0" layoutY="14.0" prefHeight="247.0" prefWidth="436.0">
+                        <TextArea fx:id="fileTextArea" layoutX="14.0" layoutY="118.0" prefHeight="416.0" prefWidth="423.0" />
+                        <GridPane gridLinesVisible="true" layoutX="450.0" layoutY="14.0" prefHeight="247.0" prefWidth="533.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                           </columnConstraints>
                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                         </GridPane>
-                        <Button fx:id="simulate" layoutX="450.0" layoutY="275.0" mnemonicParsing="false" onAction="#simulate" prefHeight="42.0" prefWidth="115.0" text="Simulate">
+                        <Button fx:id="simulate" layoutX="248.0" layoutY="80.0" mnemonicParsing="false" onAction="#simulate" prefHeight="25.0" prefWidth="94.0" text="Simulate">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
+                        </Button>
+                        <Button layoutY="80.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="25.0" prefWidth="102.0" text="Open File">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="48.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/open-document-icon-17.jpg" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/free-icon-file-29.jpg" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="252.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/178880.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="252.0" layoutY="40.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/editor_copy_duplicate_file_files_text-512.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="201.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@../img/Editing-Cut-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="300.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/1151128.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="348.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/gtk_zoom_in.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="96.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/save-icon-png.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="144.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@../img/print-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="144.0" layoutY="40.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@../img/unnamed.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="396.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/gtk_zoom_out.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutY="40.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/183625.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </Button>
+                        <Button layoutX="48.0" layoutY="40.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="43.0">
+                           <graphic>
+                              <ImageView fitHeight="32.0" fitWidth="33.0" pickOnBounds="true">
+                                 <image>
+                                    <Image url="@../img/signal2.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </Button>
                             </children>
                         </AnchorPane>
@@ -51,29 +186,71 @@
                 </Tab>
             </tabs>
         </TabPane>
-      <MenuBar prefHeight="25.0" prefWidth="900.0">
+      <MenuBar prefHeight="25.0" prefWidth="1000.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem fx:id="newTabMenuItem" mnemonicParsing="false" onAction="#addNewTab" text="New Tab" />
-                  <MenuItem mnemonicParsing="false" onAction="#chooseFile" text="Open File" />
+                  <MenuItem fx:id="newTabMenuItem" mnemonicParsing="false" onAction="#addNewTab" text="New Tab">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#chooseFile" text="Open File">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Print" />
-                  <MenuItem mnemonicParsing="false" text="Print Preview" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveNewFile" text="Save as">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem mnemonicParsing="false" text="Setting" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="Print" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="Print Preview" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem disable="true" mnemonicParsing="false" text="Setting">
+                     <accelerator>
+                        <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#Exit" text="Exit" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#backToSave" text="Undo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Cut">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Copy">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Past">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem mnemonicParsing="false" text="Delete">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="UP" shift="ANY" shortcut="UP" />
+                     </accelerator></MenuItem>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#getHelp" text="About" />
             </items>
           </Menu>
         </menus>

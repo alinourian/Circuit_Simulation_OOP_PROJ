@@ -294,6 +294,7 @@ public class InputController {
 
         Solver.time = 0;
         Solver.step = 0;
+        Solver.output.delete(0, Solver.output.length());
 
         FileInputProcessor.COMMANDLINE = 0;
     }

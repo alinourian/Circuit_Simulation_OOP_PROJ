@@ -18,18 +18,11 @@ public abstract class FileScanner {
             hasFile = true;
             //  Solve
             Solver solver = new Solver();
-            solver.run();
-
-            //  Write on file
-            try {
-                SaveOnFile.saveDataOnFile();
-            } catch (IOException e) {
-                Errors.saveFileError(e);
-            }
+            return solver.run();
 
             //  Console scanning & Read file
             //ConsoleScanner.run();
-            return true;
+
         }
         return false;
     }

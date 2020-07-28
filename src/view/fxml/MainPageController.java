@@ -1,10 +1,14 @@
 package view.fxml;
 
-import javafx.event.ActionEvent;
+import controller.Solver;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.Errors;
@@ -30,6 +34,9 @@ public class MainPageController {
     private static final Stage Stage = new Stage();
 
     @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
     private TabPane tabPane;
 
     @FXML
@@ -41,7 +48,11 @@ public class MainPageController {
     @FXML
     private Button simulate;
 
+    @FXML
+    private Button drawGraph;
+
     private File file;
+    private String firstBackUpText;
 
     private final ImageView resistor = new ImageView(new Image("view/img/resistor-symbol.png"));
     private final ImageView capacitor = new ImageView(new Image("view/img/Symbol_Capacitor.png"));
@@ -63,12 +74,15 @@ public class MainPageController {
     public void chooseFile() {
         FileScanner.hasFile = false;
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File newFile = fileChooser.showOpenDialog(Stage);
 
         String text = String.valueOf(getTextOfFile(newFile));
+        firstBackUpText = text;
         if (!text.equals("cancel")) {
+            fileTextArea.setEditable(true);
             file = newFile;
             fileTextArea.setText(text);
             closeTabs();
@@ -76,9 +90,14 @@ public class MainPageController {
     }
 
     public void simulate() {
+        errorTextArea.setText("Program is simulating ...\n" +
+                "Please wait ...");
+        if (file == null) {
+          file = new File("newFile.txt");
+        }
         updateFile();
         if (FileScanner.runProgram(file)) {
-            closeTabs();
+            errorTextArea.setText("File successfully simulated.\n" + String.valueOf(Solver.output));
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Can not simulate the file!");
@@ -88,31 +107,63 @@ public class MainPageController {
     }
 
     public void updateFile() {
-        try {
-            FileWriter fileWriter = new FileWriter(file);
-            Scanner scanner = new Scanner(fileTextArea.getText());
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                //System.out.println(line);
-                fileWriter.write(line + "\n");
+        closeTabs();
+        saveFile();
+    }
+
+    public void saveFile() {
+        if (file != null) {
+            try {
+                FileWriter fileWriter = new FileWriter(file);
+                Scanner scanner = new Scanner(fileTextArea.getText());
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    //System.out.println(line);
+                    fileWriter.write(line + "\n");
+                }
+                scanner.close();
+                fileWriter.close();
+            } catch (IOException | RuntimeException e) {
+                Errors.exceptionsError(e);
+                errorTextArea.setText(Errors.string + "\nCan not save the file!");
             }
-            scanner.close();
-            fileWriter.close();
-        } catch (IOException | RuntimeException e) {
-            Errors.exceptionsError(e);
-            errorTextArea.setText(Errors.string + "\nCan not save the file!");
         }
+        firstBackUpText = String.valueOf(getTextOfFile(file));
+    }
+
+    public void saveNewFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save File");
+        fileChooser.setInitialFileName("myFile");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text File", "*.txt"));
+        File fileSelected = fileChooser.showSaveDialog(getStage());
+        fileChooser.setInitialDirectory(fileSelected.getParentFile());
+        try {
+            FileWriter fileWriter = new FileWriter(fileSelected);
+            fileWriter.write(fileTextArea.getText());
+            fileWriter.close();
+        } catch (IOException ignored) {
+        }
+    }
+
+    public void backToSave() {
+        fileTextArea.setText(firstBackUpText);
+    }
+
+    public void getHelp() throws IOException {
+        Stage helpStage = HelpPageController.getStage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("HelpPage.fxml"));
+        Parent root = fxmlLoader.load();
+        helpStage.setScene(new Scene(root));
+        helpStage.setResizable(false);
+        helpStage.show();
     }
 
     private StringBuilder getTextOfFile(File file) {
         StringBuilder string = new StringBuilder();
         try {
             Scanner scanner = new Scanner(file);
-            try {
-                string.append(scanner.nextLine());
-            } catch (RuntimeException e) {
-                errorTextArea.setText(e + " Can not get the text of file" + "\n" + "File is Empty!");
-            }
+            string.append(scanner.nextLine());
             while (scanner.hasNextLine()) {
                 string.append("\n");
                 String line = scanner.nextLine();
@@ -141,15 +192,6 @@ public class MainPageController {
 
     public void Exit() {
         Stage.close();
-    }
-
-    public void printActions(String string) {
-        String wholeText = errorTextArea.getText() + string;
-        errorTextArea.setText(wholeText);
-    }
-
-    public void printResult(String result, boolean type) {
-        errorTextArea.setText(result);
     }
 
     //  GETTERS AND SETTERS

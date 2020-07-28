@@ -52,31 +52,36 @@ public class NewTab extends Tab {
         accordion.getPanes().add(powerPane);
 
         VBox vBox = new VBox(accordion);
-        vBox.setLayoutX(700);
+        vBox.setLayoutX(800);
         MainPane.getChildren().add(vBox);
 
-        Button btn = new Button("btn");
-        btn.setPrefWidth(50);
-        btn.setPrefHeight(50);
-        btn.setLayoutX(750);
-        btn.setLayoutY(450);
+        Button draw = new Button("Draw");
+        draw.setPrefWidth(100);
+        draw.setPrefHeight(50);
+        draw.setLayoutX(700);
+        draw.setLayoutY(0);
 
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        draw.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                chartPane.getChildren().clear();
-                if (status.equals(Type.VOLTAGE)) {
-                    chartPane.getChildren().add(getChart(voltagesButtons));
-                } else if (status.equals(Type.CURRENT)) {
-                    chartPane.getChildren().add(getChart(currentsButtons));
-                } else {
-                    chartPane.getChildren().add(getChart(powersButtons));
+                try {
+                    chartPane.getChildren().clear();
+                    if (status.equals(Type.VOLTAGE)) {
+                        chartPane.getChildren().add(getChart(voltagesButtons));
+                    } else if (status.equals(Type.CURRENT)) {
+                        chartPane.getChildren().add(getChart(currentsButtons));
+                    } else {
+                        chartPane.getChildren().add(getChart(powersButtons));
+                    }
+                } catch (NullPointerException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Please choose something first.");
+                    alert.show();
                 }
-
             }
         });
         MainPane.getChildren().add(chartPane);
-        MainPane.getChildren().add(btn);
+        MainPane.getChildren().add(draw);
         this.setContent(MainPane);
     }
 
@@ -158,14 +163,22 @@ public class NewTab extends Tab {
             if (radioButton.isSelected()) {
                 if (status.equals(Type.VOLTAGE)) {
                     chart.getData().add(getVoltageChart(radioButton));
+                    chart.setTitle("Voltage");
                 } else if (status.equals(Type.CURRENT)) {
                     chart.getData().add(getCurrentChart(radioButton));
+                    chart.setTitle("Current");
                 } else {
                     chart.getData().add(getPowerChart(radioButton));
+                    chart.setTitle("Power");
                 }
             }
         }
-
+        chart.setLayoutX(20);
+        chart.setLayoutY(0);
+        chart.setPrefWidth(650);
+        chart.setPrefHeight(520);
+        chart.setAlternativeColumnFillVisible(true);
+        //chart.setAlternativeRowFillVisible(true);
         return chart;
     }
 
