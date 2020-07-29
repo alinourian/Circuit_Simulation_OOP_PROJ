@@ -4,9 +4,12 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    public static String stageTitle = "Spice";
+    public static Image stageIcon = new Image("view\\img\\stage-Icon.png");
 
     public static void main(String[] args) {
         launch(args);
@@ -16,8 +19,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("LoginPage.fxml"));
         Parent root = fxmlLoader.load();
-        //primaryStage.setResizable(false);
+        primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle(Main.stageTitle);
+        primaryStage.getIcons().add(stageIcon);
         primaryStage.show();
     }
 }

@@ -106,7 +106,7 @@ public class Solver {
         for (Node node : controller.getNodes()) {
             measurementError += Math.abs(node.getTotalCurrent(time));
         }
-        System.out.println("error: " + measurementError);
+        //System.out.println("error: " + measurementError);
         return measurementError < Math.pow(10, -2);
     }
 
@@ -147,10 +147,9 @@ public class Solver {
 
     private void printVoltages() {
         for (Node node : controller.getNodes()) {
-            //System.out.printf(node.getName() + " => voltage : %.3f\n", node.getVoltage());
             double _voltage = ((double) Math.round(node.getVoltage() * 1000))/1000;
             Errors.print(node.getName() + " => voltage : " + _voltage);
-            Solver.output.append(" => voltage node ").append(node.getName()).append(" : ").append(_voltage);
+            Solver.output.append("\n=> voltage node ").append(node.getName()).append(" : ").append(_voltage);
         }
     }
 

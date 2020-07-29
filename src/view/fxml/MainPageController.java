@@ -1,6 +1,8 @@
 package view.fxml;
 
 import controller.Solver;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +22,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainPageController {
     private static MainPageController instance;
@@ -33,31 +37,20 @@ public class MainPageController {
 
     private static final Stage Stage = new Stage();
 
-    @FXML
-    private AnchorPane anchorPane;
-
-    @FXML
-    private TabPane tabPane;
-
-    @FXML
-    private TextArea fileTextArea;
-
-    @FXML
-    private TextArea errorTextArea;
-
-    @FXML
-    private Button simulate;
-
-    @FXML
-    private Button drawGraph;
+    @FXML private TabPane tabPane;
+    @FXML private TextArea fileTextArea;
+    @FXML private TextArea errorTextArea;
+    @FXML private ProgressBar progressBar;
+    @FXML private Label percentLabel;
 
     private File file;
     private String firstBackUpText;
+    private ExecutorService executor = Executors.newCachedThreadPool ( );
 
-    private final ImageView resistor = new ImageView(new Image("view/img/resistor-symbol.png"));
-    private final ImageView capacitor = new ImageView(new Image("view/img/Symbol_Capacitor.png"));
-    private final ImageView inductor = new ImageView(new Image("view/img/Inductor.png"));
-    private final ImageView battery = new ImageView(new Image("view/img/battery.png"));
+    //private final ImageView resistor = new ImageView(new Image("view/img/resistor-symbol.png"));
+    //private final ImageView capacitor = new ImageView(new Image("view/img/Symbol_Capacitor.png"));
+    //private final ImageView inductor = new ImageView(new Image("view/img/Inductor.png"));
+    //private final ImageView battery = new ImageView(new Image("view/img/battery.png"));
 
     public void addNewTab() {
         if (FileScanner.hasFile) {
@@ -87,26 +80,72 @@ public class MainPageController {
             fileTextArea.setText(text);
             closeTabs();
         }
+        errorTextArea.setText("");
+        progressBar.setVisible(false);
+        percentLabel.setVisible(false);
+        percentLabel.setText("0%");
+        progressBar.setProgress(0);
     }
 
     public void simulate() {
-        errorTextArea.setText("Program is simulating ...\n" +
-                "Please wait ...");
-        if (file == null) {
-          file = new File("newFile.txt");
-        }
-        updateFile();
-        if (FileScanner.runProgram(file)) {
-            errorTextArea.setText("File successfully simulated.\n" + String.valueOf(Solver.output));
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Can not simulate the file!");
-            alert.show();
-            errorTextArea.setText(Errors.string + "\nERROR happened in simulation!");
-        }
+        errorTextArea.setText("");
+        simulating();
+        Task displayMessage = new Task<Void>() {
+            @Override
+            public Void call() {
+                Platform.runLater(() -> {
+                    //HERE
+                    /*
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                     */
+                    if (file == null) {
+                        file = new File("newFile.txt");
+                    }
+                    updateFile();
+                    //percentLabel.setText("40%");
+                    //progressBar.setProgress(-1);
+
+                    if (FileScanner.runProgram(file)) {
+                        errorTextArea.setText("File successfully simulated.\n" + String.valueOf(Solver.output));
+                        percentLabel.setText("100%");
+                        progressBar.setProgress(1);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Can not simulate the file!");
+                        alert.show();
+                        errorTextArea.setText(Errors.string + "\nERROR happened in simulation!");
+                        percentLabel.setText("ERROR");
+                        progressBar.setProgress(0);
+                    }
+                });
+                return null;
+            }
+        };
+        executor.execute(displayMessage);
+
     }
 
-    public void updateFile() {
+    private void simulating() {
+        errorTextArea.setText("Program is simulating ...\n" +
+                "Please wait ...");
+        progressBar.setVisible(true);
+        percentLabel.setVisible(true);
+        percentLabel.setText("0%");
+        progressBar.setProgress(-1);
+        /*
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ignored) {
+        }
+         */
+    }
+
+    private void updateFile() {
         closeTabs();
         saveFile();
     }
@@ -146,7 +185,7 @@ public class MainPageController {
         }
     }
 
-    public void backToSave() {
+    public void undoToSave() {
         fileTextArea.setText(firstBackUpText);
     }
 
@@ -155,6 +194,8 @@ public class MainPageController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("HelpPage.fxml"));
         Parent root = fxmlLoader.load();
         helpStage.setScene(new Scene(root));
+        helpStage.setTitle(Main.stageTitle);
+        helpStage.getIcons().add(Main.stageIcon);
         helpStage.setResizable(false);
         helpStage.show();
     }

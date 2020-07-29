@@ -4,12 +4,15 @@ import controller.InputController;
 import enums.Type;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import model.Element;
@@ -20,7 +23,6 @@ import java.util.ArrayList;
 
 public class NewTab extends Tab {
 
-    private final AnchorPane MainPane;
     private final Pane chartPane;
     private final Accordion accordion;
     private Type status;
@@ -31,7 +33,6 @@ public class NewTab extends Tab {
 
     public NewTab(String text) {
         super(text);
-        this.MainPane = new AnchorPane();
         this.chartPane = new Pane();
         this.accordion = new Accordion();
         this.voltagesButtons = new ArrayList<>();
@@ -41,8 +42,7 @@ public class NewTab extends Tab {
     }
 
     private void addNewTab() {
-
-        accordion.setMaxHeight(400);
+        accordion.setMaxHeight(500);
         TitledPane voltagePane = addChooser(voltagesButtons, Type.VOLTAGE);
         TitledPane currentPane = addChooser(currentsButtons, Type.CURRENT);
         TitledPane powerPane = addChooser(powersButtons, Type.POWER);
@@ -50,17 +50,12 @@ public class NewTab extends Tab {
         accordion.getPanes().add(voltagePane);
         accordion.getPanes().add(currentPane);
         accordion.getPanes().add(powerPane);
-
-        VBox vBox = new VBox(accordion);
-        vBox.setLayoutX(800);
-        MainPane.getChildren().add(vBox);
+        VBox accordionVBox = new VBox(5);
+        accordionVBox.setPadding(new Insets(5, 5, 5, 5));
 
         Button draw = new Button("Draw");
-        draw.setPrefWidth(100);
-        draw.setPrefHeight(50);
-        draw.setLayoutX(700);
-        draw.setLayoutY(0);
-
+        //draw.setPrefWidth(200);
+        //draw.setPrefHeight(20);
         draw.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -80,9 +75,13 @@ public class NewTab extends Tab {
                 }
             }
         });
-        MainPane.getChildren().add(chartPane);
-        MainPane.getChildren().add(draw);
-        this.setContent(MainPane);
+        accordionVBox.getChildren().addAll(draw, accordion);
+
+        Separator separator = new Separator(Orientation.VERTICAL);
+        HBox mainHBox = new HBox(5);
+        mainHBox.getChildren().addAll(accordionVBox, separator, chartPane);
+
+        this.setContent(mainHBox);
     }
 
     private TitledPane addChooser(ArrayList<RadioButton> graphsForDraw, Type type) {
@@ -146,9 +145,7 @@ public class NewTab extends Tab {
 
         pane.setContent(scroll);
         pane.setPrefWidth(200);
-        pane.setPrefHeight(400);
-        pane.setLayoutX(1);
-        pane.setLayoutY(1);
+        //pane.setPrefHeight(500);
 
         return pane;
     }
@@ -173,10 +170,9 @@ public class NewTab extends Tab {
                 }
             }
         }
-        chart.setLayoutX(20);
-        chart.setLayoutY(0);
-        chart.setPrefWidth(650);
-        chart.setPrefHeight(520);
+        chart.setPrefWidth(600);
+        chart.setPrefHeight(500);
+        chart.setLayoutX(100);
         chart.setAlternativeColumnFillVisible(true);
         //chart.setAlternativeRowFillVisible(true);
         return chart;

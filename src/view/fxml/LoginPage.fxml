@@ -6,23 +6,38 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="345.0" maxWidth="620.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.LoginPageController">
-   <children>
-      <ImageView fx:id="imageView" fitHeight="345.0" fitWidth="620.0" pickOnBounds="true">
-         <image>
-            <Image url="@../img/blue-circuit.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="loginButton" layoutX="491.0" layoutY="222.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="56.0" text="Login" textAlignment="CENTER" />
-      <TextField fx:id="userText" layoutX="386.0" layoutY="106.0" prefHeight="32.0" prefWidth="161.0" promptText="UserName" />
-      <PasswordField fx:id="passText" layoutX="386.0" layoutY="158.0" prefHeight="32.0" prefWidth="161.0" promptText="Password" />
-      <Label fx:id="loginLbl" contentDisplay="CENTER" layoutX="398.0" layoutY="197.0" prefHeight="25.0" prefWidth="149.0" textAlignment="CENTER" textFill="#f2eded">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Label>
-   </children>
-</AnchorPane>
+<BorderPane fx:id="borderPane" prefHeight="345.0" prefWidth="620.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.LoginPageController">
+   <center>
+      <VBox prefHeight="345.0" prefWidth="620.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="345.0" prefWidth="620.0">
+               <children>
+                  <Pane prefHeight="345.0" prefWidth="620.0">
+                     <children>
+                        <ImageView fx:id="imageView" fitHeight="374.0" fitWidth="653.0" pickOnBounds="true">
+                           <image>
+                              <Image url="@../img/blue-circuit-image.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="loginLbl" contentDisplay="CENTER" layoutX="378.0" layoutY="259.0" prefHeight="25.0" prefWidth="133.0" textAlignment="CENTER" textFill="#f2eded">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="loginButton" layoutX="468.0" layoutY="222.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="71.0" text="Login" textAlignment="CENTER" />
+                        <PasswordField fx:id="passText" layoutX="378.0" layoutY="171.0" prefHeight="32.0" prefWidth="161.0" promptText="Password" />
+                        <TextField fx:id="userText" layoutX="378.0" layoutY="128.0" prefHeight="32.0" prefWidth="161.0" promptText="UserName" />
+                     </children>
+                  </Pane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

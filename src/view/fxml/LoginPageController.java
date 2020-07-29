@@ -8,7 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class LoginPageController {
     }
 
     @FXML
-    private AnchorPane anchorPane;
+    private BorderPane borderPane;
 
     @FXML
     private Label loginLbl;
@@ -59,8 +59,10 @@ public class LoginPageController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MainPage.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle(Main.stageTitle);
+        primaryStage.getIcons().add(Main.stageIcon);
         //primaryStage.setResizable(false);
-        Stage stage = (Stage) anchorPane.getScene().getWindow();
+        Stage stage = (Stage) borderPane.getScene().getWindow();
         stage.close();
         primaryStage.show();
     }
