@@ -4,28 +4,30 @@ import controller.InputController;
 import enums.Type;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HorizontalDirection;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import model.Element;
 import model.Node;
 import model.Source;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class NewTab extends Tab {
 
-    private final Pane chartPane;
+    private final GridPane chartPane;
     private final Accordion accordion;
     private Type status;
+    private AreaChart<Number, Number> chart;
 
     private final ArrayList<RadioButton> voltagesButtons;
     private final ArrayList<RadioButton> currentsButtons;
@@ -33,7 +35,7 @@ public class NewTab extends Tab {
 
     public NewTab(String text) {
         super(text);
-        this.chartPane = new Pane();
+        this.chartPane = new GridPane();
         this.accordion = new Accordion();
         this.voltagesButtons = new ArrayList<>();
         this.currentsButtons = new ArrayList<>();
@@ -43,6 +45,7 @@ public class NewTab extends Tab {
 
     private void addNewTab() {
         accordion.setMaxHeight(500);
+        accordion.setMinWidth(200);
         TitledPane voltagePane = addChooser(voltagesButtons, Type.VOLTAGE);
         TitledPane currentPane = addChooser(currentsButtons, Type.CURRENT);
         TitledPane powerPane = addChooser(powersButtons, Type.POWER);
@@ -54,19 +57,17 @@ public class NewTab extends Tab {
         accordionVBox.setPadding(new Insets(5, 5, 5, 5));
 
         Button draw = new Button("Draw");
-        //draw.setPrefWidth(200);
-        //draw.setPrefHeight(20);
         draw.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
                     chartPane.getChildren().clear();
                     if (status.equals(Type.VOLTAGE)) {
-                        chartPane.getChildren().add(getChart(voltagesButtons));
+                        chartPane.add(getChart(voltagesButtons), 0, 0);
                     } else if (status.equals(Type.CURRENT)) {
-                        chartPane.getChildren().add(getChart(currentsButtons));
+                        chartPane.add(getChart(currentsButtons), 0, 0);
                     } else {
-                        chartPane.getChildren().add(getChart(powersButtons));
+                        chartPane.add(getChart(powersButtons), 0, 0);
                     }
                 } catch (NullPointerException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -75,10 +76,26 @@ public class NewTab extends Tab {
                 }
             }
         });
-        accordionVBox.getChildren().addAll(draw, accordion);
+
+        Button showGraph = new Button("show graph");
+        showGraph.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    showGraph();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        HBox buttonHBox = new HBox();
+        buttonHBox.setSpacing(5);
+        buttonHBox.getChildren().addAll(draw, showGraph);
+        accordionVBox.getChildren().addAll(buttonHBox, accordion);
 
         Separator separator = new Separator(Orientation.VERTICAL);
         HBox mainHBox = new HBox(5);
+        //chartPane.setPadding(new Insets(10, 20, 10, 20));
         mainHBox.getChildren().addAll(accordionVBox, separator, chartPane);
 
         this.setContent(mainHBox);
@@ -170,11 +187,10 @@ public class NewTab extends Tab {
                 }
             }
         }
-        chart.setPrefWidth(600);
-        chart.setPrefHeight(500);
-        chart.setLayoutX(100);
+        chart.setPrefWidth(1920);
+        chart.setPrefHeight(1080);
         chart.setAlternativeColumnFillVisible(true);
-        //chart.setAlternativeRowFillVisible(true);
+        this.chart = chart;
         return chart;
     }
 
@@ -260,4 +276,26 @@ public class NewTab extends Tab {
         }
     }
 
+    public void showGraph() throws IOException {
+        if (chart != null) {
+            Stage helpStage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShowGraphPage.fxml"));
+            Parent root = fxmlLoader.load();
+            helpStage.setScene(new Scene(root));
+            helpStage.setTitle("Show Graph");
+            helpStage.getIcons().add(Main.stageIcon);
+            //helpStage.setResizable(false);
+            ShowGraphPageController controller = fxmlLoader.getController();
+            controller.initial(chart);
+            helpStage.show();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("No chart! Please draw a chart first.");
+            alert.show();
+        }
+    }
+
+    public AreaChart<Number, Number> getChart() {
+        return chart;
+    }
 }
