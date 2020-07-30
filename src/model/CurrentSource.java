@@ -1,5 +1,6 @@
 package model;
 
+import controller.Solver;
 import enums.Type;
 
 public class CurrentSource extends Source {
@@ -22,8 +23,8 @@ public class CurrentSource extends Source {
     }
 
     @Override
-    public double getCurrent(Node node, double time) {
-        double value = currentDC + amplitude * Math.sin(2 * Math.PI * frequency * time + phase);
+    public double getCurrent(Node node) {
+        double value = currentDC + amplitude * Math.sin(2 * Math.PI * frequency * Solver.time + phase);
         if (node.getName().equals(nodeP.getName())) {
             return value;
         } else {
@@ -32,8 +33,8 @@ public class CurrentSource extends Source {
     }
 
     @Override
-    public double getValue(Node node, double time) {
-        return getCurrent(node, time);
+    public double getValue(Node node) {
+        return getCurrent(node);
     }
 
     @Override

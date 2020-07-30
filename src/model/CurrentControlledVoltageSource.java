@@ -14,14 +14,14 @@ public class CurrentControlledVoltageSource extends VoltageSource {
     }
 
     @Override
-    public double getVoltage(Node node, double time) {
+    public double getVoltage(Node node) {
         double value;
         if (branch instanceof Element) {
             Element element = (Element)branch;
             value = gain * Math.abs(element.getCurrent(element.getNodeP()));
         } else {
             Source source = (Source)branch;
-            value = gain * Math.abs(source.getCurrent(source.getNodeP(), time));
+            value = gain * Math.abs(source.getCurrent(source.getNodeP()));
         }
         if (node.getName().equals(nodeP.getName())) {
             return value;
@@ -31,8 +31,8 @@ public class CurrentControlledVoltageSource extends VoltageSource {
     }
 
     @Override
-    public double getValue(Node node, double time) {
-        return getVoltage(node, time);
+    public double getValue(Node node) {
+        return getVoltage(node);
     }
 
     @Override

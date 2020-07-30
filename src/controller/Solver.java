@@ -2,6 +2,7 @@ package controller;
 
 import model.Element;
 import model.Node;
+import model.Union;
 import view.Errors;
 import view.console.ShowCircuit;
 import view.file.SaveOnFile;
@@ -31,12 +32,22 @@ public class Solver {
             Errors.groundError();
             return false;
         }
+
+        UnionCreator unionCreator = new UnionCreator();
+        unionCreator.run();
+
+
+
         do {
+            step++;
+            time += controller.getDeltaT();
+
             double _time = ((double) Math.round(time * 1000))/1000;
             Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
             solve();
+
             errors.add(measureErrorEachStep);
             if (measureErrorEachStep > 50000) {
                 Errors.transitionFailed();
@@ -45,8 +56,7 @@ public class Solver {
 
             saveVoltages();
             saveCurrents();
-            step++;
-            time += controller.getDeltaT();
+
         } while (time <= controller.getTranTime());
 
         try {
@@ -61,6 +71,38 @@ public class Solver {
         }
         System.out.println(max);
         return true;
+    }
+
+
+    public void solve2(){
+
+        do {
+
+            for (Union union : controller.getUnions())
+            {
+                if (union.getType().equals("SingleNode"))
+                {
+                    if (!union.getFatherOfUnion().getName().equals("0"))
+                    {
+
+
+
+                    }
+                }
+                else
+                {
+                    if (!union.getFatherOfUnion().getName().equals("0"))
+                    {
+
+                    }
+                }
+            }
+
+
+        }while (!checkKCL() && measureErrorEachStep <= 50000);
+
+
+
     }
 
     public void solve() {

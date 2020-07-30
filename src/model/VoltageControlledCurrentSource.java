@@ -16,7 +16,7 @@ public class VoltageControlledCurrentSource extends CurrentSource {
     }
 
     @Override
-    public double getCurrent(Node node, double time) {
+    public double getCurrent(Node node) {
         double value = gain * (controllerNode1.getVoltage() - controllerNode2.getVoltage());
         if (node.getName().equals(nodeP.getName())) {
             return value;
@@ -26,8 +26,8 @@ public class VoltageControlledCurrentSource extends CurrentSource {
     }
 
     @Override
-    public double getValue(Node node, double time) {
-        return getCurrent(node, time);
+    public double getValue(Node node) {
+        return getCurrent(node);
     }
 
     @Override
