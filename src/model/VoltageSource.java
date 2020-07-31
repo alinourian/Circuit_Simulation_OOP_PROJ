@@ -1,5 +1,6 @@
 package model;
 
+import controller.Solver;
 import enums.Type;
 
 public class VoltageSource extends Source {
@@ -22,8 +23,8 @@ public class VoltageSource extends Source {
     }
 
     @Override
-    public double getVoltage(Node node, double time) {
-        double value = voltageDC + amplitude * Math.sin(2 * Math.PI * frequency * time + phase);
+    public double getVoltage(Node node) {
+        double value = voltageDC + amplitude * Math.sin(2 * Math.PI * frequency * Solver.time + phase);
         if (node.getName().equals(nodeP.getName())) {
             return value;
         } else {
@@ -32,8 +33,8 @@ public class VoltageSource extends Source {
     }
 
     @Override
-    public double getValue(Node node, double time) {
-        return getVoltage(node, time);
+    public double getValue(Node node) {
+        return getVoltage(node);
     }
 
     @Override

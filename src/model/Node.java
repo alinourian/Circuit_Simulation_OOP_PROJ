@@ -26,9 +26,10 @@ public class Node {
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.voltages = new ArrayList<>();
+        voltages.add(0.0);
     }
 
-    public double getTotalCurrent(double time){
+    public double getTotalCurrent(){
         double totalCurrent = 0;
         for (Element element : elements){
             totalCurrent += element.getCurrent(InputController.getInstance().findNode(name));
@@ -36,7 +37,7 @@ public class Node {
         for (Source source : sources) {
             if (source instanceof CurrentSource) {
                 CurrentSource currentSource = (CurrentSource)source;
-                totalCurrent += currentSource.getCurrent(InputController.getInstance().findNode(name), time);
+                totalCurrent += currentSource.getCurrent(InputController.getInstance().findNode(name));
             }
         }
         return totalCurrent;
@@ -54,9 +55,9 @@ public class Node {
 
     public Node getParentNode() { return parentNode; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+
+    public Union getIncludingUnion() { return includingUnion; }
 
     public double getVoltage() {
         return voltage;

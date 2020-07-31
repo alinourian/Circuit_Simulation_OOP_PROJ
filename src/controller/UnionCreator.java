@@ -41,7 +41,7 @@ public class UnionCreator {
         }*/
 
         // PRINTING UNIONS
-        /*System.out.println("\n---------------");
+        System.out.println("\n---------------");
         for (Union union : controller.getUnions()) {
             System.out.println("Union father is: " + union.getFatherOfUnion().getName());
             System.out.println("Nodes are: ");
@@ -49,7 +49,7 @@ public class UnionCreator {
                 System.out.println(node.getName());
             }
             System.out.println("---------------");
-        }*/
+        }
 
         return true;
     }
@@ -151,11 +151,15 @@ public class UnionCreator {
     }
 
     private void createSingleNodeUnion(Node node) {
-        controller.getUnions().add(new Union(node));
+        Union union = new Union(node);
+        union.setType("SingleNode");
+        controller.getUnions().add(union);
     }
 
     private void createMultiNodeUnion(Node fatherNode,ArrayList<Node> nodes) {
-        controller.getUnions().add(new Union(fatherNode,nodes));
+        Union union = new Union(fatherNode,nodes);
+        union.setType("MultiNode");
+        controller.getUnions().add(union);
     }
 
     private boolean isThisNodeParentOfAnyOtherNode(Node node) {

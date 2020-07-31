@@ -16,7 +16,7 @@ public class VoltageControlledVoltageSource extends VoltageSource {
     }
 
     @Override
-    public double getVoltage(Node node, double time) {
+    public double getVoltage(Node node) {
         double value = gain * (controllerNode1.getVoltage() - controllerNode2.getVoltage());
         if (node.getName().equals(nodeP.getName())) {
             return value;
@@ -26,8 +26,8 @@ public class VoltageControlledVoltageSource extends VoltageSource {
     }
 
     @Override
-    public double getValue(Node node, double time) {
-        return getVoltage(node, time);
+    public double getValue(Node node) {
+        return getVoltage(node);
     }
 
     @Override

@@ -8,11 +8,11 @@ public class Source extends Branch {
         super(name, nodeP, nodeN);
     }
 
-    public double getVoltage(Node node, double time) {
+    public double getVoltage(Node node) {
         return 0;
     }
 
-    public double getCurrent(Node node, double time) {
+    public double getCurrent(Node node) {
         return 0;
     }
 
@@ -20,7 +20,7 @@ public class Source extends Branch {
         return name;
     }
 
-    public double getValue(Node node, double time) {
+    public double getValue(Node node) {
         return 0;
     }
 
