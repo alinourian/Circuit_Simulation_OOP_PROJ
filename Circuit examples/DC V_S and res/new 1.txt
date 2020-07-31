@@ -1,9 +1,8 @@
-Vin     2       1       7      0       0       0
-Vin     1       0       4      0       0       0
+Vin1     2       1       1      4       1       0
+Vin2     1       0       4      0       0       0
 R1      2       0       1
 R2      1       0       3
-dV      1m
-dI      1m
+dV      1u
+dI      10m
 dT      1m
-.tran   15m
-
+.tran   1000m

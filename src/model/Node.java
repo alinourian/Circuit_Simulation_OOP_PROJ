@@ -29,7 +29,7 @@ public class Node {
         voltages.add(0.0);
     }
 
-    public double getTotalCurrent(double time){
+    public double getTotalCurrent(){
         double totalCurrent = 0;
         for (Element element : elements){
             totalCurrent += element.getCurrent(InputController.getInstance().findNode(name));

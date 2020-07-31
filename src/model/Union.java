@@ -12,7 +12,8 @@ public class Union {
         this.name = fatherOfUnion.getName();
         this.fatherOfUnion = fatherOfUnion;
         addNodeToUnion(fatherOfUnion);
-        fatherOfUnion.setIncludingUnion(this);
+
+        this.fatherOfUnion.setIncludingUnion(this);
     }
 
     public Union(Node fatherOfUnion,ArrayList<Node> nodes) {
@@ -20,7 +21,8 @@ public class Union {
         this.fatherOfUnion = fatherOfUnion;
         addNodeToUnion(fatherOfUnion);
         addNodesToUnion(nodes);
-        for (Node node : nodes) {
+
+        for (Node node : this.nodes) {
             node.setIncludingUnion(this);
         }
 
@@ -41,13 +43,14 @@ public class Union {
 
     public void updateNodesVoltages()
     {
-        processNodesVoltagesUpdate(this.fatherOfUnion);
+        processNodesVoltagesUpdate(fatherOfUnion);
     }
 
     public void processNodesVoltagesUpdate(Node node)
     {
         for (Node neighborNode : node.getNeighborNodes())
         {
+
             if (node.getIncludingUnion().getNodes().contains(neighborNode))
             {
                 if (neighborNode.getParentNode().equals(node))
@@ -72,13 +75,13 @@ public class Union {
         }
     }
 
-    public double getTotalCurrent(double time)
+    public double getTotalCurrent()
     {
         double totalCurrent = 0 ;
 
         if (this.getType().equals("SingleNode"))
         {
-            totalCurrent += this.getFatherOfUnion().getTotalCurrent(time);
+            totalCurrent += this.getFatherOfUnion().getTotalCurrent();
             return totalCurrent;
         }
         else
