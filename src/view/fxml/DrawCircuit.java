@@ -29,8 +29,8 @@ public abstract class DrawCircuit {
     private static final Image controlledCSource = new Image("view/img/element/ControlledCSource.png");
     private static final Image wire = new Image("view/img/element/Wire.png");
 
-    public static Pane drawCircuit(double step) {
-        drawCircuitStep = step;
+    public static Pane drawCircuit() {
+        drawCircuitStep = 80;
         for (int i = 1; i <= 6; i++) {
             for (int j = 1; j <= 5; j++) {
                 circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));

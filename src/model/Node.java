@@ -15,7 +15,6 @@ public class Node {
     private Node parentNode = null;
     private Union includingUnion;
     private int isVisited;
-    private int nodeNeed;
 
 
     public Node (String name) {
@@ -27,8 +26,6 @@ public class Node {
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.voltages = new ArrayList<>();
-        this.voltages.add(0.0);
-        this.nodeNeed = 0;
     }
 
     public double getTotalCurrent(){
@@ -65,10 +62,6 @@ public class Node {
         return voltage;
     }
 
-    public int getNodeNeed() {
-        return nodeNeed;
-    }
-
     public ArrayList<Node> getNeighborNodes() {
         return neighborNodes;
     }
@@ -101,10 +94,6 @@ public class Node {
         if (!name.equals("0")) {
             this.voltage = voltage;
         }
-    }
-
-    public void setNodeNeed(int nodeNeed) {
-        this.nodeNeed = nodeNeed;
     }
 
     @Override

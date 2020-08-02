@@ -18,7 +18,6 @@
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -269,14 +268,7 @@
                            </children>
                         </VBox>
                         <Separator orientation="VERTICAL" prefHeight="200.0" />
-                        <BorderPane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-                           <center>
-                              <Pane fx:id="circuitPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                              </Pane>
-                           </center>
+                        <BorderPane fx:id="borderPane" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                            <top>
                               <Separator prefWidth="200.0" BorderPane.alignment="CENTER" />
                            </top>

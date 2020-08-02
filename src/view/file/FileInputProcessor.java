@@ -4,12 +4,16 @@ import controller.InputController;
 import enums.Type;
 import view.Errors;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public abstract class FileInputProcessor {
     private static final InputController controller = InputController.getInstance();
-    public static int COMMANDLINE = 0;
+    public static int commandLine = 0;
+    private static final HashMap<String, Integer> saveLines = new HashMap<>();
 
     public static boolean inputProcess(String command, int commandLine) {
-        FileInputProcessor.COMMANDLINE = commandLine;
+        FileInputProcessor.commandLine = commandLine;
         String[] split = command.split("\\s+");
         if (CommandsRegex.COMMENT_COMMAND.getMatcher(command).matches()) {
             return true;
@@ -22,15 +26,23 @@ public abstract class FileInputProcessor {
         } else if (CommandsRegex.CURRENT_SOURCE.getMatcher(command).matches()) {
             return addCurrentSource(split[0], split[1], split[2], split[3], split[4], split[5], split[6]);
         } else if (CommandsRegex.VOLTAGE_CONTROLLED_CURRENT_SOURCE.getMatcher(command).matches()) {
-            return addVoltageControlledCurrentSource(split[0], split[1], split[2], split[3], split[4], split[5]);
+            saveLines.put(command, commandLine);
+            return true;
+            //return addVoltageControlledCurrentSource(split[0], split[1], split[2], split[3], split[4], split[5]);
         } else if (CommandsRegex.CURRENT_CONTROLLED_CURRENT_SOURCE.getMatcher(command).matches()) {
-            return addCurrentControlledCurrentSource(split[0], split[1], split[2], split[3], split[4]);
+            saveLines.put(command, commandLine);
+            return true;
+            //return addCurrentControlledCurrentSource(split[0], split[1], split[2], split[3], split[4]);
         } else if (CommandsRegex.VOLTAGE_SOURCE.getMatcher(command).matches()) {
             return addVoltageSource(split[0], split[1], split[2], split[3], split[4], split[5], split[6]);
         } else if (CommandsRegex.VOLTAGE_CONTROLLED_VOLTAGE_SOURCE.getMatcher(command).matches()) {
-            return addVoltageControlledVoltageSource(split[0], split[1], split[2], split[3], split[4], split[5]);
+            saveLines.put(command, commandLine);
+            return true;
+            //return addVoltageControlledVoltageSource(split[0], split[1], split[2], split[3], split[4], split[5]);
         } else if (CommandsRegex.CURRENT_CONTROLLED_VOLTAGE_SOURCE.getMatcher(command).matches()) {
-            return addCurrentControlledVoltageSource(split[0], split[1], split[2], split[3], split[4]);
+            saveLines.put(command, commandLine);
+            return true;
+            //return addCurrentControlledVoltageSource(split[0], split[1], split[2], split[3], split[4]);
         } else if (CommandsRegex.DELTA_VOLTAGE.getMatcher(command).matches()) {
             return addDeltaVoltage(split[1]);
         } else if (CommandsRegex.DELTA_CURRENT.getMatcher(command).matches()) {
@@ -38,21 +50,25 @@ public abstract class FileInputProcessor {
         } else if (CommandsRegex.DELTA_TIME.getMatcher(command).matches()) {
             return addDeltaTime(split[1]);
         } else if (CommandsRegex.TRAN.getMatcher(command).matches()) {
-            return addTran(split[1]);
+            if (addTran(split[1])) {
+                return readSaveLines();
+            } else {
+                return false;
+            }
         } else {
-            Errors.commandError(FileInputProcessor.COMMANDLINE);
+            Errors.commandError(FileInputProcessor.commandLine);
             return false;
         }
     }
 
     private static boolean addResistor(String name, String node1, String node2, String s_value) {
         if (controller.findResistor(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.addElement(name, node1, node2, value, Type.RESISTOR);
@@ -61,12 +77,12 @@ public abstract class FileInputProcessor {
 
     private static boolean addCapacitor(String name, String node1, String node2, String s_value) {
         if (controller.findCapacitor(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.addElement(name, node1, node2, value, Type.CAPACITOR);
@@ -75,12 +91,12 @@ public abstract class FileInputProcessor {
 
     private static boolean addInductor(String name, String node1, String node2, String s_value) {
         if (controller.findInductor(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double value = controller.getValueOfString(s_value);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.addElement(name, node1, node2, value, Type.INDUCTOR);
@@ -90,7 +106,7 @@ public abstract class FileInputProcessor {
     private static boolean addCurrentSource(String name, String node1, String node2, String s_value,
                                          String s_amplitude, String s_frequency, String s_phase) {
         if (controller.findCurrentSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(s_value.charAt(s_value.length() - 1));
@@ -98,7 +114,7 @@ public abstract class FileInputProcessor {
         double frequencyFactor = controller.getUnit(s_frequency.charAt(s_frequency.length() - 1));
         double phaseFactor = controller.getUnit(s_phase.charAt(s_phase.length() - 1));
         if (valueFactor == -2 || amplitudeFactor == -2 || frequencyFactor == -2 || phaseFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -113,7 +129,7 @@ public abstract class FileInputProcessor {
             controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.CURRENT_SOURCE);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -122,16 +138,16 @@ public abstract class FileInputProcessor {
     private static boolean addVoltageControlledCurrentSource(String name, String node1, String node2,
                                                           String voltage1, String voltage2, String value) {
         if (controller.findCurrentSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
         if (valueFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
-            Errors.nodeError(FileInputProcessor.COMMANDLINE);
+            Errors.nodeError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -140,7 +156,7 @@ public abstract class FileInputProcessor {
             controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, Type.V_C_C_S);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -148,16 +164,16 @@ public abstract class FileInputProcessor {
     private static boolean addCurrentControlledCurrentSource(String name, String node1, String node2,
                                                           String branch, String value) {
         if (controller.findCurrentSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
         if (valueFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
-            Errors.branchError(FileInputProcessor.COMMANDLINE);
+            Errors.branchError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -166,7 +182,7 @@ public abstract class FileInputProcessor {
             controller.addCurrentControlledSource(name, node1, node2, gain, branch, Type.C_C_C_S);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -174,7 +190,7 @@ public abstract class FileInputProcessor {
     private static boolean addVoltageSource(String name, String node1, String node2, String s_value,
                                          String s_amplitude, String s_frequency, String s_phase) {
         if (controller.findVoltageSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(s_value.charAt(s_value.length() - 1));
@@ -182,7 +198,7 @@ public abstract class FileInputProcessor {
         double frequencyFactor = controller.getUnit(s_frequency.charAt(s_frequency.length() - 1));
         double phaseFactor = controller.getUnit(s_phase.charAt(s_phase.length() - 1));
         if (valueFactor == -2 || amplitudeFactor == -2 || frequencyFactor == -2 || phaseFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -197,7 +213,7 @@ public abstract class FileInputProcessor {
             controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.VOLTAGE_SOURCE);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -205,16 +221,16 @@ public abstract class FileInputProcessor {
     private static boolean addVoltageControlledVoltageSource(String name, String node1, String node2,
                                                           String voltage1, String voltage2, String value) {
         if (controller.findVoltageSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
         if (valueFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         if (controller.findNode(voltage1) == null && controller.findNode(voltage2) == null) {
-            Errors.nodeError(FileInputProcessor.COMMANDLINE);
+            Errors.nodeError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -223,7 +239,7 @@ public abstract class FileInputProcessor {
             controller.addVoltageControlledSource(name, node1, node2, gain, voltage1, voltage2, Type.V_C_V_S);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -231,16 +247,16 @@ public abstract class FileInputProcessor {
     private static boolean addCurrentControlledVoltageSource(String name, String node1, String node2,
                                                           String branch, String value) {
         if (controller.findVoltageSource(name) != null) {
-            Errors.similarNameError(FileInputProcessor.COMMANDLINE);
+            Errors.similarNameError(FileInputProcessor.commandLine);
             return false;
         }
         double valueFactor = controller.getUnit(value.charAt(value.length() - 1));
         if (valueFactor == -2) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         if (controller.findElement(branch) == null && controller.findSource(branch) == null) {
-            Errors.branchError(FileInputProcessor.COMMANDLINE);
+            Errors.branchError(FileInputProcessor.commandLine);
             return false;
         }
         try {
@@ -249,7 +265,7 @@ public abstract class FileInputProcessor {
             controller.addCurrentControlledSource(name, node1, node2, gain, branch, Type.C_C_V_S);
             return true;
         } catch (NumberFormatException e) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
     }
@@ -257,7 +273,7 @@ public abstract class FileInputProcessor {
     private static boolean addDeltaVoltage(String deltaVoltage) {
         double value = controller.getValueOfString(deltaVoltage);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.setDeltaV(value);
@@ -267,7 +283,7 @@ public abstract class FileInputProcessor {
     private static boolean addDeltaCurrent(String deltaCurrent) {
         double value = controller.getValueOfString(deltaCurrent);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.setDeltaI(value);
@@ -277,7 +293,7 @@ public abstract class FileInputProcessor {
     private static boolean addDeltaTime(String deltaTime) {
         double value = controller.getValueOfString(deltaTime);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.setDeltaT(value);
@@ -287,10 +303,39 @@ public abstract class FileInputProcessor {
     private static boolean addTran(String time) {
         double value = controller.getValueOfString(time);
         if (value == -1) {
-            Errors.valueError(FileInputProcessor.COMMANDLINE);
+            Errors.valueError(FileInputProcessor.commandLine);
             return false;
         }
         controller.setTranTime(value);
         return true;
+    }
+
+    private static boolean readSaveLines() {
+        for (String command : saveLines.keySet()) {
+            FileInputProcessor.commandLine = saveLines.get(command);
+            String[] split = command.split("\\s+");
+            if (CommandsRegex.VOLTAGE_CONTROLLED_CURRENT_SOURCE.getMatcher(command).matches()) {
+                if (!addVoltageControlledCurrentSource(split[0], split[1], split[2], split[3], split[4], split[5])) {
+                    return false;
+                }
+            } else if (CommandsRegex.CURRENT_CONTROLLED_CURRENT_SOURCE.getMatcher(command).matches()) {
+                if (!addCurrentControlledCurrentSource(split[0], split[1], split[2], split[3], split[4])) {
+                    return false;
+                }
+            } else if (CommandsRegex.VOLTAGE_CONTROLLED_VOLTAGE_SOURCE.getMatcher(command).matches()) {
+                if (!addVoltageControlledVoltageSource(split[0], split[1], split[2], split[3], split[4], split[5])) {
+                    return false;
+                }
+            } else if (CommandsRegex.CURRENT_CONTROLLED_VOLTAGE_SOURCE.getMatcher(command).matches()) {
+                if (!addCurrentControlledVoltageSource(split[0], split[1], split[2], split[3], split[4])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static HashMap<String, Integer> getSaveLines() {
+        return saveLines;
     }
 }

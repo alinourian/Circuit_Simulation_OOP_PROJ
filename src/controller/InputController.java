@@ -296,7 +296,8 @@ public class InputController {
         Solver.step = 0;
         Solver.output.delete(0, Solver.output.length());
 
-        FileInputProcessor.COMMANDLINE = 0;
+        FileInputProcessor.commandLine = 0;
+        FileInputProcessor.getSaveLines().clear();
     }
 
     //GETTERS AND SETTERS

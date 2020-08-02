@@ -63,14 +63,14 @@ public abstract class Errors {
 
     public static void branchError(int lineNum) {
         string = "error :\n" +
-                "Line " + FileInputProcessor.COMMANDLINE + " : Controller branch does not initialize!";
+                "Line " + FileInputProcessor.commandLine + " : Controller branch does not initialize!";
         System.err.println(string);
         //MainPageController.printResult(string, false);
     }
 
     public static void nodeError(int lineNum) {
         string = "error :\n" +
-                "Line " + FileInputProcessor.COMMANDLINE + " : Controller nodes do not initialize!";
+                "Line " + FileInputProcessor.commandLine + " : Controller nodes do not initialize!";
         System.err.println(string);
         //MainPageController.printResult(string, false);
     }

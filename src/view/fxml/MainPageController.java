@@ -1,6 +1,5 @@
 package view.fxml;
 
-import controller.InputController;
 import controller.Solver;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -11,16 +10,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import model.Branch;
-import model.Element;
-import model.Node;
-import model.Source;
 import view.Errors;
 import view.file.FileScanner;
 
@@ -50,11 +43,13 @@ public class MainPageController {
     @FXML private TextArea errorTextArea;
     @FXML private ProgressBar progressBar;
     @FXML private Label percentLabel;
-    @FXML private Pane circuitPane;
+    @FXML private BorderPane borderPane;
+
 
     private File file;
     private String firstBackUpText;
     private final ExecutorService executor = Executors.newCachedThreadPool();
+    boolean bool = true;
 
     public void addNewTab() {
         if (FileScanner.hasFile) {
@@ -196,7 +191,7 @@ public class MainPageController {
             helpStage.setTitle("Show Circuit");
             helpStage.getIcons().add(Main.stageIcon);
             ShowCircuitPage controller = fxmlLoader.getController();
-            controller.initial(circuitPane);
+            controller.initial(new Pane());
             helpStage.show();
         }
     }
@@ -248,18 +243,17 @@ public class MainPageController {
     }
 
     public void drawCircuit() {
-        double step = Math.min(circuitPane.getWidth() / 7, circuitPane.getHeight() / 6);
-        Pane pane = DrawCircuit.drawCircuit(step);
-        circuitPane.getChildren().add(pane);
+        if (bool) {
+            Pane pane = DrawCircuit.drawCircuit();
+            borderPane.getChildren().add(pane);
+            bool = false;
+        }
+
     }
 //  GETTERS AND SETTERS
 
     public static Stage getStage() {
         return Stage;
-    }
-
-    public Pane getCircuitPane() {
-        return circuitPane;
     }
 }
 

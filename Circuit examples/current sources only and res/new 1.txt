@@ -1,7 +1,7 @@
 I1     1       0       1      0       0       0
 R1      0       1       1
 C1	0	1	1
-dV      10u
-dI      10m
+dV      0.1u
+dI      100u
 dT      1m
-.tran   1
+.tran   8

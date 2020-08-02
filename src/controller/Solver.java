@@ -19,6 +19,7 @@ public class Solver {
     public static int step = 0;
     public static int measureErrorEachStep = 0;
     private final int MAX_ERROR_MEASUREMENT_TRYING = 500000;
+    private final double KCL_ERROR = Math.pow(10, -2);
     public static StringBuilder output = new StringBuilder();
     public ArrayList<Integer> errors = new ArrayList<>();
 
@@ -39,20 +40,16 @@ public class Solver {
 
 
         do {
-            step++;
-            time += controller.getDeltaT();
 
-            double _time = ((double) Math.round(time * 1000))/1000;
+            double _time = ((double) Math.round(time * 10000))/10000;
             Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
-            solve3();
-
+            solve1();
 
             errors.add(measureErrorEachStep);
 
             if (measureErrorEachStep > MAX_ERROR_MEASUREMENT_TRYING) {
-                System.out.println("out...");
                 Errors.transitionFailed();
                 return false;
             }
@@ -60,8 +57,11 @@ public class Solver {
             saveVoltages();
             saveCurrents();
 
-        } while (time <= controller.getTranTime());
+            step++;
+            time += controller.getDeltaT();
+            System.out.println(time);
 
+        } while (time <= controller.getTranTime() + Math.pow(10, -6));
 
         try {
             SaveOnFile.saveDataOnFile();
@@ -183,10 +183,78 @@ public class Solver {
 
     }
 
+    public void solve1() {
+        measureErrorEachStep = 0;
+
+        do {
+
+            for (Union union : controller.getUnions())
+            {
+                if (union.getType().equals("SingleNode"))
+                {
+                    if (!union.getFatherOfUnion().getName().equals("0"))
+                    {
+                        double totalCurrent1 = union.getTotalCurrent();
+
+                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
+                        updateElementsCurrent();
+                        double totalCurrent2 = union.getTotalCurrent();
+                        setBackElementCurrent();
+
+                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - controller.getDeltaV());
+
+                        double voltage = union.getFatherOfUnion().getVoltage() +
+                                ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
+
+                        union.getFatherOfUnion().setSaveVoltage(voltage);
+                    }
+                }
+                else
+                {
+                    if (!union.getFatherOfUnion().getName().equals("0"))
+                    {
+                        //System.out.println("multi");
+                        double totalCurrent1 = union.getTotalCurrent();
+
+                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
+                        //System.out.println("union name is: "+union.getName());
+                        //System.out.println("union father is: "+ union.getFatherOfUnion().getName());
+                        union.updateNodesVoltages();
+
+                        updateElementsCurrent();
+                        double totalCurrent2 = union.getTotalCurrent();
+                        setBackElementCurrent();
+
+                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - controller.getDeltaV());
+                        union.updateNodesVoltages();
+
+                        double voltage = union.getFatherOfUnion().getVoltage() +
+                                ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
+
+                        union.getFatherOfUnion().setSaveVoltage(voltage);
+                    }
+                }
+            }
+
+            setVoltages();
+
+            for (Union union : controller.getUnions()) {
+                union.updateNodesVoltages();
+            }
+
+            updateElementsCurrent();
+            measureErrorEachStep++;
+
+        }while (!checkKCL() && measureErrorEachStep <= MAX_ERROR_MEASUREMENT_TRYING);
+
+        printVoltages();
+
+    }
+
     /////////////////////////////////////////////////////
     ////// this method doesn't workout correct //////////
     /////////////////////////////////////////////////////
-    public void solve3() {
+    public void solve0() {
         measureErrorEachStep = 0;
         do {
             for (Node node : controller.getNodes()) {
@@ -224,17 +292,14 @@ public class Solver {
         }
     }
 
-    private boolean checkKCL()
-    {
+    private boolean checkKCL() {
         double measurementError = 0;
 
         for (Union union : controller.getUnions()) {
             measurementError += Math.abs(union.getTotalCurrent());
-            System.out.println("total current of union: "+union.getName()+" is "+Math.abs(union.getTotalCurrent()));
+            //System.out.println("total current of union: "+union.getName()+" is "+Math.abs(union.getTotalCurrent()));
         }
-        return measurementError < Math.pow(10,-1);
-
-
+        return measurementError < KCL_ERROR;
     }
 
     /////////////////////////////////////////////////////
@@ -244,7 +309,7 @@ public class Solver {
         double measurementError = 0;
         for (Node node : controller.getNodes()) {
             measurementError += Math.abs(node.getTotalCurrent());
-            System.out.println("total current of node: "+node.getName()+" is "+Math.abs(node.getTotalCurrent()));
+            //System.out.println("total current of node: "+node.getName()+" is "+Math.abs(node.getTotalCurrent()));
         }
         //System.out.println("error: " + measurementError);
         return measurementError < 9*Math.pow(10, -2);
@@ -262,7 +327,6 @@ public class Solver {
     private void updateElementsCurrent() {
         for (Element element : controller.getElements()) {
             element.updateElementCurrent();
-
         }
 
     }
