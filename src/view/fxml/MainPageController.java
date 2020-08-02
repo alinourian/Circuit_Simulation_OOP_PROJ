@@ -1,5 +1,6 @@
 package view.fxml;
 
+import controller.InputController;
 import controller.Solver;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -16,6 +17,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Branch;
+import model.Element;
+import model.Node;
+import model.Source;
 import view.Errors;
 import view.file.FileScanner;
 
@@ -50,19 +55,6 @@ public class MainPageController {
     private File file;
     private String firstBackUpText;
     private final ExecutorService executor = Executors.newCachedThreadPool();
-    private double drawCircuitStep;
-
-    private final Image resistor = new Image("view/img/element/Resistor.png");
-    private final Image capacitor = new Image("view/img/element/Capacitor.png");
-    private final Image inductor = new Image("view/img/element/Inductor.png");
-    private final Image diode = new Image("view/img/element/Diode.png");
-    private final Image gnd = new Image("view/img/element/Ground.png");
-    private final Image vSource = new Image("view/img/element/VSource.png");
-    private final Image cSource = new Image("view/img/element/CSource.png");
-    private final Image acSource = new Image("view/img/element/AcSource.png");
-    private final Image controlledVSource = new Image("view/img/element/ControlledVSource.png");
-    private final Image controlledCSource = new Image("view/img/element/ControlledCSource.png");
-    private final Image wire = new Image("view/img/element/Wire.png");
 
     public void addNewTab() {
         if (FileScanner.hasFile) {
@@ -256,96 +248,16 @@ public class MainPageController {
     }
 
     public void drawCircuit() {
-        drawCircuitStep = Math.min(circuitPane.getWidth() / 7, circuitPane.getHeight() / 6);
-        for (int i = 1; i <= 6; i++) {
-            for (int j = 1; j <= 5; j++) {
-                circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));
-            }
-        }
-        putImage(resistor, 9, 3);
-        putImage(capacitor, 10, 4);
-        putImage(cSource, 11, 5);
-        putImage(inductor, 12, 11);
-        putImage(controlledCSource, 12, 6);
-        putImage(wire, 9, 10);
-        putImage(wire, 10, 11);
-        putImage(wire, 3, 4);
-        putImage(wire, 4, 5);
-        putImage(diode, 5, 6);
-        putImage(acSource, 9, 8);
-        putImage(controlledVSource, 7, 8);
-        putImage(wire, 7, 1);
-        putImage(wire, 1, 2);
-        putImage(vSource, 2, 3);
+        DrawCircuit.drawCircuit();
     }
-
-    private PaneNode convertNodeNumToPaneNode(double num) {
-        double x = num % 6 != 0 ? num % 6 : 6;
-        double y = 6 - Math.ceil(num / 6 );
-        return getNode(x, y);
-    }
-
-    private double getXY(double XY) {
-        return XY * drawCircuitStep;
-    }
-
-
-    private PaneNode getNode(double x, double y) {
-        return new PaneNode(getXY(x), getXY(y));
-    }
-
-    private PaneNode getLayoutNode(PaneNode middlePoint) {
-        return new PaneNode(middlePoint.nodeX - drawCircuitStep / 2, middlePoint.nodeY - drawCircuitStep / 2);
-    }
-
-    private void putImage(Image image, double numNode1, double numNode2) {
-        PaneNode node1 = convertNodeNumToPaneNode(numNode1);
-        PaneNode node2 = convertNodeNumToPaneNode(numNode2);
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(drawCircuitStep);
-        imageView.setFitHeight(drawCircuitStep);
-        if (node1.nodeX == node2.nodeX) {
-            PaneNode middlePoint = new PaneNode(node1.nodeX, (node1.nodeY + node2.nodeY) / 2);
-            PaneNode node = getLayoutNode(middlePoint);
-            imageView.setLayoutX(node.nodeX);
-            imageView.setLayoutY(node.nodeY);
-            circuitPane.getChildren().add(imageView);
-        } else if (node1.nodeY == node2.nodeY) {
-            imageView.setRotate(90);
-            PaneNode middlePoint = new PaneNode((node1.nodeX + node2.nodeX) / 2, node1.nodeY);
-            PaneNode node = getLayoutNode(middlePoint);
-            imageView.setLayoutX(node.nodeX);
-            imageView.setLayoutY(node.nodeY);
-            circuitPane.getChildren().add(imageView);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Not Possible!");
-            alert.show();
-        }
-    }
-
-    //  GETTERS AND SETTERS
+//  GETTERS AND SETTERS
 
     public static Stage getStage() {
         return Stage;
     }
 
-}
-
-class PaneNode {
-    double nodeX;
-    double nodeY;
-
-    public PaneNode(double nodeX, double nodeY) {
-        this.nodeX = nodeX;
-        this.nodeY = nodeY;
-    }
-
-    @Override
-    public String toString() {
-        return "PaneNode{" +
-                "nodeX=" + nodeX +
-                ", nodeY=" + nodeY +
-                '}';
+    public Pane getCircuitPane() {
+        return circuitPane;
     }
 }
+

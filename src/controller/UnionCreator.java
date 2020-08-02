@@ -38,7 +38,7 @@ public class UnionCreator {
         // PRINTING PARENT OF EACH NODE
         /*for (Node node : controller.getNodes()) {
             System.out.println("parent of node "+ node.getName()+" is:" + node.getParentNode().getName());
-        }*/
+        }
 
         // PRINTING UNIONS
         System.out.println("\n---------------");
@@ -51,8 +51,12 @@ public class UnionCreator {
             System.out.println("---------------");
         }
 
+         */
+
         return true;
     }
+
+
 
     private void processNodesParentSetting(Node groundNode) {
 

@@ -45,7 +45,7 @@ public class Solver {
             Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
-            solve();
+            solve3();
 
             errors.add(measureErrorEachStep);
 
