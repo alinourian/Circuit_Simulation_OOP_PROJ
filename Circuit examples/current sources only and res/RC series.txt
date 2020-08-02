@@ -4,4 +4,4 @@ C1      0       1       1
 dV      10u
 dI      10m
 dT      1m
-.tran   5
+.tran   2

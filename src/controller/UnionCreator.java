@@ -41,7 +41,7 @@ public class UnionCreator {
         }*/
 
         // PRINTING UNIONS
-        System.out.println("\n---------------");
+        /*System.out.println("\n---------------");
         for (Union union : controller.getUnions()) {
             System.out.println("Union father is: " + union.getFatherOfUnion().getName());
             System.out.println("Nodes are: ");
@@ -49,7 +49,7 @@ public class UnionCreator {
                 System.out.println(node.getName());
             }
             System.out.println("---------------");
-        }
+        }*/
 
         return true;
     }

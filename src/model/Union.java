@@ -90,9 +90,11 @@ public class Union {
 
             for (Node node : this.getNodes()) {
 
-                if (node.getName().equals("0"))
+                /*if (node.getName().equals("0"))
+                {
                     continue;
-
+                }
+                */
                 for (Node neighborNode : node.getNeighborNodes())
                 {
                     if (!this.getNodes().contains(neighborNode))
