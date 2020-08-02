@@ -90,8 +90,12 @@ public class Union {
 
             for (Node node : this.getNodes()) {
 
-                if (node.getName().equals("0"))
+                // these 4 lines should be comment
+                /*if (node.getName().equals("0"))
+                {
                     continue;
+                }
+                */
 
                 for (Node neighborNode : node.getNeighborNodes())
                 {
