@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public abstract class DrawCircuit {
     private static double drawCircuitStep;
-    private static final Pane circuitPane = MainPageController.getInstance().getCircuitPane();
+    private static final Pane circuitPane = new Pane();
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
     private static final Image capacitor = new Image("view/img/element/Capacitor.png");
@@ -29,8 +29,8 @@ public abstract class DrawCircuit {
     private static final Image controlledCSource = new Image("view/img/element/ControlledCSource.png");
     private static final Image wire = new Image("view/img/element/Wire.png");
 
-    public static void drawCircuit() {
-        drawCircuitStep = Math.min(circuitPane.getWidth() / 7, circuitPane.getHeight() / 6);
+    public static Pane drawCircuit(double step) {
+        drawCircuitStep = step;
         for (int i = 1; i <= 6; i++) {
             for (int j = 1; j <= 5; j++) {
                 circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));
@@ -53,6 +53,7 @@ public abstract class DrawCircuit {
         putImage(vSource, 2, 3);
         putImage(inductor, 29, 30);
         putImage(resistor, 9.5, 3.5);
+        return circuitPane;
     }
 
     private static ArrayList<Branch> getBranches(Node node1, Node node2) {
