@@ -17,7 +17,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("LoginPage.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("loginPage.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setResizable(false);
         primaryStage.setScene(new Scene(root));
@@ -25,4 +25,6 @@ public class Main extends Application {
         primaryStage.getIcons().add(stageIcon);
         primaryStage.show();
     }
+
+    //TODO : error handling phase 1 - diode - graphic - help page
 }

@@ -13,6 +13,7 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Element;
@@ -26,6 +27,8 @@ public class NewTab extends Tab {
 
     private final GridPane chartPane;
     private final Accordion accordion;
+    private final Button draw;
+    private final Button showGraph;
     private Type status;
     private AreaChart<Number, Number> chart;
 
@@ -37,6 +40,8 @@ public class NewTab extends Tab {
         super(text);
         this.chartPane = new GridPane();
         this.accordion = new Accordion();
+        this.draw = new Button("Draw");
+        this.showGraph = new Button("show graph");
         this.voltagesButtons = new ArrayList<>();
         this.currentsButtons = new ArrayList<>();
         this.powersButtons = new ArrayList<>();
@@ -54,9 +59,8 @@ public class NewTab extends Tab {
         accordion.getPanes().add(currentPane);
         accordion.getPanes().add(powerPane);
         VBox accordionVBox = new VBox(5);
-        accordionVBox.setPadding(new Insets(5, 5, 5, 5));
+        accordionVBox.setPadding(new Insets(5, 10, 5, 5));
 
-        Button draw = new Button("Draw");
         draw.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -77,7 +81,6 @@ public class NewTab extends Tab {
             }
         });
 
-        Button showGraph = new Button("show graph");
         showGraph.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -88,6 +91,7 @@ public class NewTab extends Tab {
                 }
             }
         });
+
         HBox buttonHBox = new HBox();
         buttonHBox.setSpacing(5);
         buttonHBox.getChildren().addAll(draw, showGraph);
@@ -95,10 +99,78 @@ public class NewTab extends Tab {
 
         Separator separator = new Separator(Orientation.VERTICAL);
         HBox mainHBox = new HBox(5);
+        mainHBox.setPadding(new Insets(10, 10, 10, 10));
         //chartPane.setPadding(new Insets(10, 20, 10, 20));
+        AreaChart<Number, Number> tempChart = new AreaChart<>(new NumberAxis(), new NumberAxis());
+        tempChart.setPrefWidth(1920);
+        tempChart.setPrefHeight(1080);
+        chartPane.getChildren().add(tempChart);
         mainHBox.getChildren().addAll(accordionVBox, separator, chartPane);
-
+        setStyle();
         this.setContent(mainHBox);
+    }
+
+    private void setStyle() {
+        chartPane.setStyle("-fx-background-color: lightgray;" +
+                "-fx-border-radius: 8, 7, 6;" +
+                "-fx-background-insets: 0,1,2;");
+
+        draw.setStyle("-fx-background-color: whitesmoke;" +
+                "    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "-fx-font-size: 14px");
+        draw.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                draw.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
+        draw.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                draw.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
+        showGraph.setStyle("-fx-background-color: whitesmoke;" +
+                "    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "    -fx-font-size: 14px;");
+        showGraph.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                showGraph.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
+        showGraph.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                showGraph.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
     }
 
     private TitledPane addChooser(ArrayList<RadioButton> graphsForDraw, Type type) {
@@ -190,6 +262,8 @@ public class NewTab extends Tab {
         chart.setPrefWidth(1920);
         chart.setPrefHeight(1080);
         chart.setAlternativeColumnFillVisible(true);
+        chart.setStyle("-fx-font-style: italic");
+        chart.setCreateSymbols(false);
         this.chart = chart;
         return chart;
     }
@@ -278,24 +352,19 @@ public class NewTab extends Tab {
 
     public void showGraph() throws IOException {
         if (chart != null) {
-            Stage helpStage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShowGraphPage.fxml"));
+            Stage showGraphStage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("showGraphPage.fxml"));
             Parent root = fxmlLoader.load();
-            helpStage.setScene(new Scene(root));
-            helpStage.setTitle("Show Graph");
-            helpStage.getIcons().add(Main.stageIcon);
-            //helpStage.setResizable(false);
+            showGraphStage.setScene(new Scene(root));
+            showGraphStage.setTitle("Show Graph");
+            showGraphStage.getIcons().add(Main.stageIcon);
             ShowGraphPageController controller = fxmlLoader.getController();
             controller.initial(chart);
-            helpStage.show();
+            showGraphStage.show();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("No chart! Please draw a chart first.");
             alert.show();
         }
-    }
-
-    public AreaChart<Number, Number> getChart() {
-        return chart;
     }
 }

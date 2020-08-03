@@ -6,14 +6,19 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 public class ShowGraphPageController {
 
     @FXML private GridPane gridPane;
 
+    private final AreaChart<Number, Number> thisChart = new AreaChart<>(new NumberAxis(), new NumberAxis());
+
+    public ShowGraphPageController() {
+        this.thisChart.setStyle("-fx-font-style: italic");
+    }
+
     public void initial(AreaChart<Number, Number> chart) {
-        AreaChart<Number, Number> thisChart = new AreaChart<>(new NumberAxis(), new NumberAxis());
+        gridPane.setPadding(new Insets(20, 20, 20, 20));
         for (XYChart.Series<Number, Number> datum : chart.getData()) {
             XYChart.Series<Number, Number> series = new XYChart.Series<>();
             series.setName(datum.getName());
@@ -25,7 +30,9 @@ public class ShowGraphPageController {
             }
             thisChart.getData().add(series);
         }
-        gridPane.setPadding(new Insets(20, 20, 20, 20));
+        thisChart.setTitle(chart.getTitle());
+        thisChart.setCreateSymbols(false);
         gridPane.getChildren().add(thisChart);
+
     }
 }

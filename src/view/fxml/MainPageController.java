@@ -185,7 +185,7 @@ public class MainPageController {
             tab.showGraph();
         } else {
             Stage helpStage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ShowCircuitPage.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("showCircuitPage.fxml"));
             Parent root = fxmlLoader.load();
             helpStage.setScene(new Scene(root));
             helpStage.setTitle("Show Circuit");
@@ -198,7 +198,7 @@ public class MainPageController {
 
     public void getHelp() throws IOException {
         Stage helpStage = HelpPageController.getStage();
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("HelpPage.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("helpPage.fxml"));
         Parent root = fxmlLoader.load();
         helpStage.setScene(new Scene(root));
         helpStage.setTitle(Main.stageTitle);
@@ -240,6 +240,10 @@ public class MainPageController {
 
     public void Exit() {
         Stage.close();
+    }
+
+    public void drawGraph() {
+
     }
 
     public void drawCircuit() {

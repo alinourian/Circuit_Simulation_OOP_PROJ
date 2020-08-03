@@ -56,7 +56,7 @@ public class LoginPageController {
 
     private void runMainPage() throws Exception {
         Stage primaryStage = MainPageController.getStage();
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("MainPage.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("mainPage.fxml"));
         Parent root = fxmlLoader.load();
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle(Main.stageTitle);
