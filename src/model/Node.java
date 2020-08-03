@@ -27,7 +27,7 @@ public class Node {
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.voltages = new ArrayList<>();
-        this.voltages.add(0.0);
+      //  this.voltages.add(0.0);
         this.nodeNeed = 0;
     }
 

@@ -248,8 +248,7 @@ public class MainPageController {
     }
 
     public void drawCircuit() {
-        double step = Math.min(circuitPane.getWidth() / 7, circuitPane.getHeight() / 6);
-        Pane pane = DrawCircuit.drawCircuit(step);
+        Pane pane = DrawCircuit.drawCircuit();
         circuitPane.getChildren().add(pane);
     }
 //  GETTERS AND SETTERS

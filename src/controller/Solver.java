@@ -39,14 +39,13 @@ public class Solver {
 
 
         do {
-            step++;
-            time += controller.getDeltaT();
+
 
             double _time = ((double) Math.round(time * 1000))/1000;
             Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
-            solve3();
+            solve();
 
 
             errors.add(measureErrorEachStep);
@@ -59,6 +58,9 @@ public class Solver {
 
             saveVoltages();
             saveCurrents();
+
+            step++;
+            time += controller.getDeltaT();
 
         } while (time <= controller.getTranTime());
 
@@ -114,8 +116,9 @@ public class Solver {
 
                         /*System.out.println("union : "+union.getName());
                         System.out.println("total cur 1: "+totalCurrent1);
-                        System.out.println("total cur 2: "+totalCurrent2);
-*/                        /*System.out.println("tem cur plus: "+tempTotalCurrentPlus);
+                        System.out.println("total cur 2: "+totalCurrent2);*/
+
+                        /*System.out.println("tem cur plus: "+tempTotalCurrentPlus);
                         System.out.println("tem cur minus: "+tempTotalCurrentMinus);*/
 
 
