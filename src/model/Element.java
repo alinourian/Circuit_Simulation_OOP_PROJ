@@ -14,6 +14,8 @@ public class Element extends Branch {
         this.current = 0;
         this.helpCurrent = 0;
         this.currents = new ArrayList<>();
+        setHeight(1);
+        setWidth(1);
     }
 
     public void updateElementCurrent() {

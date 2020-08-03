@@ -25,6 +25,7 @@ public class InputController {
     private final ArrayList<VoltageSource> voltageSources = new ArrayList<>();
     private final ArrayList<Element> elements = new ArrayList<>();
     private final ArrayList<Source> sources = new ArrayList<>();
+    private Branch finalSuperiorBranch;
 
     private double deltaV = 0;
     private double deltaI = 0;
@@ -353,6 +354,10 @@ public class InputController {
     public double getTranTime() {
         return tranTime;
     }
+
+    public Branch getFinalSuperiorBranch() { return finalSuperiorBranch; }
+
+    public void setFinalSuperiorBranch(Branch finalSuperiorBranch) { this.finalSuperiorBranch = finalSuperiorBranch; }
 
     public void setAllNodesNotVisited() {
         for (Node node : nodes) {

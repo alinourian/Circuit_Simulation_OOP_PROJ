@@ -6,6 +6,8 @@ public class Source extends Branch {
 
     public Source(String name, Node nodeP, Node nodeN) {
         super(name, nodeP, nodeN);
+        setHeight(1);
+        setWidth(1);
     }
 
     public double getVoltage(Node node) {

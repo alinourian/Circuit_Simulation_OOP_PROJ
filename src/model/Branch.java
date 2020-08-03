@@ -1,10 +1,13 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Branch {
     protected final String name;
     protected Node nodeP;
     protected Node nodeN;
-    private Branch subBranches;
+    private Branch superiorBranch;
+    private ArrayList<Branch> subBranches = new ArrayList<>();
     private int width;
     private int height;
 
@@ -12,23 +15,24 @@ public class Branch {
         this.name = name;
         this.nodeP = nodeP;
         this.nodeN = nodeN;
-        this.subBranches = null;
-        this.height = 1;
-        this.width = 1;
+        this.superiorBranch = null;
+
     }
 
-
-    public void setSubBranches(Branch subBranches) { this.subBranches = subBranches; }
 
     public void setWidth(int width) { this.width = width; }
 
     public void setHeight(int height) { this.height = height; }
 
-    public String getName() {
-        return name;
-    }
+    public void setSuperiorBranch(Branch superiorBranch) { this.superiorBranch = superiorBranch; }
 
-    public Branch getSubBranches() { return subBranches; }
+    public void setSubBranches(ArrayList<Branch> subBranches) { this.subBranches = subBranches; }
+
+    public ArrayList<Branch> getSubBranches() { return subBranches; }
+
+    public Branch getSuperiorBranch() { return superiorBranch; }
+
+    public String getName() { return name; }
 
     public int getWidth() { return width; }
 

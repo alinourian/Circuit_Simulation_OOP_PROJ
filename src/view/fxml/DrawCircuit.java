@@ -16,10 +16,12 @@ import java.util.ArrayList;
 public abstract class DrawCircuit {
     private static double drawCircuitStep;
     private static final Pane circuitPane = new Pane();
+    private static final InputController controller = InputController.getInstance();
+
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
     private static final Image capacitor = new Image("view/img/element/Capacitor.png");
-    private static  final Image inductor = new Image("view/img/element/Inductor.png");
+    private static final Image inductor = new Image("view/img/element/Inductor.png");
     private static final Image diode = new Image("view/img/element/Diode.png");
     private static final Image gnd = new Image("view/img/element/Ground.png");
     private static final Image vSource = new Image("view/img/element/VSource.png");
@@ -36,6 +38,11 @@ public abstract class DrawCircuit {
                 circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));
             }
         }
+
+
+        setTheFinalSuperiorBranch();
+
+
         putGround();
         putImage(resistor, 9, 3);
         putImage(capacitor, 10, 4);
@@ -55,6 +62,40 @@ public abstract class DrawCircuit {
         putImage(resistor, 9.5, 3.5);
         return circuitPane;
     }
+
+
+    private static void setTheFinalSuperiorBranch()
+    {
+        ArrayList<Branch>   allBranches = new ArrayList<>();
+
+        for (Source source : controller.getSources()) {
+            allBranches.add(source);
+        }
+
+        for (Element element : controller.getElements()) {
+            allBranches.add(element);
+        }
+
+
+        while (allBranches.size() != 1)
+        {
+
+
+
+
+        }
+
+
+
+        controller.setFinalSuperiorBranch(allBranches.get(0));
+
+    }
+
+    private static void incorporateParallelBranchesToNewBranch()
+    {
+
+    }
+
 
     private static ArrayList<Branch> getBranches(Node node1, Node node2) {
         ArrayList<Branch> branches = new ArrayList<>();
