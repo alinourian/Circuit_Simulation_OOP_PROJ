@@ -3,6 +3,7 @@ package controller;
 import enums.Type;
 import model.*;
 import view.file.FileInputProcessor;
+import view.fxml.DrawCircuit;
 
 import java.util.ArrayList;
 
@@ -288,6 +289,9 @@ public class InputController {
         voltageSources.clear();
         elements.clear();
         sources.clear();
+        DrawCircuit.getAllBranchesTemp().clear();
+        DrawCircuit.getNewSeriesBranches().clear();
+        DrawCircuit.getNewTempBranch().clear();
 
         deltaV = 0;
         deltaI = 0;

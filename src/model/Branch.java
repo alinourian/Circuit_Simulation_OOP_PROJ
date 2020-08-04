@@ -21,6 +21,22 @@ public class Branch {
 
     }
 
+    public Node getAnotherNodeOfBranch(Node node)
+    {
+        if (this.nodeP.equals(node))
+        {
+            return this.nodeN;
+        }
+        else if (this.nodeN.equals(node))
+        {
+            return this.nodeP;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     public void setWidth(int width) { this.width = width; }
 

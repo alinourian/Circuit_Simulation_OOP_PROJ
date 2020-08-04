@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Branch;
+import model.Circuit;
 import model.Element;
 import model.Source;
 import view.Errors;
@@ -219,8 +220,8 @@ public class MainPageController {
 
                     if (FileScanner.runProgram(file)) {
                         additional = 0.1;
-                        drawCircuit();
                         animationTimer.stop();
+                        drawCircuit();
                         errorTextArea.setText("File successfully simulated.\n" + Solver.output);
                         percentLabel.setText("100%");
                         progressBar.setProgress(1);
@@ -310,7 +311,12 @@ public class MainPageController {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setContentText("not yet!");
         //alert.show();
-        //Pane pane = DrawCircuit.drawCircuit();
+        Pane pane = DrawCircuit.drawCircuit();
+        if (!borderPane.getChildren().contains(pane))
+        {
+            borderPane.getChildren().add(pane);
+        }
+
         //TODO
     }
 
@@ -322,7 +328,7 @@ public class MainPageController {
         progressBar.setVisible(true);
         percentLabel.setVisible(true);
         percentLabel.setText("0%");
-        progressBar.setProgress(-1);
+        progressBar.setProgress(0);
     }
 
     public void fillProgress() {
@@ -334,7 +340,7 @@ public class MainPageController {
                     timer = now;
                     progressBar.setProgress(0);
                 } else if (now - timer > PERIOD) {
-                    if (additional == 0.1 && progressBar.getProgress() < 1) {
+                    if (additional == 0.1 && progressBar.getProgress() +additional <= 1) {
                         progressBar.setProgress(progressBar.getProgress() + additional);
                         timer = now;
                         double percent = progressBar.getProgress() * 100;

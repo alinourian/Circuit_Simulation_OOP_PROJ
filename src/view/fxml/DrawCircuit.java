@@ -11,6 +11,7 @@ import model.Element;
 import model.Node;
 import model.Source;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.ArrayList;
 
 public abstract class DrawCircuit {
@@ -90,14 +91,42 @@ public abstract class DrawCircuit {
         {
             incorporateParallelBranchesToNewBranch();
 
-
-
+            incorporateSeriesBranchesToNewBranch();
 
         }
 
 
+        // printAllBranchesAndSubbranches(allBranchesTemp);
 
         controller.setFinalSuperiorBranch(allBranchesTemp.get(0));
+
+    }
+
+    private static void printAllBranchesAndSubbranches(ArrayList<Branch>    branches)
+    {
+        for (Branch branch : branches) {
+            System.out.println("branch name is :"+branch.getName());
+            System.out.println("Nope p is: "+branch.getNodeP().getName());
+            System.out.println("Nope n is: "+branch.getNodeN().getName());
+        }
+
+        for (Branch branch : branches) {
+            if (branch.getSubBranches().size() != 0)
+            {
+                printAllBranchesAndSubbranches(branch.getSubBranches());
+            }
+        }
+    }
+
+    private static void print()
+    {
+        for (Branch branch : allBranchesTemp)
+        {
+            System.out.println("branch name is :"+branch.getName());
+            System.out.println("Nope p is: "+branch.getNodeP().getName());
+            System.out.println("Nope n is: "+branch.getNodeN().getName());
+        }
+        System.out.println("");
 
     }
 
@@ -142,7 +171,11 @@ public abstract class DrawCircuit {
 
         for (Node neighborNode : node.getNeighborNodes())
         {
-            processParallelIncorporationForEachNode(neighborNode);
+            if (!neighborNode.getIsVisited())
+            {
+                processParallelIncorporationForEachNode(neighborNode);
+            }
+
         }
 
     }
@@ -174,6 +207,14 @@ public abstract class DrawCircuit {
 
         processSeriesIncorporationForEachNode(controller.getGround());
 
+        for (Branch branch : newSeriesBranches)
+        {
+            for (Branch subBranch : branch.getSubBranches())
+            {
+                allBranchesTemp.remove(subBranch);
+            }
+            allBranchesTemp.add(branch);
+        }
     }
 
 
@@ -186,12 +227,100 @@ public abstract class DrawCircuit {
             findConnectedSeriesBranches(node,branch);
         }
 
+        int counter = 0;
+
+        for (Branch branch : allBranchesTemp)
+        {
+            if (!branch.getIsVisited())
+            {
+                counter++;
+            }
+        }
+
+        if ( counter != 0 )
+        {
+
+            for (Branch branch : getNeighborBranchesOfThisNode(node))
+            {
+                processSeriesIncorporationForEachNode(branch.getAnotherNodeOfBranch(node));
+            }
+
+        }
+
+
     }
 
     private static void findConnectedSeriesBranches(Node node,Branch branch)
     {
         if (!branch.getIsVisited())
         {
+            branch.setVisited();
+
+            if ( ( getNeighborBranchesOfThisNode( branch.getAnotherNodeOfBranch(node) ).size() == 2 ) &&
+                    ( !newTempBranchStartNode.equals( branch.getAnotherNodeOfBranch(node) ) ) )
+            {
+                /*System.out.println("input node: "+node.getName());
+                System.out.println("input branch: "+branch.getName());*/
+
+                newTempBranch.add(branch);
+                Branch connectedBranch = null;
+
+                for (Branch branch1 : getNeighborBranchesOfThisNode(branch.getAnotherNodeOfBranch(node)))
+                {
+                    if (!branch.equals(branch1))
+                    {
+                        connectedBranch = branch1;
+                    }
+                }
+
+                findConnectedSeriesBranches( branch.getAnotherNodeOfBranch(node) , connectedBranch );
+            }
+            else
+            {
+                /*System.out.println("input node: "+node.getName());
+                System.out.println("input branch: "+branch.getName());*/
+
+
+                if ( !newTempBranchStartNode.equals( branch.getAnotherNodeOfBranch(node) ) )
+                {
+                    newTempBranch.add(branch);
+                }
+
+                if (newTempBranch.size() >= 2)
+                {
+                    if ( !newTempBranchStartNode.equals( branch.getAnotherNodeOfBranch(node) ) )
+                    {
+                        newTempBranchEndNode = branch.getAnotherNodeOfBranch(node);
+                    }
+                    else
+                    {
+                        newTempBranchEndNode = node;
+                    }
+
+                    /*System.out.println("new Temp Branch Start Node is :"+newTempBranchStartNode.getName());
+                    System.out.println("new Temp Branch End Node is :"+newTempBranchEndNode.getName());*/
+
+                    StringBuilder newBranchName = new StringBuilder();
+
+                    for (Branch tempBranch : newTempBranch)
+                    {
+                        newBranchName.append(tempBranch.getName()+" ");
+                    }
+
+                    Branch newBranch = new Branch(newBranchName.toString(),newTempBranchStartNode,newTempBranchEndNode);
+                    newBranch.setTheTypeSeries();
+
+                    for (Branch tempBranch : newTempBranch) {
+                        newBranch.getSubBranches().add(tempBranch);
+                        tempBranch.setSuperiorBranch(newBranch);
+                    }
+
+                    newSeriesBranches.add(newBranch);
+
+                }
+
+            }
+
 
         }
     }
@@ -238,6 +367,14 @@ public abstract class DrawCircuit {
             branch.setNotVisited();
         }
     }
+
+
+    private static void setBranchesHeight()
+    {
+
+    }
+
+
 
     private static void setParallelElement() {
         InputController controller = new InputController();
@@ -322,6 +459,17 @@ public abstract class DrawCircuit {
     }
 
 
+    public static ArrayList<Branch> getAllBranchesTemp() {
+        return allBranchesTemp;
+    }
+
+    public static ArrayList<Branch> getNewSeriesBranches() {
+        return newSeriesBranches;
+    }
+
+    public static ArrayList<Branch> getNewTempBranch() {
+        return newTempBranch;
+    }
 }
 
 class PaneNode {

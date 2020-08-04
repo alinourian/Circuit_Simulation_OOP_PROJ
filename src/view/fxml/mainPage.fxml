@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
+<BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
    <top>
       <VBox prefHeight="75.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
