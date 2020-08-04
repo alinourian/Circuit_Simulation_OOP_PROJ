@@ -76,7 +76,7 @@ public abstract class Errors {
     }
 
     public static void groundError() {
-        string = "ground not found!";
+        string = "ERROR -4 : \n" + "ground not found!";
         System.err.println(string);
         //MainPageController.printResult(string, false);
     }
@@ -91,6 +91,11 @@ public abstract class Errors {
         string = "Transition failed!\n" +
                 "Please check your simulations constant.\n" +
                 "They're not fit!";
+        System.err.println(string);
+    }
+
+    public static void errors(int num, String errorType) {
+        string = "ERROR " + num + " : \n" + errorType;
         System.err.println(string);
     }
 

@@ -15,6 +15,7 @@ public class Node {
     private Node parentNode = null;
     private Union includingUnion;
     private int isVisited;
+    private boolean groundMatch;
 
 
     public Node (String name) {
@@ -22,6 +23,7 @@ public class Node {
         this.voltage = 0;
         this.saveVoltage = 0;
         this.isVisited = 0;
+        groundMatch = false;
         this.neighborNodes = new ArrayList<>();
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
@@ -41,7 +43,6 @@ public class Node {
         }
         return totalCurrent;
     }
-
 
     public boolean getIsVisited() {
         return isVisited != 0;
@@ -78,6 +79,10 @@ public class Node {
         return voltages;
     }
 
+    public boolean isGroundMatch() {
+        return groundMatch;
+    }
+
     public void setSaveVoltage(double saveVoltage) {
         this.saveVoltage = saveVoltage;
     }
@@ -94,6 +99,10 @@ public class Node {
         if (!name.equals("0")) {
             this.voltage = voltage;
         }
+    }
+
+    public void setGroundMatch(boolean groundMatch) {
+        this.groundMatch = groundMatch;
     }
 
     @Override

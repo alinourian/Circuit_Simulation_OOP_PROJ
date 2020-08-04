@@ -22,6 +22,26 @@ public class VoltageSource extends Source {
         super(name, nodeP, nodeN);
     }
 
+    public double getCurrentForVSource(Node node1, Node node2) {
+        double totalCurrent = 0 ;
+
+        for (Element element : node1.getElements()) {
+            totalCurrent += element.getCurrent(node1);
+        }
+        for (Source source : node1.getSources()) {
+            if (source instanceof CurrentSource) {
+                totalCurrent += source.getCurrent(node1);
+            } else {
+                VoltageSource vSource = (VoltageSource) source;
+                Node node0 = vSource.getNodeP().getName().equals(node1.getName()) ? vSource.getNodeN() : vSource.getNodeP();
+                if (node0 != node2) {
+                    totalCurrent += vSource.getCurrentForVSource(node0, node1);
+                }
+            }
+        }
+        return -1 * totalCurrent;
+    }
+
     @Override
     public double getVoltage(Node node) {
         double value = voltageDC + amplitude * Math.sin(2 * Math.PI * frequency * Solver.time + phase);

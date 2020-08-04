@@ -1,6 +1,8 @@
 package view.fxml;
 
+import controller.InputController;
 import controller.Solver;
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -14,6 +16,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Branch;
+import model.Element;
+import model.Source;
 import view.Errors;
 import view.file.FileScanner;
 
@@ -22,19 +27,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainPageController {
-    private static MainPageController instance;
-
-    public static MainPageController getInstance() {
-        if (instance == null) {
-            instance = new MainPageController();
-        }
-        return instance;
-    }
 
     private static final Stage Stage = new Stage();
 
@@ -49,7 +47,13 @@ public class MainPageController {
     private File file;
     private String firstBackUpText;
     private final ExecutorService executor = Executors.newCachedThreadPool();
-    boolean bool = true;
+
+    private final long PERIOD = 200_000_000L;
+    private long timer = -1;
+    private AnimationTimer animationTimer;
+    private double additional = 0;
+
+    // MENU OPTIONS && TOOLBAR OPTIONS
 
     public void addNewTab() {
         if (FileScanner.hasFile) {
@@ -63,7 +67,11 @@ public class MainPageController {
         }
     }
 
-    public void chooseFile() {
+    public void newFile() {
+        resetPage();
+    }
+
+    public void openFile() {
         FileScanner.hasFile = false;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open File");
@@ -84,60 +92,6 @@ public class MainPageController {
         percentLabel.setVisible(false);
         percentLabel.setText("0%");
         progressBar.setProgress(0);
-    }
-
-    public void simulate() {
-        errorTextArea.setText("");
-        simulating();
-        Task displayMessage = new Task<Void>() {
-            @Override
-            public Void call() {
-                Platform.runLater(() -> {
-                    if (file == null) {
-                        file = new File("newFile.txt");
-                    }
-                    updateFile();
-                    //percentLabel.setText("40%");
-                    //progressBar.setProgress(-1);
-
-                    if (FileScanner.runProgram(file)) {
-                        drawCircuit();
-                        errorTextArea.setText("File successfully simulated.\n" + Solver.output);
-                        percentLabel.setText("100%");
-                        progressBar.setProgress(1);
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Can not simulate the file!");
-                        alert.show();
-                        errorTextArea.setText(Errors.string + "\nERROR happened in simulation!");
-                        percentLabel.setText("ERROR");
-                        progressBar.setProgress(0);
-                    }
-                });
-                return null;
-            }
-        };
-        executor.execute(displayMessage);
-    }
-
-    private void simulating() {
-        errorTextArea.setText("Program is simulating ...\n" +
-                "Please wait ...");
-        progressBar.setVisible(true);
-        percentLabel.setVisible(true);
-        percentLabel.setText("0%");
-        progressBar.setProgress(-1);
-        /*
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ignored) {
-        }
-         */
-    }
-
-    private void updateFile() {
-        closeTabs();
-        saveFile();
     }
 
     public void saveFile() {
@@ -175,8 +129,8 @@ public class MainPageController {
         }
     }
 
-    public void undoToSave() {
-        fileTextArea.setText(firstBackUpText);
+    public void print() {
+        //TODO
     }
 
     public void showPrintPreview() throws IOException {
@@ -196,6 +150,49 @@ public class MainPageController {
         }
     }
 
+    public void setting() {
+        //TODO
+    }
+
+    public void Exit() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit");
+        alert.setHeaderText("");
+        alert.setContentText("Are you sure you want to exit?");
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.OK) {
+            Stage.close();
+        }
+    }
+
+    public void undoToSave() {
+        fileTextArea.setText(firstBackUpText);
+    }
+
+    public void cut() {
+        //TODO
+    }
+
+    public void copy() {
+        //TODO
+    }
+
+    public void paste() {
+        //TODO
+    }
+
+    public void delete() {
+        //TODO
+    }
+
+    public void zoomIn() {
+        //TODO
+    }
+
+    public void zoomOut() {
+        //TODO
+    }
+
     public void getHelp() throws IOException {
         Stage helpStage = HelpPageController.getStage();
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("helpPage.fxml"));
@@ -205,6 +202,153 @@ public class MainPageController {
         helpStage.getIcons().add(Main.stageIcon);
         helpStage.setResizable(false);
         helpStage.show();
+    }
+
+    public void simulate() {
+        errorTextArea.setText("");
+        simulating();
+        Task displayMessage = new Task<Void>() {
+            @Override
+            public Void call() {
+                Platform.runLater(() -> {
+                    if (file == null) {
+                        file = new File("newFile.txt");
+                    }
+                    fillProgress();
+                    updateFile();
+
+                    if (FileScanner.runProgram(file)) {
+                        additional = 0.1;
+                        drawCircuit();
+                        animationTimer.stop();
+                        errorTextArea.setText("File successfully simulated.\n" + Solver.output);
+                        percentLabel.setText("100%");
+                        progressBar.setProgress(1);
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Can not simulate the file!");
+                        alert.show();
+                        animationTimer.stop();
+                        errorTextArea.setText(Errors.string + "\nERROR happened in simulation!");
+                        percentLabel.setText("ERROR");
+                        progressBar.setProgress(0);
+                    }
+                    timer = -1;
+                    additional = 0;
+                });
+                return null;
+            }
+        };
+        executor.execute(displayMessage);
+    }
+
+    public void drawVCPGraphs() {
+        if (!FileScanner.hasFile) {
+            return;
+        }
+        ArrayList<String> choices = new ArrayList<>();
+        for (Element element : InputController.getInstance().getElements()) {
+            choices.add(element.getName());
+        }
+        for (Source source : InputController.getInstance().getSources()) {
+            choices.add(source.getName());
+        }
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(
+                InputController.getInstance().getElements().get(0).getName(), choices);
+        dialog.setTitle("Choice Dialog");
+        dialog.setHeaderText("Draw Voltage/Current/Power Graph");
+        dialog.setContentText("Choose your element :");
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()){
+            Element element = null;
+            Source source = null;
+            for (Element temp : InputController.getInstance().getElements()) {
+                if (temp.getName().equals(result.get())) {
+                    element = temp;
+                }
+            }
+            if (element == null) {
+                for (Source temp : InputController.getInstance().getSources()) {
+                    if (temp.getName().equals(result.get())) {
+                        source = temp;
+                    }
+                }
+                NewTab voltageTab = new NewTab("NewTab  ");
+                assert source != null;
+                voltageTab.drawCustomChart(NewTab.subCharts(source.getNodeP().getVoltages(),
+                        source.getNodeN().getVoltages()), "(Node " + source.getNodeP().getName() + ") -" +
+                        "(Node " + source.getNodeN().getName() + ")", "Voltage");
+                NewTab currentTab = new NewTab("NewTab  ");
+                currentTab.drawCustomChart(source.getCurrents(), source.getName(), "Current");
+                NewTab powerTab = new NewTab("NewTab  ");
+                powerTab.drawCustomChart(NewTab.multiplyCharts(source.getCurrents(),
+                        NewTab.subCharts(source.getNodeP().getVoltages(), source.getNodeN().getVoltages())),
+                        source.getName(), "Power");
+                tabPane.getTabs().addAll(voltageTab, currentTab, powerTab);
+                tabPane.getSelectionModel().select(powerTab);
+            } else {
+                NewTab voltageTab = new NewTab("NewTab  ");
+                voltageTab.drawCustomChart(NewTab.subCharts(element.getNodeP().getVoltages(),
+                        element.getNodeN().getVoltages()), "(Node " + element.getNodeP().getName() + ") -" +
+                        "(Node " + element.getNodeN().getName() + ")", "Voltage");
+                NewTab currentTab = new NewTab("NewTab  ");
+                currentTab.drawCustomChart(element.getCurrents(), element.getName(), "Current");
+                NewTab powerTab = new NewTab("NewTab  ");
+                powerTab.drawCustomChart(NewTab.multiplyCharts(element.getCurrents(),
+                        NewTab.subCharts(element.getNodeP().getVoltages(), element.getNodeN().getVoltages())),
+                        element.getName(), "Power");
+                tabPane.getTabs().addAll(voltageTab, currentTab, powerTab);
+                tabPane.getSelectionModel().select(powerTab);
+            }
+        }
+    }
+
+    public void drawCircuit() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("not yet!");
+        //alert.show();
+        //Pane pane = DrawCircuit.drawCircuit();
+        //TODO
+    }
+
+    // ***** HELPING METHODS *****
+
+    private void simulating() {
+        errorTextArea.setText("Program is simulating ...\n" +
+                "Please wait ...");
+        progressBar.setVisible(true);
+        percentLabel.setVisible(true);
+        percentLabel.setText("0%");
+        progressBar.setProgress(-1);
+    }
+
+    public void fillProgress() {
+        progressBar.setVisible(true);
+        animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                if (timer == -1) {
+                    timer = now;
+                    progressBar.setProgress(0);
+                } else if (now - timer > PERIOD) {
+                    if (additional == 0.1 && progressBar.getProgress() < 1) {
+                        progressBar.setProgress(progressBar.getProgress() + additional);
+                        timer = now;
+                        double percent = progressBar.getProgress() * 100;
+                        percentLabel.setText(percent + "%");
+                    }
+                }
+            }
+        };
+        animationTimer.start();
+    }
+
+    private void updateFile() {
+        closeTabs();
+        saveFile();
     }
 
     private StringBuilder getTextOfFile(File file) {
@@ -238,26 +382,20 @@ public class MainPageController {
         }
     }
 
-    public void Exit() {
-        Stage.close();
+    private void resetPage() {
+        FileScanner.hasFile = false;
+        closeTabs();
+        fileTextArea.setText("");
+        errorTextArea.setText("");
+        InputController.getInstance().restartProgram();
     }
 
-    public void drawGraph() {
-
-    }
-
-    public void drawCircuit() {
-        if (bool) {
-            Pane pane = DrawCircuit.drawCircuit();
-            borderPane.getChildren().add(pane);
-            bool = false;
-        }
-
-    }
 //  GETTERS AND SETTERS
 
     public static Stage getStage() {
         return Stage;
     }
+
+
 }
 

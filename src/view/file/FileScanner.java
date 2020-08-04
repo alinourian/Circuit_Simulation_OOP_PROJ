@@ -1,5 +1,6 @@
 package view.file;
 
+import controller.CircuitErrorHandling;
 import controller.InputController;
 import controller.Solver;
 import view.Errors;
@@ -15,6 +16,9 @@ public abstract class FileScanner {
     public static boolean runProgram(File file) {
         InputController.getInstance().restartProgram();
         if (run(file)) {
+            if (!CircuitErrorHandling.errors()) {
+                return false;
+            }
             hasFile = true;
             //  Solve
             Solver solver = new Solver();

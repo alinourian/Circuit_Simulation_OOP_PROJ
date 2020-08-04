@@ -75,64 +75,37 @@ public class Union {
         }
     }
 
-    public double getTotalCurrent()
-    {
+    public double getTotalCurrent() {
         double totalCurrent = 0 ;
 
-        if (this.getType().equals("SingleNode"))
-        {
+        if (this.getType().equals("SingleNode")) {
             totalCurrent += this.getFatherOfUnion().getTotalCurrent();
             return totalCurrent;
         }
-        else
-        {
+        for (Node node : this.getNodes()) {
 
-
-            for (Node node : this.getNodes()) {
-
-                // these 4 lines should be comment
-                /*if (node.getName().equals("0"))
-                {
-                    continue;
-                }
-                */
-
-                for (Node neighborNode : node.getNeighborNodes())
-                {
-                    if (!this.getNodes().contains(neighborNode))
-                    {
-                        for (Element element : node.getElements())
-                        {
-                            if (  ( element.getNodeP().equals(node) && element.getNodeN().equals(neighborNode) )  ||
-                                    ( element.getNodeN().equals(node) && element.getNodeP().equals(neighborNode) )  )
-                            {
-                                totalCurrent += element.getCurrent(node);
-                            }
+            for (Node neighborNode : node.getNeighborNodes()) {
+                if (!this.getNodes().contains(neighborNode)) {
+                    for (Element element : node.getElements()) {
+                        if ((element.getNodeP().equals(node) && element.getNodeN().equals(neighborNode)) ||
+                                (element.getNodeN().equals(node) && element.getNodeP().equals(neighborNode))) {
+                            totalCurrent += element.getCurrent(node);
                         }
-
-
-                        for (Source source : node.getSources())
-                        {
-                            if (source instanceof CurrentSource)
-                            {
-                                if ( ( source.getNodeP().equals(node) && source.getNodeN().equals(neighborNode) ) ||
-                                        ( source.getNodeN().equals(node) && source.getNodeP().equals(neighborNode) ) )
-                                {
-                                    CurrentSource currentSource = (CurrentSource)source;
-                                    totalCurrent += currentSource.getCurrent(node);
-                                }
-                            }
-                        }
-
-
                     }
+                    for (Source source : node.getSources()) {
+                        if (source instanceof CurrentSource) {
+                            if ((source.getNodeP().equals(node) && source.getNodeN().equals(neighborNode)) ||
+                                    (source.getNodeN().equals(node) && source.getNodeP().equals(neighborNode))) {
+                                CurrentSource currentSource = (CurrentSource) source;
+                                totalCurrent += currentSource.getCurrent(node);
+                            }
+                        }
+                    }
+
                 }
-
-
             }
-
-            return totalCurrent;
         }
+        return totalCurrent;
     }
 
     public void setFatherOfUnion(Node fatherOfUnion) {

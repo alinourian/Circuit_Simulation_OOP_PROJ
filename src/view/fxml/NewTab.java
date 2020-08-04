@@ -45,15 +45,15 @@ public class NewTab extends Tab {
         this.voltagesButtons = new ArrayList<>();
         this.currentsButtons = new ArrayList<>();
         this.powersButtons = new ArrayList<>();
-        this.addNewTab();
+        this.initial();
     }
 
-    private void addNewTab() {
+    private void initial() {
         accordion.setMaxHeight(500);
         accordion.setMinWidth(200);
-        TitledPane voltagePane = addChooser(voltagesButtons, Type.VOLTAGE);
-        TitledPane currentPane = addChooser(currentsButtons, Type.CURRENT);
-        TitledPane powerPane = addChooser(powersButtons, Type.POWER);
+        TitledPane voltagePane = addChooserBox(voltagesButtons, Type.VOLTAGE);
+        TitledPane currentPane = addChooserBox(currentsButtons, Type.CURRENT);
+        TitledPane powerPane = addChooserBox(powersButtons, Type.POWER);
 
         accordion.getPanes().add(voltagePane);
         accordion.getPanes().add(currentPane);
@@ -173,7 +173,7 @@ public class NewTab extends Tab {
         });
     }
 
-    private TitledPane addChooser(ArrayList<RadioButton> graphsForDraw, Type type) {
+    private TitledPane addChooserBox(ArrayList<RadioButton> graphsForDraw, Type type) {
         VBox vBox = new VBox(15);
         vBox.setPadding(new Insets(15));
 
@@ -301,6 +301,17 @@ public class NewTab extends Tab {
                 break;
             }
         }
+        for (Source source : InputController.getInstance().getSources()) {
+            if (radioButton.getText().equals(source.getName())) {
+                for (int i = 0; i < source.getCurrents().size(); i++) {
+                    XYChart.Data<Number, Number> data;
+                    data = new XYChart.Data<>(i * InputController.getInstance().getDeltaT(),
+                            source.getCurrents().get(i));
+                    series.getData().add(data);
+                }
+                break;
+            }
+        }
         return series;
     }
 
@@ -313,7 +324,20 @@ public class NewTab extends Tab {
                 for (int i = 0; i < element.getCurrents().size(); i++) {
                     XYChart.Data<Number, Number> data;
                     data = new XYChart.Data<>(i * InputController.getInstance().getDeltaT(),
-                            element.getCurrents().get(i) * element.getVoltage());
+                            element.getCurrents().get(i) *
+                                    (element.getNodeP().getVoltages().get(i) - element.getNodeN().getVoltages().get(i)));
+                    series.getData().add(data);
+                }
+                break;
+            }
+        }
+        for (Source source : InputController.getInstance().getSources()) {
+            if (radioButton.getText().equals(source.getName())) {
+                for (int i = 0; i < source.getCurrents().size(); i++) {
+                    XYChart.Data<Number, Number> data;
+                    data = new XYChart.Data<>(i * InputController.getInstance().getDeltaT(),
+                            source.getCurrents().get(i) *
+                                    (source.getNodeP().getVoltages().get(i) - source.getNodeN().getVoltages().get(i)));
                     series.getData().add(data);
                 }
                 break;
@@ -367,4 +391,59 @@ public class NewTab extends Tab {
             alert.show();
         }
     }
+
+    // ***********************
+
+    public void drawCustomChart(ArrayList<Double> chartList, String name, String title) {
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(name);
+
+        for (int i = 0; i < chartList.size(); i++) {
+            XYChart.Data<Number, Number> data;
+            data = new XYChart.Data<>(i * InputController.getInstance().getDeltaT(), chartList.get(i));
+            series.getData().add(data);
+        }
+        chartPane.getChildren().clear();
+        AreaChart<Number, Number> tempChart = new AreaChart<>(new NumberAxis(), new NumberAxis());
+        tempChart.getData().add(series);
+        tempChart.setTitle(title);
+        tempChart.setStyle("-fx-font-style: italic");
+        tempChart.setCreateSymbols(false);
+        tempChart.setPrefWidth(1920);
+        tempChart.setPrefHeight(1080);
+        chartPane.getChildren().add(tempChart);
+    }
+
+    public static ArrayList<Double> sumCharts(ArrayList<Double> chart1, ArrayList<Double> chart2) {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = 0; i < Math.min(chart1.size(), chart2.size()); i++) {
+            result.add(chart1.get(i) + chart2.get(i));
+        }
+        return result;
+    }
+
+    public static ArrayList<Double> subCharts(ArrayList<Double> chart1, ArrayList<Double> chart2) {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = 0; i < Math.min(chart1.size(), chart2.size()); i++) {
+            result.add(chart1.get(i) - chart2.get(i));
+        }
+        return result;
+    }
+
+    public static ArrayList<Double> multiplyCharts(ArrayList<Double> chart1, ArrayList<Double> chart2) {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = 0; i < Math.min(chart1.size(), chart2.size()); i++) {
+            result.add(chart1.get(i) * chart2.get(i));
+        }
+        return result;
+    }
+
+    public static ArrayList<Double> divideCharts(ArrayList<Double> chart1, ArrayList<Double> chart2) {
+        ArrayList<Double> result = new ArrayList<>();
+        for (int i = 0; i < Math.min(chart1.size(), chart2.size()); i++) {
+            result.add(chart1.get(i) / chart2.get(i));
+        }
+        return result;
+    }
+
 }

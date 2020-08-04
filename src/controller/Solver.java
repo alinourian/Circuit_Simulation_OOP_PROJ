@@ -1,8 +1,6 @@
 package controller;
 
-import model.Element;
-import model.Node;
-import model.Union;
+import model.*;
 import view.Errors;
 import view.console.ShowCircuit;
 import view.file.SaveOnFile;
@@ -18,7 +16,7 @@ public class Solver {
     public static double time = 0;
     public static int step = 0;
     public static int measureErrorEachStep = 0;
-    private final int MAX_ERROR_MEASUREMENT_TRYING = 500000;
+    private final int MAX_ERROR_MEASUREMENT_TRYING = 10_000_000;
     private final double KCL_ERROR = Math.pow(10, -2);
     public static StringBuilder output = new StringBuilder();
     public ArrayList<Integer> errors = new ArrayList<>();
@@ -346,6 +344,14 @@ public class Solver {
     private void saveCurrents() {
         for (Element element : controller.getElements()) {
             element.getCurrents().add(element.getCurrent(element.getNodeP()));
+        }
+        for (Source source : controller.getSources()) {
+            if (source instanceof VoltageSource) {
+                VoltageSource vSource = (VoltageSource) source;
+                source.getCurrents().add(vSource.getCurrentForVSource(vSource.getNodeP(), vSource.getNodeN()));
+            }else if (source instanceof CurrentSource) {
+                source.getCurrents().add(source.getCurrent(source.getNodeP()));
+            }
         }
     }
 

@@ -2,10 +2,14 @@ package model;
 
 import enums.Type;
 
+import java.util.ArrayList;
+
 public class Source extends Branch {
+    protected ArrayList<Double> currents;
 
     public Source(String name, Node nodeP, Node nodeN) {
         super(name, nodeP, nodeN);
+        currents = new ArrayList<>();
     }
 
     public double getVoltage(Node node) {
@@ -34,6 +38,10 @@ public class Source extends Branch {
 
     public Type getType() {
         return Type.SOURCE;
+    }
+
+    public ArrayList<Double> getCurrents() {
+        return currents;
     }
 
     @Override
