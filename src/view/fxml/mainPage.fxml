@@ -227,7 +227,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#drawCircuit" prefHeight="35.0" prefWidth="48.0">
+                  <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="48.0">
                      <graphic>
                         <ImageView fitHeight="32.0" fitWidth="35.0" pickOnBounds="true">
                            <image>
