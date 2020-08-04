@@ -11,6 +11,7 @@ public class Branch {
     private String type = new String();
     private int width;
     private int height;
+    private int isVisited;
 
     public Branch(String name, Node nodeP, Node nodeN) {
         this.name = name;
@@ -32,6 +33,12 @@ public class Branch {
     public void setTheTypeParallel() { this.type = "Parallel"; }
 
     public void setTheTypeSeries() { this.type = "Series"; }
+
+    public void setVisited() { this.isVisited = 1; }
+
+    public void setNotVisited() {this.isVisited = 0; }
+
+    public boolean getIsVisited() { return isVisited == 1; }
 
     public Node getNodeP() { return nodeP; }
 

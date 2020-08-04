@@ -18,6 +18,10 @@ public abstract class DrawCircuit {
     private static final Pane circuitPane = new Pane();
     private static final InputController controller = InputController.getInstance();
     private static ArrayList<Branch> allBranchesTemp = new ArrayList<>();
+    private static ArrayList<Branch>    newSeriesBranches   = new ArrayList<>();
+    private static ArrayList<Branch>    newTempBranch   = new ArrayList<>();
+    private static Node newTempBranchStartNode;
+    private static Node newTempBranchEndNode;
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
     private static final Image capacitor = new Image("view/img/element/Capacitor.png");
@@ -162,16 +166,34 @@ public abstract class DrawCircuit {
 
     private static void incorporateSeriesBranchesToNewBranch()
     {
+        newSeriesBranches.clear();
+
         controller.setAllNodesNotVisited();
 
+        setBranchesNotVisited(allBranchesTemp);
 
+        processSeriesIncorporationForEachNode(controller.getGround());
 
     }
 
 
     private static void processSeriesIncorporationForEachNode(Node node)
     {
+        newTempBranchStartNode = node;
 
+        for (Branch branch : getNeighborBranchesOfThisNode(node)) {
+            newTempBranch.clear();
+            findConnectedSeriesBranches(node,branch);
+        }
+
+    }
+
+    private static void findConnectedSeriesBranches(Node node,Branch branch)
+    {
+        if (!branch.getIsVisited())
+        {
+
+        }
     }
 
 
@@ -208,6 +230,13 @@ public abstract class DrawCircuit {
         }
 
         return nodes;
+    }
+
+    private static void setBranchesNotVisited(ArrayList<Branch> branches)
+    {
+        for (Branch branch : branches) {
+            branch.setNotVisited();
+        }
     }
 
     private static void setParallelElement() {
