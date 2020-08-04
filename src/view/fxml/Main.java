@@ -26,5 +26,5 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    //TODO : error handling phase 1 - diode - graphic - help page
+    //TODO : diode - graphic - help page
 }

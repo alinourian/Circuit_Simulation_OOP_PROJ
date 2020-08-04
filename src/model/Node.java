@@ -16,7 +16,7 @@ public class Node {
     private Union includingUnion;
     private int isVisited;
     private boolean groundMatch;
-
+    private int updateUnionCounter;
 
     public Node (String name) {
         this.name = name;
@@ -24,22 +24,20 @@ public class Node {
         this.saveVoltage = 0;
         this.isVisited = 0;
         groundMatch = false;
+        this.updateUnionCounter = 0;
         this.neighborNodes = new ArrayList<>();
         this.elements = new ArrayList<>();
         this.sources = new ArrayList<>();
         this.voltages = new ArrayList<>();
     }
 
-    public double getTotalCurrent(){
+    public double getTotalCurrent() {
         double totalCurrent = 0;
         for (Element element : elements){
             totalCurrent += element.getCurrent(InputController.getInstance().findNode(name));
         }
         for (Source source : sources) {
-            if (source instanceof CurrentSource) {
-                CurrentSource currentSource = (CurrentSource)source;
-                totalCurrent += currentSource.getCurrent(InputController.getInstance().findNode(name));
-            }
+                totalCurrent += source.getCurrent(InputController.getInstance().findNode(name));
         }
         return totalCurrent;
     }
@@ -81,6 +79,10 @@ public class Node {
         return groundMatch;
     }
 
+    public int getUpdateUnionCounter() {
+        return updateUnionCounter;
+    }
+
     public void setSaveVoltage(double saveVoltage) {
         this.saveVoltage = saveVoltage;
     }
@@ -101,6 +103,10 @@ public class Node {
 
     public void setGroundMatch(boolean groundMatch) {
         this.groundMatch = groundMatch;
+    }
+
+    public void setUpdateUnionCounter(int updateUnionCounter) {
+        this.updateUnionCounter = updateUnionCounter;
     }
 
     @Override

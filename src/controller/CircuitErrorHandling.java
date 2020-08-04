@@ -1,6 +1,8 @@
 package controller;
 
 import model.Node;
+import model.Source;
+import model.VoltageSource;
 import view.Errors;
 
 public class CircuitErrorHandling {
@@ -8,19 +10,7 @@ public class CircuitErrorHandling {
     private static final InputController controller = InputController.getInstance();
 
     public static boolean errors() {
-        return error1() && error2() && error3() && error4() && error5();
-    }
-
-    private static boolean error1() {
-        return true;
-    }
-
-    private static boolean error2() {
-        return true;
-    }
-
-    private static boolean error3() {
-        return true;
+        return error4() && error5();
     }
 
     private static boolean error4() {
@@ -28,9 +18,9 @@ public class CircuitErrorHandling {
         if(node == null) {
             Errors.groundError();
             return false;
+        } else {
+            return error4HelpingMethod(node, node);
         }
-        //TODO
-        return true;
     }
 
     private static boolean error5() {
@@ -63,5 +53,22 @@ public class CircuitErrorHandling {
                 getGroundMatches(neighborNode);
             }
         }
+    }
+
+    private static boolean error4HelpingMethod(Node node, Node nodeOff) {
+        for (Source source : node.getSources()) {
+            if (source instanceof VoltageSource) {
+                Node node0 = source.getNodeP().getName().equals(node.getName()) ? source.getNodeN() : source.getNodeP();
+                if (node0 != nodeOff) {
+                    if (node0.getName().equals("0")) {
+                        Errors.errors(-4, "voltages conflicted!");
+                        return false;
+                    } else {
+                        return CircuitErrorHandling.error4HelpingMethod(node0, node);
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

@@ -1,5 +1,7 @@
 package model;
 
+import view.Errors;
+
 import java.util.ArrayList;
 
 public class Union {
@@ -41,38 +43,44 @@ public class Union {
         }
     }
 
-    public void updateNodesVoltages()
-    {
-        processNodesVoltagesUpdate(fatherOfUnion);
+    public boolean updateNodesVoltages() {
+        for (Node node : getNodes()) {
+            node.setUpdateUnionCounter(0);
+        }
+        return processNodesVoltagesUpdate(fatherOfUnion);
     }
 
-    public void processNodesVoltagesUpdate(Node node)
-    {
-        for (Node neighborNode : node.getNeighborNodes())
-        {
-
-            if (node.getIncludingUnion().getNodes().contains(neighborNode))
-            {
-                if (neighborNode.getParentNode().equals(node))
-                {
-                    for (Source source : node.getSources())
-                    {
-                        if (source instanceof VoltageSource)
-                        {
+    public boolean processNodesVoltagesUpdate(Node node) {
+        for (Node neighborNode : node.getNeighborNodes()) {
+            if (node.getIncludingUnion().getNodes().contains(neighborNode)) {
+                if (neighborNode.getParentNode().equals(node)) {
+                    for (Source source : node.getSources()) {
+                        if (source instanceof VoltageSource) {
                             VoltageSource voltageSource = (VoltageSource) source;
                             if ( ( voltageSource.getNodeP().equals(node) && voltageSource.getNodeN().equals(neighborNode) ) ||
-                                    ( voltageSource.getNodeN().equals(node) && voltageSource.getNodeP().equals(neighborNode)) )
-                            {
-                                neighborNode.setVoltage(node.getVoltage() + voltageSource.getVoltage(neighborNode));
+                                    ( voltageSource.getNodeN().equals(node) && voltageSource.getNodeP().equals(neighborNode)) ) {
+                                double temp = neighborNode.getVoltage();
+                                if (neighborNode.getUpdateUnionCounter() >= 1) {
+                                    neighborNode.setVoltage(node.getVoltage() + voltageSource.getVoltage(neighborNode));
+                                    if (temp != neighborNode.getVoltage()) {
+                                        Errors.errors(-3, "Voltages conflicted!");
+                                        return false;
+                                    } else {
+                                        neighborNode.setUpdateUnionCounter(neighborNode.getUpdateUnionCounter() + 1);
+                                        neighborNode.setVoltage(node.getVoltage() + voltageSource.getVoltage(neighborNode));
+                                    }
+                                } else {
+                                    neighborNode.setUpdateUnionCounter(neighborNode.getUpdateUnionCounter() + 1);
+                                    neighborNode.setVoltage(node.getVoltage() + voltageSource.getVoltage(neighborNode));
+                                }
                             }
                         }
                     }
-
-                    processNodesVoltagesUpdate(neighborNode);
+                    return processNodesVoltagesUpdate(neighborNode);
                 }
             }
-
         }
+        return true;
     }
 
     public double getTotalCurrent() {

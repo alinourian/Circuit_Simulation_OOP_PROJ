@@ -16,7 +16,7 @@ public class Solver {
     public static double time = 0;
     public static int step = 0;
     public static int measureErrorEachStep = 0;
-    private final int MAX_ERROR_MEASUREMENT_TRYING = 10_000_000;
+    private final int MAX_ERROR_MEASUREMENT_TRYING = 5_000_000;
     private final double KCL_ERROR = Math.pow(10, -2);
     public static StringBuilder output = new StringBuilder();
     public ArrayList<Integer> errors = new ArrayList<>();
@@ -37,18 +37,22 @@ public class Solver {
         UnionCreator unionCreator = new UnionCreator();
         unionCreator.run();
 
-
         do {
 
             double _time = ((double) Math.round(time * 10000))/10000;
             Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
-            solve1();
+            if (!solve()) {
+                return false;
+            }
 
             errors.add(measureErrorEachStep);
 
             if (measureErrorEachStep > MAX_ERROR_MEASUREMENT_TRYING) {
+                if (!checkError2()) {
+                    return false;
+                }
                 Errors.transitionFailed();
                 return false;
             }
@@ -76,113 +80,7 @@ public class Solver {
         return true;
     }
 
-
-    public void solve(){
-
-        measureErrorEachStep = 0;
-
-        do {
-
-            for (Union union : controller.getUnions())
-            {
-                if (union.getType().equals("SingleNode"))
-                {
-                    if (!union.getFatherOfUnion().getName().equals("0"))
-                    {
-                      //  System.out.println("single");
-                        double totalCurrent1 = union.getTotalCurrent();
-                        double totalCurrent2;
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
-                        updateElementsCurrent();
-                        double tempTotalCurrentPlus = union.getTotalCurrent();
-                        setBackElementCurrent();
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - 2*controller.getDeltaV());
-                        updateElementsCurrent();
-                        double tempTotalCurrentMinus = union.getTotalCurrent();
-                        setBackElementCurrent();
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
-
-
-                        if (Math.abs(tempTotalCurrentMinus) >= Math.abs(tempTotalCurrentPlus))
-                            totalCurrent2 = tempTotalCurrentPlus;
-                        else
-                            totalCurrent2 = tempTotalCurrentMinus;
-
-                        /*System.out.println("union : "+union.getName());
-                        System.out.println("total cur 1: "+totalCurrent1);
-                        System.out.println("total cur 2: "+totalCurrent2);
-*/                        /*System.out.println("tem cur plus: "+tempTotalCurrentPlus);
-                        System.out.println("tem cur minus: "+tempTotalCurrentMinus);*/
-
-
-                        double voltage = union.getFatherOfUnion().getVoltage() +
-                                ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
-
-                    //    System.out.println("voltage is: "+voltage);
-
-                        union.getFatherOfUnion().setSaveVoltage(voltage);
-                    }
-                }
-                else
-                {
-                    if (!union.getFatherOfUnion().getName().equals("0"))
-                    {
-                        System.out.println("multi");
-                        double totalCurrent1 = union.getTotalCurrent();
-                        double totalCurrent2;
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
-                        System.out.println("union name is: "+union.getName());
-                        System.out.println("union father is: "+ union.getFatherOfUnion().getName());
-                        union.updateNodesVoltages();
-
-                        updateElementsCurrent();
-                        double tempTotalCurrentPlus = union.getTotalCurrent();
-                        setBackElementCurrent();
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - 2*controller.getDeltaV());
-                        union.updateNodesVoltages();
-                        updateElementsCurrent();
-                        double tempTotalCurrentMinus = union.getTotalCurrent();
-                        setBackElementCurrent();
-
-                        union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
-                        union.updateNodesVoltages();
-
-                        if (Math.abs(tempTotalCurrentMinus) >= Math.abs(tempTotalCurrentPlus))
-                            totalCurrent2 = tempTotalCurrentPlus;
-                        else
-                            totalCurrent2 = tempTotalCurrentMinus;
-
-
-                        double voltage = union.getFatherOfUnion().getVoltage() +
-                                ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
-
-                        union.getFatherOfUnion().setSaveVoltage(voltage);
-                    }
-                }
-            }
-
-            setVoltages();
-
-            for (Union union : controller.getUnions()) {
-                union.updateNodesVoltages();
-            }
-
-
-            updateElementsCurrent();
-            measureErrorEachStep++;
-
-        }while (!checkKCL() && measureErrorEachStep <= MAX_ERROR_MEASUREMENT_TRYING);
-
-        printVoltages();
-
-    }
-
-    public void solve1() {
+    public boolean solve() {
         measureErrorEachStep = 0;
 
         do {
@@ -218,14 +116,18 @@ public class Solver {
                         union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
                         //System.out.println("union name is: "+union.getName());
                         //System.out.println("union father is: "+ union.getFatherOfUnion().getName());
-                        union.updateNodesVoltages();
+                        if (!union.updateNodesVoltages()) {
+                            return false;
+                        }
 
                         updateElementsCurrent();
                         double totalCurrent2 = union.getTotalCurrent();
                         setBackElementCurrent();
 
                         union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - controller.getDeltaV());
-                        union.updateNodesVoltages();
+                        if (!union.updateNodesVoltages()) {
+                            return false;
+                        }
 
                         double voltage = union.getFatherOfUnion().getVoltage() +
                                 ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
@@ -238,7 +140,9 @@ public class Solver {
             setVoltages();
 
             for (Union union : controller.getUnions()) {
-                union.updateNodesVoltages();
+                if (!union.updateNodesVoltages()) {
+                    return false;
+                }
             }
 
             updateElementsCurrent();
@@ -248,41 +152,7 @@ public class Solver {
 
         printVoltages();
 
-    }
-
-    /////////////////////////////////////////////////////
-    ////// this method doesn't workout correct //////////
-    /////////////////////////////////////////////////////
-    public void solve0() {
-        measureErrorEachStep = 0;
-        do {
-            for (Node node : controller.getNodes()) {
-                if (!node.getName().equals("0")) {
-                    //updateElementsCurrent();
-                    double totalCurrent1 = node.getTotalCurrent();
-                    //System.out.println("totalCurrent1 = " + totalCurrent1);
-                    node.setVoltage(node.getVoltage() + controller.getDeltaV());
-                    updateElementsCurrent();
-                    double totalCurrent2 = node.getTotalCurrent();
-                    //System.out.println("totalCurrent2 = " + totalCurrent2);
-                    setBackElementCurrent();
-
-                    node.setVoltage(node.getVoltage() - controller.getDeltaV());
-                    double voltage = node.getVoltage() +
-                            (Math.abs(totalCurrent1) - Math.abs(totalCurrent2)) / controller.getDeltaI()
-                                    * controller.getDeltaV();
-                    node.setSaveVoltage(voltage);
-                    //node.setVoltage(voltage);
-                    //updateElementsCurrent();
-                }
-            }
-            //System.out.println();
-            setVoltages();
-            updateElementsCurrent();
-            measureErrorEachStep++;
-        } while (!checkKCL() && measureErrorEachStep <= 75000);
-        //updateElementsCurrent();
-        printVoltages();
+        return true;
     }
 
     private void setVoltages() {
@@ -299,19 +169,6 @@ public class Solver {
             //System.out.println("total current of union: "+union.getName()+" is "+Math.abs(union.getTotalCurrent()));
         }
         return measurementError < KCL_ERROR;
-    }
-
-    /////////////////////////////////////////////////////
-    ////// this method doesn't workout correct //////////
-    /////////////////////////////////////////////////////
-    private boolean checkKCL3() {
-        double measurementError = 0;
-        for (Node node : controller.getNodes()) {
-            measurementError += Math.abs(node.getTotalCurrent());
-            //System.out.println("total current of node: "+node.getName()+" is "+Math.abs(node.getTotalCurrent()));
-        }
-        //System.out.println("error: " + measurementError);
-        return measurementError < 9*Math.pow(10, -2);
     }
 
     private double getKCLError() {
@@ -362,6 +219,24 @@ public class Solver {
             Errors.print(node.getName() + " => voltage : " + _voltage);
             Solver.output.append("\n=> voltage node ").append(node.getName()).append(" : ").append(_voltage);
         }
+    }
+
+    private boolean checkError2() {
+        for (Node node : controller.getNodes()) {
+            if (node.getTotalCurrent() > KCL_ERROR) {
+                if (node.getElements().size() > 0) {
+                    return true;
+                }
+                for (Source source : node.getSources()) {
+                    if (source instanceof VoltageSource) {
+                        return true;
+                    }
+                }
+                Errors.errors(-2, "Currents conflicted!");
+                return false;
+            }
+        }
+        return true;
     }
 
 }
