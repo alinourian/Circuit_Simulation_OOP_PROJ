@@ -8,6 +8,7 @@ public class Branch {
     protected Node nodeN;
     private Branch superiorBranch;
     private ArrayList<Branch> subBranches = new ArrayList<>();
+    private String type = new String();
     private int width;
     private int height;
 
@@ -27,6 +28,14 @@ public class Branch {
     public void setSuperiorBranch(Branch superiorBranch) { this.superiorBranch = superiorBranch; }
 
     public void setSubBranches(ArrayList<Branch> subBranches) { this.subBranches = subBranches; }
+
+    public void setTheTypeParallel() { this.type = "Parallel"; }
+
+    public void setTheTypeSeries() { this.type = "Series"; }
+
+    public Node getNodeP() { return nodeP; }
+
+    public Node getNodeN() { return nodeN; }
 
     public ArrayList<Branch> getSubBranches() { return subBranches; }
 

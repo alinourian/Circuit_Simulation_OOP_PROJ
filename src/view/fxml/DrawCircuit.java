@@ -14,10 +14,10 @@ import model.Source;
 import java.util.ArrayList;
 
 public abstract class DrawCircuit {
-    private static double drawCircuitStep;
+    private static double drawingUnitLength;
     private static final Pane circuitPane = new Pane();
     private static final InputController controller = InputController.getInstance();
-
+    private static ArrayList<Branch> allBranchesTemp = new ArrayList<>();
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
     private static final Image capacitor = new Image("view/img/element/Capacitor.png");
@@ -32,7 +32,8 @@ public abstract class DrawCircuit {
     private static final Image wire = new Image("view/img/element/Wire.png");
 
     public static Pane drawCircuit() {
-        drawCircuitStep = 80;
+        drawingUnitLength = 80;
+
         for (int i = 1; i <= 6; i++) {
             for (int j = 1; j <= 5; j++) {
                 circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));
@@ -41,6 +42,10 @@ public abstract class DrawCircuit {
 
 
         setTheFinalSuperiorBranch();
+        // TODO  set branches height and width
+        // TODO find max height and width
+        // TODO set drawingUnitLength
+        // Todo
 
 
         putGround();
@@ -66,19 +71,20 @@ public abstract class DrawCircuit {
 
     private static void setTheFinalSuperiorBranch()
     {
-        ArrayList<Branch>   allBranches = new ArrayList<>();
+
 
         for (Source source : controller.getSources()) {
-            allBranches.add(source);
+            allBranchesTemp.add(source);
         }
 
         for (Element element : controller.getElements()) {
-            allBranches.add(element);
+            allBranchesTemp.add(element);
         }
 
 
-        while (allBranches.size() != 1)
+        while (allBranchesTemp.size() != 1)
         {
+            incorporateParallelBranchesToNewBranch();
 
 
 
@@ -87,29 +93,121 @@ public abstract class DrawCircuit {
 
 
 
-        controller.setFinalSuperiorBranch(allBranches.get(0));
+        controller.setFinalSuperiorBranch(allBranchesTemp.get(0));
 
     }
 
     private static void incorporateParallelBranchesToNewBranch()
     {
+        controller.setAllNodesNotVisited();
+        processParallelIncorporationForEachNode(controller.getGround());
+
+    }
+
+    private static void processParallelIncorporationForEachNode(Node node) {
+        node.setVisited();
+
+        for (Node neighborNode : node.getNeighborNodes())
+        {
+            if (!neighborNode.getIsVisited())
+            {
+                ArrayList<Branch> branches;
+                branches = getBranchesBetweenTwoNeighborNodes(node, neighborNode);
+
+
+                if (branches.size() > 1) {
+                    StringBuilder newBranchName = new StringBuilder();
+
+                    for (Branch branch : branches) {
+                        allBranchesTemp.remove(branch);
+                        newBranchName.append(branch.getName() + " ");
+                    }
+
+                    Branch newBranch = new Branch(newBranchName.toString(), neighborNode, node);
+                    newBranch.setTheTypeParallel();
+
+                    for (Branch branch : branches) {
+                        branch.setSuperiorBranch(newBranch);
+                        newBranch.getSubBranches().add(branch);
+                    }
+                    allBranchesTemp.add(newBranch);
+
+                }
+            }
+        }
+
+        for (Node neighborNode : node.getNeighborNodes())
+        {
+            processParallelIncorporationForEachNode(neighborNode);
+        }
 
     }
 
 
-    private static ArrayList<Branch> getBranches(Node node1, Node node2) {
+    private static ArrayList<Branch> getBranchesBetweenTwoNeighborNodes(Node node1, Node node2)
+    {
         ArrayList<Branch> branches = new ArrayList<>();
-        for (Element element : node1.getElements()) {
-            if (node2.getElements().contains(element)) {
-                branches.add(element);
+
+        for (Branch branch : allBranchesTemp) {
+            if ( ( branch.getNodeN().equals(node1) && branch.getNodeP().equals(node2) ) ||
+                    ( branch.getNodeP().equals(node1) && branch.getNodeN().equals(node2) ) )
+            {
+                branches.add(branch);
             }
         }
-        for (Source source : node2.getSources()) {
-            if (node2.getSources().contains(source)) {
-                branches.add(source);
-            }
+
+        return branches;
+    }
+
+
+    private static void incorporateSeriesBranchesToNewBranch()
+    {
+        controller.setAllNodesNotVisited();
+
+
+
+    }
+
+
+    private static void processSeriesIncorporationForEachNode(Node node)
+    {
+
+    }
+
+
+    private static ArrayList<Branch>    getNeighborBranchesOfThisNode(Node node)
+    {
+        ArrayList<Branch>   branches    = new ArrayList<>();
+
+        for (Branch branch : allBranchesTemp)
+        {
+         if (branch.getNodeN().equals(node) || branch.getNodeP().equals(node))
+         {
+             branches.add(branch);
+         }
         }
         return branches;
+    }
+
+
+    private static ArrayList<Node>  getShownNodesOfAllBranchesTem()
+    {
+        ArrayList<Node> nodes   = new ArrayList<>();
+
+        for (Branch branch : allBranchesTemp)
+        {
+            if ( !nodes.contains(branch.getNodeN()) )
+            {
+                nodes.add(branch.getNodeN());
+            }
+
+            if ( !nodes.contains(branch.getNodeP()) )
+            {
+                nodes.add(branch.getNodeP());
+            }
+        }
+
+        return nodes;
     }
 
     private static void setParallelElement() {
@@ -141,7 +239,7 @@ public abstract class DrawCircuit {
     }
 
     private static double getXY(double XY) {
-        return XY * drawCircuitStep;
+        return XY * drawingUnitLength;
     }
 
     private static PaneNode getNode(double x, double y) {
@@ -149,13 +247,13 @@ public abstract class DrawCircuit {
     }
 
     private static PaneNode getLayoutNode(PaneNode middlePoint) {
-        return new PaneNode(middlePoint.nodeX - drawCircuitStep / 2, middlePoint.nodeY - drawCircuitStep / 2);
+        return new PaneNode(middlePoint.nodeX - drawingUnitLength / 2, middlePoint.nodeY - drawingUnitLength / 2);
     }
 
     private static void putGround() {
         ImageView imageView = new ImageView(gnd);
-        imageView.setFitWidth(drawCircuitStep);
-        imageView.setFitHeight(drawCircuitStep);
+        imageView.setFitWidth(drawingUnitLength);
+        imageView.setFitHeight(drawingUnitLength);
         imageView.setLayoutX(getXY(3));
         imageView.setLayoutY(getXY(5));
         circuitPane.getChildren().add(imageView);
@@ -165,8 +263,8 @@ public abstract class DrawCircuit {
         PaneNode node1 = convertNodeNumToPaneNode(numNode1);
         PaneNode node2 = convertNodeNumToPaneNode(numNode2);
         ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(drawCircuitStep);
-        imageView.setFitHeight(drawCircuitStep);
+        imageView.setFitWidth(drawingUnitLength);
+        imageView.setFitHeight(drawingUnitLength);
         if (node1.nodeX == node2.nodeX && Math.abs(node1.nodeY - node2.nodeY) == getXY(1)) {
             if (node1.nodeY > node2.nodeY) {
                 imageView.setRotate(180);

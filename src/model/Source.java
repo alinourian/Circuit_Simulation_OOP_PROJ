@@ -8,6 +8,7 @@ public class Source extends Branch {
         super(name, nodeP, nodeN);
         setHeight(1);
         setWidth(1);
+        setTheTypeSeries();
     }
 
     public double getVoltage(Node node) {
