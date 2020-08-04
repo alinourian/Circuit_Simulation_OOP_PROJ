@@ -26,6 +26,7 @@ public class InputController {
     private final ArrayList<Element> elements = new ArrayList<>();
     private final ArrayList<Source> sources = new ArrayList<>();
     private Branch finalSuperiorBranch;
+    private Node ground;
 
     private double deltaV = 0;
     private double deltaI = 0;
@@ -356,6 +357,10 @@ public class InputController {
     }
 
     public Branch getFinalSuperiorBranch() { return finalSuperiorBranch; }
+
+    public Node getGround() { return ground; }
+
+    public void setGround(Node ground) { this.ground = ground; }
 
     public void setFinalSuperiorBranch(Branch finalSuperiorBranch) { this.finalSuperiorBranch = finalSuperiorBranch; }
 

@@ -26,6 +26,7 @@ public class Solver {
         for (Node node : controller.getNodes()) {
             if (node.getName().equals("0")) {
                 groundNode = node;
+                controller.setGround(node);
             }
         }
         if (groundNode == null) {

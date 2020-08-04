@@ -16,6 +16,7 @@ public class Element extends Branch {
         this.currents = new ArrayList<>();
         setHeight(1);
         setWidth(1);
+        setTheTypeSeries();
     }
 
     public void updateElementCurrent() {

@@ -44,10 +44,8 @@ public class Node {
         return totalCurrent;
     }
 
-    public boolean getIsVisited() {
-        return isVisited != 0;
 
-    }
+    public boolean getIsVisited() { return isVisited == 1; }
 
     public double getSaveVoltage() {
         return saveVoltage;
