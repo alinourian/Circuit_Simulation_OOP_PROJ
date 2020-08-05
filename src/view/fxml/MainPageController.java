@@ -252,7 +252,6 @@ public class MainPageController {
 
                     if (FileScanner.runProgram(file)) {
                         additional = 0.1;
-                        drawCircuit();
                         animationTimer.stop();
                         drawCircuit();
                         errorTextArea.setText("File successfully simulated.\n" + Solver.output);
