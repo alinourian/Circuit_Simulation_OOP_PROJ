@@ -6,12 +6,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
-import model.Branch;
-import model.Element;
-import model.Node;
-import model.Source;
+import model.*;
 
-import javax.swing.plaf.synth.SynthOptionPaneUI;
 import java.util.ArrayList;
 
 public abstract class DrawCircuit {
@@ -23,6 +19,9 @@ public abstract class DrawCircuit {
     private static ArrayList<Branch>    newTempBranch   = new ArrayList<>();
     private static Node newTempBranchStartNode;
     private static Node newTempBranchEndNode;
+    private static int maxHorizontalNodes;
+    private static int maxVerticalNodes;
+
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
     private static final Image capacitor = new Image("view/img/element/Capacitor.png");
@@ -37,41 +36,190 @@ public abstract class DrawCircuit {
     private static final Image wire = new Image("view/img/element/Wire.png");
 
     public static Pane drawCircuit() {
+
+        circuitPane.getChildren().clear();
+
         drawingUnitLength = 80;
 
-        for (int i = 1; i <= 6; i++) {
-            for (int j = 1; j <= 5; j++) {
-                circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 1));
+
+        setTheFinalSuperiorBranch();
+
+        setBranchesHeightAndWidth();
+
+        setMaxHorizontalAndVerticalNodes();
+
+
+        System.out.println("max H is: "+maxHorizontalNodes);
+        System.out.println("max V is: "+maxVerticalNodes);
+        drawTheNodes();
+
+        drawTheFuckingCircuitDiagram();
+
+
+        ArrayList<Branch>   temp = new ArrayList<>();
+        temp.add(controller.getFinalSuperiorBranch());
+        // printAllBranchesAndSubbranches(temp);
+        putGround();
+
+        return circuitPane;
+    }
+
+
+    private static void drawTheFuckingCircuitDiagram()
+    {
+        PaneNode first = new PaneNode( (maxHorizontalNodes-1)/2*drawingUnitLength + drawingUnitLength
+                                                , drawingUnitLength);
+
+        PaneNode second = new PaneNode( (maxHorizontalNodes-1)/2*drawingUnitLength + drawingUnitLength
+                                            , (maxVerticalNodes-1)*drawingUnitLength + 80);
+
+        processDrawingTheBranches(controller.getFinalSuperiorBranch(), first , second);
+
+
+    }
+
+    private static void processDrawingTheBranches(Branch branch , PaneNode first , PaneNode second )
+    {
+        if (branch.getHeight() == 1 && branch.getWidth() == 1)
+        {
+            drawThisBranch(branch,first,second);
+        }
+        else if (branch.IsItParallel())
+        {
+            double firstPaneNodeWire_X = first.nodeX - (branch.getWidth()-1)/2*drawingUnitLength
+                    + (branch.getSubBranches().get(0).getWidth()-1)/2*drawingUnitLength;
+
+            double secondPaneNodeWire_X = 0;
+
+            double branches_X = first.nodeX - (branch.getWidth()-1)/2*drawingUnitLength;
+
+            for (Branch subBranch : branch.getSubBranches())
+            {
+                branches_X += (subBranch.getWidth()-1)/2*drawingUnitLength;
+
+                PaneNode newFirst = new PaneNode(branches_X ,first.nodeY);
+                PaneNode newSecond = new PaneNode(branches_X , second.nodeY);
+
+                processDrawingTheBranches(subBranch,newFirst,newSecond);
+
+                secondPaneNodeWire_X = branches_X;
+
+                branches_X += (subBranch.getWidth()-1)/2*drawingUnitLength + drawingUnitLength;
+            }
+
+
+            PaneNode firstWireFirstPaneNode = new PaneNode( firstPaneNodeWire_X ,first.nodeY );
+            PaneNode firstWireSecondPaneNode = new PaneNode( secondPaneNodeWire_X, first.nodeY );
+
+
+            PaneNode secondWireFirstPaneNode = new PaneNode( firstPaneNodeWire_X ,second.nodeY );
+            PaneNode secondWireSecondPaneNode = new PaneNode( secondPaneNodeWire_X , second.nodeY );
+
+
+            System.out.println("heree");
+            System.out.println("firstWireFirstPaneNode: "+firstWireFirstPaneNode);
+            System.out.println("firstWireSecondPaneNode: "+firstWireSecondPaneNode);
+            System.out.println("secondWireFirstPaneNode: "+secondWireFirstPaneNode);
+            System.out.println("secondWireSecondPaneNode: "+secondWireSecondPaneNode);
+            putWire( firstWireFirstPaneNode , firstWireSecondPaneNode );
+            putWire( secondWireFirstPaneNode , secondWireSecondPaneNode );
+        }
+        else
+        {
+
+        }
+
+
+    }
+
+
+    private static void drawThisBranch(Branch branch , PaneNode first , PaneNode second)
+    {
+
+        if (branch instanceof Element)
+        {
+            if (branch instanceof Capacitor)
+            {
+                putImage(capacitor,first,second);
+            }
+            if (branch instanceof Diode)
+            {
+                putImage(diode,first,second);
+            }
+            if (branch instanceof Inductor)
+            {
+                putImage(inductor,first,second);
+            }
+            if (branch instanceof Resistor)
+            {
+                putImage(resistor,first,second);
+            }
+
+        }
+        else if(branch instanceof Source)
+        {
+            if (branch instanceof VoltageSource)
+            {
+                if (branch instanceof VoltageControlledVoltageSource)
+                {
+
+                    putImage(controlledVSource,first,second);
+                }
+                else if(branch instanceof CurrentControlledVoltageSource)
+                {
+
+                    putImage(controlledVSource,first,second);
+                }
+                else
+                {
+                    if (((VoltageSource) branch).getPhase() == 0)
+                    {
+                        // DC VOLTAGE SOURCE
+
+                        putImage(vSource,first,second);
+                    }
+                    else
+                    {
+                        // AC VOLTAGE SOURCE
+
+                        putImage(acSource,first,second);
+                    }
+
+                }
+            }
+            else if(branch instanceof CurrentSource)
+            {
+                if (branch instanceof CurrentControlledCurrentSource)
+                {
+
+                    putImage(controlledCSource,first,second);
+                }
+                else if (branch instanceof VoltageControlledCurrentSource)
+                {
+
+                    putImage(controlledCSource,first,second);
+                }
+                else
+                {
+                    if (((CurrentSource) branch).getPhase() == 0)
+                    {
+                        // DC CURRENT SOURCE
+
+                        putImage(cSource,first,second);
+                    }
+                    else
+                    {
+                        // AC CURRENT SOURCE
+
+                        putImage(acSource,first,second);
+                    }
+                }
             }
         }
 
 
-        setTheFinalSuperiorBranch();
-        // TODO  set branches height and width
-        // TODO find max height and width
-        // TODO set drawingUnitLength
-        // Todo
-
-
-        putGround();
-        putImage(resistor, 9, 3);
-        putImage(capacitor, 10, 4);
-        putImage(cSource, 11, 5);
-        putImage(inductor, 12, 11);
-        putImage(controlledCSource, 12, 6);
-        matchNodes(9, 10, 11);
-        matchNodes(3, 4, 5);
-        matchNodes(19, 25, 26, 27, 28, 29);
-        putImage(diode, 6, 5);
-        putImage(acSource, 9, 8);
-        putImage(controlledVSource, 7, 8);
-        putImage(wire, 7, 1);
-        putImage(wire, 1, 2);
-        putImage(vSource, 2, 3);
-        putImage(inductor, 29, 30);
-        putImage(resistor, 9.5, 3.5);
-        return circuitPane;
     }
+
 
 
     private static void setTheFinalSuperiorBranch()
@@ -108,12 +256,38 @@ public abstract class DrawCircuit {
             System.out.println("branch name is :"+branch.getName());
             System.out.println("Nope p is: "+branch.getNodeP().getName());
             System.out.println("Nope n is: "+branch.getNodeN().getName());
+            System.out.println("height: "+branch.getHeight());
+            System.out.println("width: "+branch.getWidth());
+            System.out.println("");
         }
 
         for (Branch branch : branches) {
             if (branch.getSubBranches().size() != 0)
             {
                 printAllBranchesAndSubbranches(branch.getSubBranches());
+            }
+        }
+    }
+    private static ArrayList<Branch> getAllBranchesAndSubbranches()
+    {
+        ArrayList<Branch> outputBranches = new ArrayList<>();
+        ArrayList<Branch> processBranches = new ArrayList<>();
+        processBranches.add(controller.getFinalSuperiorBranch());
+        processGettingAllBranchesAndSubbranches(processBranches,outputBranches);
+        return outputBranches;
+
+
+    }
+    private static void processGettingAllBranchesAndSubbranches(ArrayList<Branch> branches,ArrayList<Branch> outputBranches)
+    {
+        for (Branch branch : branches) {
+            outputBranches.add(branch);
+        }
+
+        for (Branch branch : branches) {
+            if (branch.getSubBranches().size() !=0 )
+            {
+                processGettingAllBranchesAndSubbranches(branch.getSubBranches(),outputBranches);
             }
         }
     }
@@ -369,8 +543,128 @@ public abstract class DrawCircuit {
     }
 
 
-    private static void setBranchesHeight()
+    private static void processSettingUpTheBranchesHeightAndWidth(ArrayList<Branch> branches)
     {
+
+        for (Branch branch : branches)
+        {
+            int visitedSubbranches = 0 ;
+            for (Branch subBranch : branch.getSubBranches())
+            {
+                if (subBranch.getIsVisited())
+                {
+                    visitedSubbranches++;
+                }
+            }
+
+            if ( ( branch.getSubBranches().size() == 0 || branch.getSubBranches().size() == visitedSubbranches ) &&
+                    ( !branch.getIsVisited() )  )
+            {
+                if (!branch.equals(controller.getFinalSuperiorBranch()))
+                {
+                    Branch superiorBranch = branch.getSuperiorBranch();
+                    System.out.println("----------------------------------");
+
+                    if (superiorBranch.IsItParallel())
+                    {
+                        System.out.println("");
+                        System.out.println("branch: "+branch.getName());
+                        System.out.println("height: "+branch.getHeight());
+                        System.out.println("width: "+branch.getWidth());
+                        System.out.println("");
+                        System.out.println("superiorBranch: "+superiorBranch.getName());
+                        System.out.println("height: "+superiorBranch.getHeight());
+                        System.out.println("width: "+superiorBranch.getWidth());
+
+                        superiorBranch.setWidth(superiorBranch.getWidth() + branch.getWidth());
+                        System.out.println("superiorBranch is Parallel type");
+                        System.out.println("now superiorBranch width set to: "+superiorBranch.getWidth());
+
+                        if (branch.getHeight() > superiorBranch.getHeight())
+                        {
+                            superiorBranch.setHeight(branch.getHeight());
+                            System.out.println("branch height is more than superiorBranch height");
+                            System.out.println("now superiorBranch height set to: "+superiorBranch.getHeight());
+
+                        }
+                        else
+                        {
+                            System.out.println("XX branch height is NOT more than superiorBranch height");
+                        }
+                    }
+                    else
+                    {
+                        System.out.println("");
+                        System.out.println("branch: "+branch.getName());
+                        System.out.println("height: "+branch.getHeight());
+                        System.out.println("width: "+branch.getWidth());
+                        System.out.println("");
+                        System.out.println("superiorBranch: "+superiorBranch.getName());
+                        System.out.println("height: "+superiorBranch.getHeight());
+                        System.out.println("width: "+superiorBranch.getWidth());
+                        superiorBranch.setHeight(superiorBranch.getHeight() + branch.getHeight());
+                        System.out.println("superiorBranch is series type");
+                        System.out.println("now superiorBranch height set to: "+superiorBranch.getHeight());
+
+                        if (branch.getWidth() > superiorBranch.getWidth())
+                        {
+                            superiorBranch.setWidth(branch.getWidth());
+                            System.out.println("branch width is more than superiorBranch width");
+                            System.out.println("now superiorBranch width set to: "+superiorBranch.getWidth());
+
+                        }
+                        else
+                        {
+                            System.out.println("XX branch width is NOT more than superiorBranch width");
+                        }
+                    }
+                    branch.setVisited();
+                }
+            }
+
+
+
+
+        }
+
+        /*ArrayList<Branch>   superiorBranches = new ArrayList<>();
+
+        for (Branch branch : branches)
+        {
+            if ( branch.getSuperiorBranch() != null && !superiorBranches.contains(branch.getSuperiorBranch()) )
+            {
+                superiorBranches.add(branch.getSuperiorBranch());
+            }
+        }
+        if (superiorBranches.size() != 0)
+        {
+            processSettingUpTheBranchesHeightAndWidth(superiorBranches);
+        }*/
+
+        int visitedBranches = 0;
+        for (Branch branch : branches)
+        {
+            if (branch.getIsVisited())
+            {
+                visitedBranches++;
+            }
+        }
+        if (visitedBranches != branches.size())
+        {
+            processSettingUpTheBranchesHeightAndWidth(branches);
+        }
+
+    }
+
+    private static void setBranchesHeightAndWidth()
+    {
+        setBranchesNotVisited(getAllBranchesAndSubbranches());
+
+        ArrayList<Branch>   allBranchesExceptFinalSuperior = new ArrayList<>();
+        allBranchesExceptFinalSuperior = getAllBranchesAndSubbranches();
+        allBranchesExceptFinalSuperior.remove(controller.getFinalSuperiorBranch());
+
+        processSettingUpTheBranchesHeightAndWidth(allBranchesExceptFinalSuperior);
 
     }
 
@@ -394,13 +688,28 @@ public abstract class DrawCircuit {
     private static void matchNodes(double... doubles) {
         double[] nodes = doubles.clone();
         for (int i = 1; i < nodes.length; i++) {
-            putImage(wire, nodes[i], nodes[i - 1]);
+            putImage2(wire, nodes[i], nodes[i - 1]);
+        }
+    }
+
+    private static void setMaxHorizontalAndVerticalNodes()
+    {
+        maxHorizontalNodes = controller.getFinalSuperiorBranch().getWidth()  ;
+        maxVerticalNodes = controller.getFinalSuperiorBranch().getHeight() + 1  ;
+    }
+
+    private static void drawTheNodes()
+    {
+        for (int i = 1; i <= maxHorizontalNodes; i++) {
+            for (int j = 1; j <= maxVerticalNodes; j++) {
+                circuitPane.getChildren().add(new Circle(getXY(i), getXY(j), 2));
+            }
         }
     }
 
     private static PaneNode convertNodeNumToPaneNode(double num) {
-        double x = num % 6 != 0 ? num % 6 : 6;
-        double y = 6 - Math.ceil(num / 6 );
+        double x = num % maxVerticalNodes != 0 ? num % maxVerticalNodes : maxVerticalNodes;
+        double y = maxVerticalNodes - Math.ceil(num / maxVerticalNodes );
         return getNode(x, y);
     }
 
@@ -420,12 +729,93 @@ public abstract class DrawCircuit {
         ImageView imageView = new ImageView(gnd);
         imageView.setFitWidth(drawingUnitLength);
         imageView.setFitHeight(drawingUnitLength);
-        imageView.setLayoutX(getXY(3));
-        imageView.setLayoutY(getXY(5));
+        imageView.setLayoutX(getXY(maxHorizontalNodes/2));
+        imageView.setLayoutY(getXY(maxVerticalNodes));
         circuitPane.getChildren().add(imageView);
     }
 
-    private static void putImage(Image image, double numNode1, double numNode2) {
+    private static void putImage(Image image, PaneNode first , PaneNode second )
+    {
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(drawingUnitLength);
+        imageView.setFitHeight(drawingUnitLength);
+
+        if (first.nodeX == second.nodeX && Math.abs(first.nodeY - second.nodeY) == getXY(1)) {
+            if (first.nodeY > second.nodeY) {
+                imageView.setRotate(180);
+            }
+            PaneNode middlePoint = new PaneNode(first.nodeX, (first.nodeY + second.nodeY) / 2);
+            PaneNode node = getLayoutNode(middlePoint);
+            imageView.setLayoutX(node.nodeX);
+            imageView.setLayoutY(node.nodeY);
+            circuitPane.getChildren().add(imageView);
+        } else if (first.nodeY == second.nodeY && Math.abs(first.nodeX - second.nodeX) == getXY(1)) {
+            if (first.nodeX < second.nodeX) {
+                imageView.setRotate(-90);
+            } else {
+                imageView.setRotate(90);
+            }
+            PaneNode middlePoint = new PaneNode((first.nodeX + second.nodeX) / 2, first.nodeY);
+            PaneNode node = getLayoutNode(middlePoint);
+            imageView.setLayoutX(node.nodeX);
+            imageView.setLayoutY(node.nodeY);
+            circuitPane.getChildren().add(imageView);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Not Possible!");
+            alert.show();
+        }
+
+
+    }
+
+    private static void putWire(PaneNode first , PaneNode second)
+    {
+
+        ImageView imageView = new ImageView(wire);
+        if (first.nodeX == second.nodeX)
+        {
+            imageView.setFitWidth(drawingUnitLength);
+            imageView.setFitHeight(Math.abs(first.nodeY - second.nodeY));
+        }
+        if (first.nodeY == second.nodeY)
+        {
+            imageView.setFitWidth(drawingUnitLength);
+            imageView.setFitHeight(Math.abs(first.nodeX - second.nodeX));
+        }
+
+        if (first.nodeX == second.nodeX && Math.abs(first.nodeY - second.nodeY) == getXY(1)) {
+            if (first.nodeY > second.nodeY) {
+                imageView.setRotate(180);
+            }
+            PaneNode middlePoint = new PaneNode(first.nodeX, (first.nodeY + second.nodeY) / 2);
+            PaneNode node = getLayoutNode(middlePoint);
+            imageView.setLayoutX(node.nodeX);
+            imageView.setLayoutY(node.nodeY);
+            circuitPane.getChildren().add(imageView);
+        } else if (first.nodeY == second.nodeY && Math.abs(first.nodeX - second.nodeX) == getXY(1)) {
+            if (first.nodeX < second.nodeX) {
+                imageView.setRotate(-90);
+            } else {
+                imageView.setRotate(90);
+            }
+            PaneNode middlePoint = new PaneNode((first.nodeX + second.nodeX) / 2, first.nodeY);
+            PaneNode node = getLayoutNode(middlePoint);
+            imageView.setLayoutX(node.nodeX);
+            imageView.setLayoutY(node.nodeY);
+            circuitPane.getChildren().add(imageView);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Not Possible!");
+            alert.show();
+        }
+    }
+
+
+
+
+
+    private static void putImage2(Image image, double numNode1, double numNode2) {
         PaneNode node1 = convertNodeNumToPaneNode(numNode1);
         PaneNode node2 = convertNodeNumToPaneNode(numNode2);
         ImageView imageView = new ImageView(image);

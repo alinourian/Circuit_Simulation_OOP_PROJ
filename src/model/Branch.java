@@ -8,9 +8,9 @@ public class Branch {
     protected Node nodeN;
     private Branch superiorBranch;
     private ArrayList<Branch> subBranches = new ArrayList<>();
-    private String type = new String();
-    private int width;
-    private int height;
+    private String structureType = new String();
+    private int width = 0;
+    private int height = 0;
     private int isVisited;
 
     public Branch(String name, Node nodeP, Node nodeN) {
@@ -37,6 +37,10 @@ public class Branch {
         }
     }
 
+    public boolean IsItParallel()
+    {
+        return this.getStructureType().equals("Parallel");
+    }
 
     public void setWidth(int width) { this.width = width; }
 
@@ -46,13 +50,15 @@ public class Branch {
 
     public void setSubBranches(ArrayList<Branch> subBranches) { this.subBranches = subBranches; }
 
-    public void setTheTypeParallel() { this.type = "Parallel"; }
+    public void setTheTypeParallel() { this.structureType = "Parallel"; }
 
-    public void setTheTypeSeries() { this.type = "Series"; }
+    public void setTheTypeSeries() { this.structureType = "Series"; }
 
     public void setVisited() { this.isVisited = 1; }
 
     public void setNotVisited() {this.isVisited = 0; }
+
+    public String getStructureType() { return structureType; }
 
     public boolean getIsVisited() { return isVisited == 1; }
 
