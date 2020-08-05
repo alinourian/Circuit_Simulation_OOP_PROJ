@@ -94,6 +94,11 @@ public abstract class Errors {
         System.err.println(string);
     }
 
+    public static void stopImmediately() {
+        string = "Program stopped!";
+        System.err.println(string);
+    }
+
     public static void errors(int num, String errorType) {
         string = "ERROR " + num + " : \n" + errorType;
         System.err.println(string);
