@@ -13,6 +13,8 @@ import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -22,6 +24,7 @@ import model.Source;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class NewTab extends Tab {
 
@@ -29,12 +32,14 @@ public class NewTab extends Tab {
     private final Accordion accordion;
     private final Button draw;
     private final Button showGraph;
+    private final Button advanceDraw;
     private Type status;
     private AreaChart<Number, Number> chart;
 
     private final ArrayList<RadioButton> voltagesButtons;
     private final ArrayList<RadioButton> currentsButtons;
     private final ArrayList<RadioButton> powersButtons;
+    private final ArrayList<String> advanceDrawActions;
 
     public NewTab(String text) {
         super(text);
@@ -42,9 +47,11 @@ public class NewTab extends Tab {
         this.accordion = new Accordion();
         this.draw = new Button("Draw");
         this.showGraph = new Button("show graph");
+        this.advanceDraw = new Button("Advance Draw");
         this.voltagesButtons = new ArrayList<>();
         this.currentsButtons = new ArrayList<>();
         this.powersButtons = new ArrayList<>();
+        advanceDrawActions = new ArrayList<>();
         this.initial();
     }
 
@@ -58,7 +65,7 @@ public class NewTab extends Tab {
         accordion.getPanes().add(voltagePane);
         accordion.getPanes().add(currentPane);
         accordion.getPanes().add(powerPane);
-        VBox accordionVBox = new VBox(5);
+        VBox accordionVBox = new VBox(10);
         accordionVBox.setPadding(new Insets(5, 10, 5, 5));
 
         draw.setOnAction(new EventHandler<ActionEvent>() {
@@ -92,10 +99,17 @@ public class NewTab extends Tab {
             }
         });
 
+        advanceDraw.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                advanceChartDraw();
+            }
+        });
+
         HBox buttonHBox = new HBox();
         buttonHBox.setSpacing(5);
         buttonHBox.getChildren().addAll(draw, showGraph);
-        accordionVBox.getChildren().addAll(buttonHBox, accordion);
+        accordionVBox.getChildren().addAll(buttonHBox, advanceDraw, accordion);
 
         Separator separator = new Separator(Orientation.VERTICAL);
         HBox mainHBox = new HBox(5);
@@ -164,6 +178,34 @@ public class NewTab extends Tab {
             @Override
             public void handle(MouseEvent event) {
                 showGraph.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
+        advanceDraw.setStyle("-fx-background-color: whitesmoke;" +
+                "    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "-fx-font-size: 14px");
+        advanceDraw.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                advanceDraw.setStyle("-fx-background-color: whitesmoke;" +
+                        "    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 14px;");
+            }
+        });
+        advanceDraw.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                advanceDraw.setStyle("-fx-background-color: whitesmoke;" +
                         "    -fx-background-radius: 8,7,6;" +
                         "    -fx-background-insets: 0,1,2;" +
                         "    -fx-text-fill: black;" +
@@ -295,7 +337,7 @@ public class NewTab extends Tab {
                 for (int i = 0; i < element.getCurrents().size(); i++) {
                     XYChart.Data<Number, Number> data;
                     data = new XYChart.Data<>(i * InputController.getInstance().getDeltaT(),
-                            element.getCurrents().get(i));
+                            -1 * element.getCurrents().get(i));
                     series.getData().add(data);
                 }
                 break;
@@ -394,6 +436,107 @@ public class NewTab extends Tab {
 
     // ***********************
 
+    public void advanceChartDraw() {
+        // Create the custom dialog.
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Advance Drawer");
+        dialog.setHeaderText("Enter what you want to draw...");
+        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        dialogStage.getIcons().add(new Image("view/img/sinusoid-pngrepo-com.png"));
+        //dialog.initOwner(MainPageController.getStage());
+        ImageView imageView = new ImageView(new Image("view/img/sinusoid-pngrepo-com.png"));
+        imageView.setFitHeight(100);
+        imageView.setFitWidth(100);
+        dialog.setGraphic(imageView);
+        // Set the button types.
+        ButtonType drawButtonType = new ButtonType("Draw", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(drawButtonType, ButtonType.CANCEL);
+
+
+        // CREATE MOTHER BOX
+        VBox vBox = new VBox(10);
+        //vBox.setPrefWidth(200);
+        vBox.setPrefHeight(400);
+
+        // FIRST CHILD
+        TextField textField = new TextField();
+        textField.setPromptText("Enter your equation ...");
+        textField.setEditable(false);
+        textField.setMinWidth(500);
+        textField.setMinHeight(40);
+        textField.setStyle("-fx-font-size: 14px");
+
+        // SECOND CHILD
+        HBox hBox = new HBox();
+        hBox.setSpacing(20);
+
+        VBox elementsVBox = new VBox();
+
+        ScrollPane elementsScroll = new ScrollPane();
+        elementsScroll.setContent(elementsVBox);
+
+        double xButton = 100, yButton = 30;
+        for (Node node : InputController.getInstance().getNodes()) {
+            Button button = new Button("V[node" + node.getName() + "]");
+            setButtonStyle(button, textField);
+            button.setPrefSize(xButton, yButton);
+            elementsVBox.getChildren().add(button);
+        }
+        for (Element element : InputController.getInstance().getElements()) {
+            Button button1 = new Button("I[" + element.getName() + "]");
+            setButtonStyle(button1, textField);
+            button1.setPrefSize(xButton, yButton);
+            elementsVBox.getChildren().add(button1);
+            Button button2 = new Button("P[" + element.getName() + "]");
+            setButtonStyle(button2, textField);
+            button2.setPrefSize(xButton, yButton);
+            elementsVBox.getChildren().add(button2);
+        }
+        for (Source source : InputController.getInstance().getSources()) {
+            Button button1 = new Button("I[" + source.getName() + "]");
+            setButtonStyle(button1, textField);
+            button1.setPrefSize(xButton, yButton);
+            elementsVBox.getChildren().add(button1);
+            Button button2 = new Button("P[" + source.getName() + "]");
+            setButtonStyle(button2, textField);
+            button2.setPrefSize(xButton, yButton);
+            elementsVBox.getChildren().add(button2);
+        }
+
+        Accordion buttonAccordion = new Accordion();
+        //buttonAccordion.setMinHeight(200);
+        buttonAccordion.setMinWidth(200);
+        TitledPane buttonPane = new TitledPane();
+        buttonPane.setText("Tools");
+        buttonPane.setContent(elementsScroll);
+        buttonAccordion.getPanes().add(buttonPane);
+        Separator separator = new Separator(Orientation.VERTICAL);
+        ScrollPane calcScroll = new ScrollPane();
+        calcScroll.setContent(getCalculationPane(textField));
+        hBox.getChildren().addAll(buttonAccordion, separator,calcScroll);
+        vBox.getChildren().addAll(textField, hBox);
+        dialog.getDialogPane().setContent(vBox);
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == drawButtonType) {
+                return textField.getText();
+            }
+            return null;
+        });
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(s -> {
+            calculateInput(s);
+            System.out.println("text = " + s);
+        });
+    }
+
+    public void calculateInput(String string) {
+        //TODO
+    }
+
     public void drawCustomChart(ArrayList<Double> chartList, String name, String title) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(name);
@@ -446,4 +589,212 @@ public class NewTab extends Tab {
         return result;
     }
 
+    //Draw advanceDraw dialog buttons
+    private Pane getCalculationPane(TextField textField) {
+        Pane calculationPane = new Pane();
+        calculationPane.setPrefWidth(245);
+        calculationPane.setPrefHeight(328);
+        addNumbers(calculationPane, textField);
+        addCalculationButtons(calculationPane, textField);
+        addControllerButton(calculationPane, textField);
+        return calculationPane;
+    }
+
+    private void addControllerButton(Pane calculationPane, TextField textField) {
+        Button clear = new Button("Clear");
+        Button back = new Button("Back");
+        clear.setLayoutX(0); back.setLayoutX(122);
+        clear.setLayoutY(0); back.setLayoutY(0);
+        clear.setPrefWidth(122); back.setPrefWidth(123);
+        clear.setPrefHeight(60); back.setPrefHeight(60);
+        setControllerButtonStyle(clear, back, textField);
+        calculationPane.getChildren().addAll(clear, back);
+    }
+
+    private void addNumbers(Pane calculationPane, TextField textField) {
+        for (int i = 1; i < 10; i++) {
+            Button button = new Button(Integer.toString(i));
+            button.setPrefWidth(61);
+            button.setPrefHeight(67);
+            switch (i) {
+                case 1:
+                    button.setLayoutX(0);
+                    button.setLayoutY(194);
+                    break;
+                case 2:
+                    button.setLayoutX(61);
+                    button.setLayoutY(194);
+                    break;
+                case 3:
+                    button.setLayoutX(122);
+                    button.setLayoutY(194);
+                    break;
+                case 4:
+                    button.setLayoutX(0);
+                    button.setLayoutY(127);
+                    break;
+                case 5:
+                    button.setLayoutX(61);
+                    button.setLayoutY(127);
+                    break;
+                case 6:
+                    button.setLayoutX(122);
+                    button.setLayoutY(127);
+                    break;
+                case 7:
+                    button.setLayoutX(0);
+                    button.setLayoutY(60);
+                    break;
+                case 8:
+                    button.setLayoutX(61);
+                    button.setLayoutY(60);
+                    break;
+                default:
+                    button.setLayoutX(122);
+                    button.setLayoutY(60);
+                    break;
+            }
+            setButtonStyle(button, textField);
+            calculationPane.getChildren().add(button);
+        }
+        Button button0 = new Button("0");
+        Button buttonDote = new Button(".");
+        button0.setLayoutX(0); buttonDote.setLayoutX(122);
+        button0.setLayoutY(261); buttonDote.setLayoutY(261);
+        button0.setPrefWidth(122); buttonDote.setPrefWidth(61);
+        button0.setPrefHeight(67); buttonDote.setPrefHeight(67);
+        setButtonStyle(button0, textField); setButtonStyle(buttonDote, textField);
+        calculationPane.getChildren().addAll(button0, buttonDote);
+    }
+
+    private void addCalculationButtons(Pane calculationPane, TextField textField) {
+        Button add = new Button(" + ");
+        Button sub = new Button(" - ");
+        Button multiply = new Button(" * ");
+        Button divide = new Button(" / ");
+        ArrayList<Button> buttons = new ArrayList<>();
+        buttons.add(add);
+        buttons.add(sub);
+        buttons.add(multiply);
+        buttons.add(divide);
+        for (Button button : buttons) {
+            setButtonStyle(button, textField);
+            button.setLayoutX(183);
+            button.setPrefSize(62, 67);
+        }
+        add.setLayoutY(261);
+        sub.setLayoutY(194);
+        multiply.setLayoutY(127);
+        divide.setLayoutY(60);
+        calculationPane.getChildren().addAll(add, sub, multiply, divide);
+    }
+
+    private void setButtonStyle(Button button, TextField textField) {
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                advanceDrawActions.add(button.getText());
+                textField.setText(textField.getText() + button.getText());
+            }
+        });
+        button.setStyle("    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "    -fx-font-size: 12px;");
+        button.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                button.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+        button.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                button.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+    }
+
+    private void setControllerButtonStyle(Button clear, Button back, TextField textField) {
+        clear.setStyle("    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "    -fx-font-size: 14px;");
+        clear.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                clear.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+        clear.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                clear.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+        back.setStyle("    -fx-background-radius: 8,7,6;" +
+                "    -fx-background-insets: 0,1,2;" +
+                "    -fx-text-fill: black;" +
+                "-fx-font-style: italic;" +
+                "    -fx-font-size: 14px;");
+        back.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                back.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: steelblue;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+        back.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                back.setStyle("    -fx-background-radius: 8,7,6;" +
+                        "    -fx-background-insets: 0,1,2;" +
+                        "    -fx-text-fill: black;" +
+                        "-fx-font-style: italic;" +
+                        "    -fx-font-size: 12px;");
+            }
+        });
+
+        clear.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                textField.setText("");
+                advanceDrawActions.clear();
+            }
+        });
+        back.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (advanceDrawActions.size() > 0) {
+                    advanceDrawActions.remove(advanceDrawActions.size() - 1);
+                }
+                StringBuilder text = new StringBuilder();
+                for (String s : advanceDrawActions) {
+                    text.append(s);
+                }
+                textField.setText(String.valueOf(text));
+            }
+        });
+    }
 }

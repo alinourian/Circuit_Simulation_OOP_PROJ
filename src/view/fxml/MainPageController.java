@@ -12,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
@@ -28,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +47,7 @@ public class MainPageController {
     @FXML private Label percentLabel;
     @FXML private BorderPane borderPane;
 
+    public static boolean simulateStop = false;
 
     private File file;
     private String firstBackUpText;
@@ -53,6 +57,7 @@ public class MainPageController {
     private long timer = -1;
     private AnimationTimer animationTimer;
     private double additional = 0;
+    private String statusKCLError = "10m";
 
     // MENU OPTIONS && TOOLBAR OPTIONS
 
@@ -152,7 +157,33 @@ public class MainPageController {
     }
 
     public void setting() {
-        //TODO
+        HashMap<String, Double> results = new HashMap<>();
+        results.put("100m", 0.1);results.put("10m", 0.01);
+        results.put("1m", 0.001); results.put("100u", 0.0001);
+        results.put("10u", 0.00001); results.put("1u", 0.000001);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("100m"); list.add("10m"); list.add("1m");
+        list.add("100u"); list.add("10u"); list.add("1u");
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(statusKCLError, list);
+        dialog.setTitle("Setting");
+        dialog.setHeaderText("");
+        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        dialogStage.getIcons().add(new Image("view/img/setting-icon.png"));
+        dialog.setContentText("Choose KCL_ERROR:");
+        ImageView imageView = new ImageView(new Image("view/img/setting-icon.png"));
+        imageView.setFitHeight(100);
+        imageView.setFitWidth(100);
+        dialog.setGraphic(imageView);
+
+        // Traditional way to get the response value.
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            Solver.setKCL_ERROR(results.get(result.get()));
+            statusKCLError = result.get();
+            System.out.println("KCL ERROR set at : " + Solver.getKclError());
+        }
+
     }
 
     public void Exit() {
@@ -183,7 +214,7 @@ public class MainPageController {
     }
 
     public void delete() {
-        //TODO
+        resetPage();
     }
 
     public void zoomIn() {
@@ -206,6 +237,7 @@ public class MainPageController {
     }
 
     public void simulate() {
+        simulateStop = false;
         errorTextArea.setText("");
         simulating();
         Task displayMessage = new Task<Void>() {
@@ -220,11 +252,13 @@ public class MainPageController {
 
                     if (FileScanner.runProgram(file)) {
                         additional = 0.1;
+                        drawCircuit();
                         animationTimer.stop();
                         drawCircuit();
                         errorTextArea.setText("File successfully simulated.\n" + Solver.output);
                         percentLabel.setText("100%");
                         progressBar.setProgress(1);
+                        Errors.print("KCL ERROR : " + Solver.getKclError());
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setContentText("Can not simulate the file!");
@@ -243,8 +277,15 @@ public class MainPageController {
         executor.execute(displayMessage);
     }
 
+    public void stopSimulating() {
+        simulateStop = false;
+    }
+
     public void drawVCPGraphs() {
         if (!FileScanner.hasFile) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Please simulate your file first.");
+            alert.show();
             return;
         }
         ArrayList<String> choices = new ArrayList<>();
@@ -308,8 +349,8 @@ public class MainPageController {
     }
 
     public void drawCircuit() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("not yet!");
+        //Alert alert = new Alert(Alert.AlertType.ERROR);
+        //alert.setContentText("not yet!");
         //alert.show();
         Pane pane = DrawCircuit.drawCircuit();
         if (!borderPane.getChildren().contains(pane))
@@ -340,7 +381,7 @@ public class MainPageController {
                     timer = now;
                     progressBar.setProgress(0);
                 } else if (now - timer > PERIOD) {
-                    if (additional == 0.1 && progressBar.getProgress() +additional <= 1) {
+                    if (additional == 0.1 && progressBar.getProgress() + additional <= 1) {
                         progressBar.setProgress(progressBar.getProgress() + additional);
                         timer = now;
                         double percent = progressBar.getProgress() * 100;
