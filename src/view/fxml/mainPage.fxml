@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="650.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
+<BorderPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.fxml.MainPageController">
    <top>
       <VBox prefHeight="75.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
          <children>
@@ -32,45 +32,108 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="T" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/newTab3-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#newFile" text="New File">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="F" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/images.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#openFile" text="Open File">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/open-document-icon.jpg" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/save-icon-png.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#saveNewFile" text="Save as">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/save-as-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#print" text="Print">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                           </accelerator></MenuItem>
+                           </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/print-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                         <MenuItem mnemonicParsing="false" onAction="#showPrintPreview" text="Print Preview">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                           </accelerator></MenuItem>
+                           </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/sinusoid-pngrepo-com.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#setting" text="Setting">
                            <accelerator>
                               <KeyCodeCombination alt="DOWN" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/setting-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem mnemonicParsing="false" onAction="#Exit" text="Exit" />
+                        <MenuItem mnemonicParsing="false" onAction="#Exit" text="Exit">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/exit-icon.jpg" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Edit">
@@ -79,40 +142,107 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/back-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem disable="true" mnemonicParsing="false" onAction="#cut" text="Cut">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="X" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/cut-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
                         </MenuItem>
                         <MenuItem disable="true" mnemonicParsing="false" onAction="#copy" text="Copy">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/copy-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
                         </MenuItem>
                         <MenuItem disable="true" mnemonicParsing="false" onAction="#paste" text="Past">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="V" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/paste-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
                         </MenuItem>
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#delete" text="Delete">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="DELETE" control="UP" meta="UP" shift="ANY" shortcut="UP" />
                            </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/delete-icon.png" />
+                                 </image></ImageView>
+                           </graphic>
                         </MenuItem>
                      </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="View">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#zoomIn" text="Zoom in" />
-                        <MenuItem mnemonicParsing="false" onAction="#zoomOut" text="Zoom out" />
+                        <MenuItem mnemonicParsing="false" onAction="#zoomIn" text="Zoom in">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/zoom_in.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#zoomOut" text="Zoom out">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/zoom_out.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                      </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Run">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#simulate" text="run">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/run-menu-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                    </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Help">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#getHelp" text="About" />
+                        <MenuItem mnemonicParsing="false" onAction="#getHelp" text="About">
+                           <graphic>
+                              <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../img/help-icon.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
                      </items>
                   </Menu>
                </menus>
@@ -302,6 +432,15 @@
             <HBox alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT" spacing="10.0">
                <children>
                   <ProgressBar fx:id="progressBar" prefHeight="27.0" prefWidth="160.0" progress="0.0" visible="false" />
+                  <Button mnemonicParsing="false" onAction="#stopSimulating" prefHeight="25.0" prefWidth="25.0">
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true">
+                           <image>
+                              <Image url="@../img/delete-icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                   <Button mnemonicParsing="false" onAction="#setting" prefHeight="25.0" prefWidth="25.0">
                      <graphic>
                         <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true">

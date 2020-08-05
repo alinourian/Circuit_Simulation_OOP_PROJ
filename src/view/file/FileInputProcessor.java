@@ -123,7 +123,7 @@ public abstract class FileInputProcessor {
             double amplitude = amplitudeFactor == -1 ? Double.parseDouble(s_amplitude) :
                     Double.parseDouble(s_amplitude.substring(0, s_amplitude.length() - 1)) * amplitudeFactor;
             double frequency = frequencyFactor == -1 ? Double.parseDouble(s_frequency) :
-                    Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
+                    Double.parseDouble(s_frequency.substring(0, s_frequency.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
             controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.CURRENT_SOURCE);
@@ -207,7 +207,7 @@ public abstract class FileInputProcessor {
             double amplitude = amplitudeFactor == -1 ? Double.parseDouble(s_amplitude) :
                     Double.parseDouble(s_amplitude.substring(0, s_amplitude.length() - 1)) * amplitudeFactor;
             double frequency = frequencyFactor == -1 ? Double.parseDouble(s_frequency) :
-                    Double.parseDouble(s_frequency.substring(0, s_amplitude.length() - 1)) * frequencyFactor;
+                    Double.parseDouble(s_frequency.substring(0, s_frequency.length() - 1)) * frequencyFactor;
             double phase = phaseFactor == -1 ? Double.parseDouble(s_phase) :
                     Double.parseDouble(s_phase.substring(0, s_phase.length() - 1)) * phaseFactor;
             controller.addSource(name, node1, node2, value, amplitude, frequency, phase, Type.VOLTAGE_SOURCE);

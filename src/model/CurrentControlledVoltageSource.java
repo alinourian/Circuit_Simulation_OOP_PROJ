@@ -18,10 +18,10 @@ public class CurrentControlledVoltageSource extends VoltageSource {
         double value;
         if (branch instanceof Element) {
             Element element = (Element)branch;
-            value = gain * Math.abs(element.getCurrent(element.getNodeP()));
+            value = gain * element.getCurrent(element.getNodeN());
         } else {
             Source source = (Source)branch;
-            value = gain * Math.abs(source.getCurrent(source.getNodeP()));
+            value = gain * source.getCurrent(source.getNodeP());
         }
         if (node.getName().equals(nodeP.getName())) {
             return value;

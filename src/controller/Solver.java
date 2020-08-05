@@ -16,8 +16,8 @@ public class Solver {
     public static double time = 0;
     public static int step = 0;
     public static int measureErrorEachStep = 0;
-    private final int MAX_ERROR_MEASUREMENT_TRYING = 5_000_000;
-    private final double KCL_ERROR = Math.pow(10, -2);
+    private final int MAX_ERROR_MEASUREMENT_TRYING = 6_000_000;
+    private static double KCL_ERROR = Math.pow(10, -2);
     public static StringBuilder output = new StringBuilder();
     public ArrayList<Integer> errors = new ArrayList<>();
 
@@ -38,9 +38,13 @@ public class Solver {
         unionCreator.run();
 
         do {
+            if (MainPageController.simulateStop) {
+                Errors.stopImmediately();
+                return false;
+            }
 
             double _time = ((double) Math.round(time * 10000))/10000;
-            Errors.print("\n***(time = " + _time + ")***");
+            //Errors.print("\n***(time = " + _time + ")***");
             output.append("\n***(time = ").append(_time).append(")***");
 
             if (!solve()) {
@@ -216,7 +220,7 @@ public class Solver {
     private void printVoltages() {
         for (Node node : controller.getNodes()) {
             double _voltage = ((double) Math.round(node.getVoltage() * 1000))/1000;
-            Errors.print(node.getName() + " => voltage : " + _voltage);
+            //Errors.print(node.getName() + " => voltage : " + _voltage);
             Solver.output.append("\n=> voltage node ").append(node.getName()).append(" : ").append(_voltage);
         }
     }
@@ -239,4 +243,11 @@ public class Solver {
         return true;
     }
 
+    public static double getKclError() {
+        return KCL_ERROR;
+    }
+
+    public static void setKCL_ERROR(double KCL_ERROR) {
+        Solver.KCL_ERROR = KCL_ERROR;
+    }
 }
