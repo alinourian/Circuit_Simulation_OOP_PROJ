@@ -9,6 +9,7 @@ public enum CommandsRegex {
     RESISTOR("([R|r]\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     CAPACITOR("([C|c]\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     INDUCTOR("([L|l]\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
+    DIODE("(D\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     CURRENT_SOURCE("(I\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     VOLTAGE_CONTROLLED_CURRENT_SOURCE("(G\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),
     CURRENT_CONTROLLED_CURRENT_SOURCE("(F\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s*"),

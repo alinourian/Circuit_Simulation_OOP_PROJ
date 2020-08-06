@@ -16,7 +16,7 @@ public class Solver {
     public static double time = 0;
     public static int step = 0;
     public static int measureErrorEachStep = 0;
-    private final int MAX_ERROR_MEASUREMENT_TRYING = 6_000_000;
+    private final int MAX_ERROR_MEASUREMENT_TRYING = 5_000_000;
     private static double KCL_ERROR = Math.pow(10, -2);
     public static StringBuilder output = new StringBuilder();
     public ArrayList<Integer> errors = new ArrayList<>();
@@ -68,7 +68,7 @@ public class Solver {
             time += controller.getDeltaT();
             System.out.println(time);
 
-        } while (time <= controller.getTranTime() + Math.pow(10, -6));
+        } while (time <= controller.getTranTime() + Math.pow(10, -7));
 
         try {
             SaveOnFile.saveDataOnFile();

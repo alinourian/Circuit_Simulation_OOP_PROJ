@@ -22,6 +22,7 @@ public class InputController {
     private final ArrayList<Resistor> resistors = new ArrayList<>();
     private final ArrayList<Capacitor> capacitors = new ArrayList<>();
     private final ArrayList<Inductor> inductors = new ArrayList<>();
+    private final ArrayList<Diode> diodes = new ArrayList<>();
     private final ArrayList<CurrentSource> currentSources = new ArrayList<>();
     private final ArrayList<VoltageSource> voltageSources = new ArrayList<>();
     private final ArrayList<Element> elements = new ArrayList<>();
@@ -34,7 +35,23 @@ public class InputController {
     private double deltaT = 0;
     private double tranTime = 0;
 
+    public Node pDiode;
+    public Node nDiode;
+
     //ADD METHODS
+    public void addDiode(String name, String node1, String node2) {
+        /*Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
+        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
+        if (!nodes.contains(nodeP)) nodes.add(nodeP);
+        pDiode = nodeP; nDiode = nodeN;
+        Diode diode = new Diode(name, nodeP, nodeN);
+        diodes.add(diode);
+        elements.add(diode);
+        nodeP.getElements().add(diode);
+        nodeN.getElements().add(diode);*/
+
+    }
+
     public void addElement(String name, String node1, String node2, double value, Type type) {
         Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
         Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
@@ -192,6 +209,15 @@ public class InputController {
         for (Inductor inductor : inductors) {
             if (inductor.getName().equals(name)) {
                 return inductor;
+            }
+        }
+        return null;
+    }
+
+    public Diode findDiode(String name) {
+        for (Diode diode : diodes) {
+            if (diode.getName().equals(name)) {
+                return diode;
             }
         }
         return null;

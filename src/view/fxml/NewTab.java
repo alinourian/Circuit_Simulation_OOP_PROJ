@@ -605,7 +605,7 @@ public class NewTab extends Tab {
         Button back = new Button("Back");
         clear.setLayoutX(0); back.setLayoutX(122);
         clear.setLayoutY(0); back.setLayoutY(0);
-        clear.setPrefWidth(122); back.setPrefWidth(123);
+        clear.setPrefWidth(122); back.setPrefWidth(122);
         clear.setPrefHeight(60); back.setPrefHeight(60);
         setControllerButtonStyle(clear, back, textField);
         calculationPane.getChildren().addAll(clear, back);
@@ -679,8 +679,8 @@ public class NewTab extends Tab {
         buttons.add(divide);
         for (Button button : buttons) {
             setButtonStyle(button, textField);
-            button.setLayoutX(183);
-            button.setPrefSize(62, 67);
+            button.setLayoutX(182);
+            button.setPrefSize(61, 67);
         }
         add.setLayoutY(261);
         sub.setLayoutY(194);
