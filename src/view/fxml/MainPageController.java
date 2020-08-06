@@ -357,6 +357,9 @@ public class MainPageController {
         if (!borderPane.getChildren().contains(pane))
         {
             borderPane.getChildren().add(pane);
+        } else {
+            borderPane.getChildren().clear();
+            borderPane.getChildren().add(pane);
         }
 
         //TODO
