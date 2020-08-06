@@ -23,6 +23,8 @@ public abstract class FileInputProcessor {
             return addCapacitor(split[0], split[1], split[2], split[3]);
         } else if (CommandsRegex.INDUCTOR.getMatcher(command).matches()) {
             return addInductor(split[0], split[1], split[2], split[3]);
+        } else if (CommandsRegex.DIODE.getMatcher(command).matches()) {
+            return addDiode(split[0], split[1], split[2]);
         } else if (CommandsRegex.CURRENT_SOURCE.getMatcher(command).matches()) {
             return addCurrentSource(split[0], split[1], split[2], split[3], split[4], split[5], split[6]);
         } else if (CommandsRegex.VOLTAGE_CONTROLLED_CURRENT_SOURCE.getMatcher(command).matches()) {
@@ -100,6 +102,15 @@ public abstract class FileInputProcessor {
             return false;
         }
         controller.addElement(name, node1, node2, value, Type.INDUCTOR);
+        return true;
+    }
+
+    private static boolean addDiode(String name, String node1, String node2) {
+        if (controller.findDiode(name) != null) {
+            Errors.similarNameError(FileInputProcessor.commandLine);
+            return false;
+        }
+        controller.addDiode(name, node1, node2);
         return true;
     }
 

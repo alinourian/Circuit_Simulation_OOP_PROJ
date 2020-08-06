@@ -353,14 +353,11 @@ public class MainPageController {
         //Alert alert = new Alert(Alert.AlertType.ERROR);
         //alert.setContentText("not yet!");
         //alert.show();
-
         Pane pane = DrawCircuit.drawCircuit();
-
         if (!borderPane.getChildren().contains(pane))
         {
             borderPane.getChildren().add(pane);
         }
-
 
         //TODO
     }

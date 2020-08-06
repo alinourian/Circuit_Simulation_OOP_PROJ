@@ -69,8 +69,7 @@ public class LoginPageController {
 
     private void addID() {
         userAndPass.put("98102527", "2150632063");
-        userAndPass.put("user", "pass");
-        userAndPass.put("", "");
+        userAndPass.put("98102035", "2190226715");
     }
 
 }
