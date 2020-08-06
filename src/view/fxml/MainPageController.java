@@ -253,7 +253,6 @@ public class MainPageController {
                     if (FileScanner.runProgram(file)) {
                         additional = 0.1;
                         animationTimer.stop();
-                        drawCircuit();
                         errorTextArea.setText("File successfully simulated.\n" + Solver.output);
                         percentLabel.setText("100%");
                         progressBar.setProgress(1);
@@ -267,6 +266,9 @@ public class MainPageController {
                         percentLabel.setText("ERROR");
                         progressBar.setProgress(0);
                     }
+
+                    drawCircuit();
+
                     timer = -1;
                     additional = 0;
                 });
@@ -351,11 +353,14 @@ public class MainPageController {
         //Alert alert = new Alert(Alert.AlertType.ERROR);
         //alert.setContentText("not yet!");
         //alert.show();
+
         Pane pane = DrawCircuit.drawCircuit();
+
         if (!borderPane.getChildren().contains(pane))
         {
             borderPane.getChildren().add(pane);
         }
+
 
         //TODO
     }

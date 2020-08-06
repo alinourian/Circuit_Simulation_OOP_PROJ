@@ -4,6 +4,7 @@ import controller.CircuitErrorHandling;
 import controller.InputController;
 import controller.Solver;
 import view.Errors;
+import view.fxml.MainPageController;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +22,8 @@ public abstract class FileScanner {
             }
             hasFile = true;
             //  Solve
+
+           // MainPageController.getStage().getScene().getRoot().getParent().
             Solver solver = new Solver();
             return solver.run();
 

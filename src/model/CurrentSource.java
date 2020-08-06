@@ -37,6 +37,8 @@ public class CurrentSource extends Source {
         return getCurrent(node);
     }
 
+    public double getPhase() { return phase; }
+
     @Override
     public Type getType() {
         return Type.CURRENT_SOURCE;

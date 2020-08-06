@@ -62,6 +62,8 @@ public class VoltageSource extends Source {
         return Type.VOLTAGE_SOURCE;
     }
 
+    public double getPhase() { return phase; }
+
     @Override
     public String toString() {
         return  name + "       " +
