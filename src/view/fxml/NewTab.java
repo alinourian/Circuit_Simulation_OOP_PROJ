@@ -122,6 +122,8 @@ public class NewTab extends Tab {
         mainHBox.getChildren().addAll(accordionVBox, separator, chartPane);
         setStyle();
         this.setContent(mainHBox);
+
+
     }
 
     private void setStyle() {
@@ -477,7 +479,7 @@ public class NewTab extends Tab {
 
         double xButton = 100, yButton = 30;
         for (Node node : InputController.getInstance().getNodes()) {
-            Button button = new Button("V[node" + node.getName() + "]");
+            Button button = new Button("V[" + node.getName() + "]");
             setButtonStyle(button, textField);
             button.setPrefSize(xButton, yButton);
             elementsVBox.getChildren().add(button);
@@ -528,13 +530,71 @@ public class NewTab extends Tab {
         Optional<String> result = dialog.showAndWait();
 
         result.ifPresent(s -> {
-            calculateInput(s);
+            //calculateInput(s);
             System.out.println("text = " + s);
         });
     }
 
     public void calculateInput(String string) {
-        //TODO
+        String firstAction = advanceDrawActions.get(0);
+        ArrayList<Double> action0 = getArrayListFromName(firstAction);
+        String secondAction = advanceDrawActions.get(1);
+        for (int i = 2; i < advanceDrawActions.size() - 2; i+=2) {
+            String action = advanceDrawActions.get(i);
+            action0 = calc(action0, getArrayListFromName(action), secondAction);
+            secondAction = advanceDrawActions.get(i + 1);
+        }
+        assert action0 != null;
+        drawCustomChart(action0, "Custom", "");
+    }
+
+    private ArrayList<Double> getArrayListFromName(String string) {
+        if (string.startsWith("V")) {
+            for (Node node : InputController.getInstance().getNodes()) {
+                if (string.matches("I[" + node.getName() + "]")) {
+                    return node.getVoltages();
+                }
+            }
+        } else if (string.startsWith("I")) {
+            for (Element element : InputController.getInstance().getElements()) {
+                if (string.matches("I[" + element.getName() + "]")) {
+                    return element.getCurrents();
+                }
+            }
+            for (Source source : InputController.getInstance().getSources()) {
+                if (string.matches("I[" + source.getName() + "]")) {
+                    return source.getCurrents();
+                }
+            }
+        } else if (string.startsWith("P")) {
+            for (Element element : InputController.getInstance().getElements()) {
+                if (string.matches("P[" + element.getName() + "]")) {
+                    return multiplyCharts(element.getCurrents(),
+                            subCharts(element.getNodeP().getVoltages(), element.getNodeN().getVoltages()));
+                }
+            }
+            for (Source source : InputController.getInstance().getSources()) {
+                if (string.matches("P[" + source.getName() + "]")) {
+                    return multiplyCharts(source.getCurrents(),
+                            subCharts(source.getNodeP().getVoltages(), source.getNodeN().getVoltages()));
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private ArrayList<Double> calc(ArrayList<Double> arrayList1, ArrayList<Double> arrayList2, String statue) {
+        switch (statue) {
+            case " + ":
+                return sumCharts(arrayList1, arrayList2);
+            case " - ":
+                return subCharts(arrayList1, arrayList2);
+            case " * ":
+                return multiplyCharts(arrayList1, arrayList2);
+            default:
+                return divideCharts(arrayList1, arrayList2);
+        }
     }
 
     public void drawCustomChart(ArrayList<Double> chartList, String name, String title) {

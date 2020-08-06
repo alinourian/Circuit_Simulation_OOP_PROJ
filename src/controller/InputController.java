@@ -40,16 +40,7 @@ public class InputController {
 
     //ADD METHODS
     public void addDiode(String name, String node1, String node2) {
-        /*Node nodeP = findNode(node1) == null ? new Node(node1) : findNode(node1);
-        Node nodeN = findNode(node2) == null ? new Node(node2) : findNode(node2);
-        if (!nodes.contains(nodeP)) nodes.add(nodeP);
-        pDiode = nodeP; nDiode = nodeN;
-        Diode diode = new Diode(name, nodeP, nodeN);
-        diodes.add(diode);
-        elements.add(diode);
-        nodeP.getElements().add(diode);
-        nodeN.getElements().add(diode);*/
-
+        addElement(name, node1, node2, 0, Type.DIODE);
     }
 
     public void addElement(String name, String node1, String node2, double value, Type type) {
@@ -81,6 +72,13 @@ public class InputController {
             elements.add(inductor);
             nodeP.getElements().add(inductor);
             nodeN.getElements().add(inductor);
+        } else if (type.equals(Type.DIODE)) {
+            Diode diode = new Diode(name, nodeP, nodeN);
+            diodes.add(diode);
+            elements.add(diode);
+            nodeP.getElements().add(diode);
+            nodeN.getElements().add(diode);
+            pDiode = nodeP; nDiode = nodeN;
         }
     }
 
@@ -311,6 +309,7 @@ public class InputController {
         resistors.clear();
         capacitors.clear();
         inductors.clear();
+        diodes.clear();
         currentSources.clear();
         voltageSources.clear();
         elements.clear();
@@ -344,6 +343,10 @@ public class InputController {
 
     public ArrayList<Inductor> getInductors() {
         return inductors;
+    }
+
+    public ArrayList<Diode> getDiodes() {
+        return diodes;
     }
 
     public ArrayList<CurrentSource> getCurrentSources() {
