@@ -11,6 +11,7 @@ import javafx.scene.shape.Circle;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public abstract class DrawCircuit {
     private static double drawingUnitLength;
@@ -336,8 +337,10 @@ public abstract class DrawCircuit {
 
         while (allBranchesTemp.size() != 1)
         {
-            incorporateParallelBranchesToNewBranch();
+            System.out.println("allBranchesTemp size befor parll incp\n" + allBranchesTemp.size());
 
+            incorporateParallelBranchesToNewBranch();
+            System.out.println("allBranchesTemp size befor series incp\n" + allBranchesTemp.size());
             incorporateSeriesBranchesToNewBranch();
 
         }
@@ -405,21 +408,57 @@ public abstract class DrawCircuit {
 
     private static void incorporateParallelBranchesToNewBranch()
     {
+
+        System.out.println("we are in Parallel incorpo...");
         controller.setAllNodesNotVisited();
         processParallelIncorporationForEachNode(controller.getGround());
 
     }
 
-    private static void processParallelIncorporationForEachNode(Node node) {
+    private static void processParallelIncorporationForEachNode(Node node){
         node.setVisited();
 
-        for (Node neighborNode : node.getNeighborNodes())
+
+        for (Branch branch : getNeighborBranchesOfThisNode(node)) {
+            if (allBranchesTemp.contains(branch))
+            {
+                if (!branch.getAnotherNodeOfBranch(node).getIsVisited())
+                {
+                    ArrayList<Branch> branches;
+                    branches = getBranchesBetweenTwoNeighborNodes(node, branch.getAnotherNodeOfBranch(node));
+
+                    if (branches.size() > 1 )
+                    {
+                        StringBuilder newBranchName = new StringBuilder();
+                        for (Branch branch1 : branches) {
+                            allBranchesTemp.remove(branch1);
+                            newBranchName.append(branch1.getName() + " ");
+                        }
+
+                        Branch newBranch = new Branch(newBranchName.toString() , branch.getAnotherNodeOfBranch(node) ,node);
+                        newBranch.setTheTypeParallel();
+
+                        for (Branch branch1 : branches) {
+                            branch1.setSuperiorBranch(newBranch);
+                            newBranch.getSubBranches().add(branch1);
+                        }
+                        allBranchesTemp.add(newBranch);
+                    }
+
+                }
+            }
+        }
+
+
+
+        /*for (Node neighborNode : node.getNeighborNodes())
         {
             if (!neighborNode.getIsVisited())
             {
                 ArrayList<Branch> branches;
                 branches = getBranchesBetweenTwoNeighborNodes(node, neighborNode);
-
+                System.out.println("branches between two node: "+node.getName()+" , "+neighborNode.getName());
+                System.out.println(branches);
 
                 if (branches.size() > 1) {
                     StringBuilder newBranchName = new StringBuilder();
@@ -440,7 +479,8 @@ public abstract class DrawCircuit {
 
                 }
             }
-        }
+        }*/
+
 
         for (Node neighborNode : node.getNeighborNodes())
         {
@@ -477,8 +517,8 @@ public abstract class DrawCircuit {
         controller.setAllNodesNotVisited();
 
         setBranchesNotVisited(allBranchesTemp);
-        System.out.println("ALL BRANCHES TEMP");
-        System.out.println(allBranchesTemp);
+        System.out.println("ALL BRANCHES TEMP.size : "+allBranchesTemp.size());
+
 
         processSeriesIncorporationForEachNode(controller.getGround());
 
@@ -495,15 +535,27 @@ public abstract class DrawCircuit {
 
     private static void processSeriesIncorporationForEachNode(Node node)
     {
+        try
+        {
+            TimeUnit.SECONDS.sleep(1);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
         newTempBranchStartNode = node;
+
 
         for (Branch branch : getNeighborBranchesOfThisNode(node))
         {
             System.out.println("newTempBranchStartNode is "+node);
             System.out.println("neighbor branch: " + branch.getName());
+            System.out.println("another node of this neighbor branch is");
+            System.out.println(branch.getAnotherNodeOfBranch(node).getName());
             newTempBranch.clear();
             findConnectedSeriesBranches(node,branch);
         }
+        skipTheJailedUnvisitedBranches();
 
 
         int counter = 0;
@@ -516,6 +568,9 @@ public abstract class DrawCircuit {
                 counter++;
             }
         }
+
+
+        System.out.println("conter: " + counter);
 
 
 
@@ -534,11 +589,61 @@ public abstract class DrawCircuit {
 
     }
 
+    private static void skipTheJailedUnvisitedBranches()
+    {
+       // System.out.println("\n we r in skip search");
+        for (Branch branch : allBranchesTemp)
+        {
+        //    System.out.println("branch name: "+branch.getName());
+
+
+            if (!branch.getIsVisited())
+            {
+          //      System.out.println("this branch is unvisited");
+
+                double notVisitedNeighborBranchesCounter = 0;
+          //      System.out.println("neighbor branches are:");
+                for (Branch branch1 : allBranchesTemp)
+                {
+
+                    if ( (branch1.getNodeP().equals(branch.getNodeP()) ||
+                        branch1.getNodeN().equals(branch.getNodeP()) ||
+                        branch1.getNodeP().equals(branch.getNodeN()) ||
+                        branch1.getNodeN().equals(branch.getNodeN())) && ( !branch.equals(branch1) ) )
+                    {
+            /*            System.out.println(branch1.getName());
+                        System.out.println("neighbor branch nope P: "+branch1.getNodeP());
+                        System.out.println("neighbor branch nope N: "+branch1.getNodeN());
+                        System.out.println("target branch nope P: "+branch.getNodeP());
+                        System.out.println("target branch nope N: "+branch.getNodeN());
+*/
+
+                        if (!branch1.getIsVisited())
+                        {
+                            notVisitedNeighborBranchesCounter++;
+                        }
+                    }
+
+                }
+              //  System.out.println("not vis counter: "+notVisitedNeighborBranchesCounter);
+                if (notVisitedNeighborBranchesCounter == 0)
+                {
+                    branch.setVisited();
+                }
+            }
+
+        }
+      //  System.out.println("\n xxxxx search is over xxxxx\n");
+
+    }
+
     private static void findConnectedSeriesBranches(Node node,Branch branch)
     {
         if (!branch.getIsVisited())
         {
             branch.setVisited();
+            System.out.println("this branch set visited\n"
+                                +branch.getName());
 
             if ( ( getNeighborBranchesOfThisNode( branch.getAnotherNodeOfBranch(node) ).size() == 2 ) &&
                     ( !newTempBranchStartNode.equals( branch.getAnotherNodeOfBranch(node) ) ) )
