@@ -7,6 +7,7 @@ public class Diode extends Element {
 
     public Diode(String name, Node nodeP, Node nodeN) {
         super(name, nodeP, nodeN);
+        hasCurrent = true;
     }
 
     @Override
@@ -20,7 +21,7 @@ public class Diode extends Element {
     public double getCurrent(Node node) {
         Node other = node.equals(nodeP) ? nodeN : nodeP;
         double sumCurrents = 0;
-        if (nodeP.getVoltage() - nodeN.getVoltage() >= 0) {
+        if (hasCurrent) {
             for (Element element : other.getElements()) {
                 if (!(element instanceof Diode)) {
                     sumCurrents += element.getCurrent(other);
@@ -35,7 +36,11 @@ public class Diode extends Element {
 
     @Override
     public void setBackElementCurrent() {
-        current = helpCurrent;
+        //current = helpCurrent;
+    }
+
+    public void setHasCurrent(boolean hasCurrent) {
+        this.hasCurrent = hasCurrent;
     }
 
     @Override

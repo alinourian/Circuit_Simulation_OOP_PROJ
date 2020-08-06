@@ -51,6 +51,8 @@ public class Solver {
                 return false;
             }
 
+            //controller.getDiodes().get(0).setHasCurrent(controller.getDiodes().get(0).getNodeP().getVoltage() >= controller.getDiodes().get(0).getNodeN().getVoltage());
+
             errors.add(measureErrorEachStep);
 
             if (measureErrorEachStep > MAX_ERROR_MEASUREMENT_TRYING) {
@@ -91,7 +93,9 @@ public class Solver {
 
             for (Union union : controller.getUnions())
             {
-                if (union.getType().equals("SingleNode"))
+                if (union.getFatherOfUnion().equals(controller.nDiode) || union.getFatherOfUnion().equals(controller.pDiode)) {
+                    //diodeSolve(union);
+                } else if (union.getType().equals("SingleNode"))
                 {
                     if (!union.getFatherOfUnion().getName().equals("0"))
                     {
@@ -109,9 +113,7 @@ public class Solver {
 
                         union.getFatherOfUnion().setSaveVoltage(voltage);
                     }
-                }
-                else
-                {
+                } else {
                     if (!union.getFatherOfUnion().getName().equals("0"))
                     {
                         //System.out.println("multi");
@@ -152,11 +154,73 @@ public class Solver {
             updateElementsCurrent();
             measureErrorEachStep++;
 
-        }while (!checkKCL() && measureErrorEachStep <= MAX_ERROR_MEASUREMENT_TRYING);
+        } while (!checkKCL() && measureErrorEachStep <= MAX_ERROR_MEASUREMENT_TRYING);
 
         printVoltages();
 
         return true;
+    }
+
+    private void diodeSolve(Union union) {
+        Diode diode = controller.getDiodes().get(0);
+        if (union.getFatherOfUnion().equals(controller.nDiode))
+        {
+            double totalCurrent1 = union.getTotalCurrent();
+
+            union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
+            controller.nDiode.setVoltage(controller.nDiode.getVoltage());
+            updateElementsCurrent();
+            double totalCurrent2 = union.getTotalCurrent();
+            setBackElementCurrent();
+
+            union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - controller.getDeltaV());
+            controller.nDiode.setVoltage(controller.nDiode.getVoltage());
+
+            double save = union.getFatherOfUnion().getVoltage();
+            double voltage = union.getFatherOfUnion().getVoltage() +
+                    ( Math.abs(totalCurrent1) - Math.abs(totalCurrent2) ) / controller.getDeltaI() * controller.getDeltaV();
+            union.getFatherOfUnion().setVoltage(voltage);
+            controller.nDiode.setVoltage(controller.nDiode.getVoltage());
+            updateElementsCurrent();
+            if (diode.getCurrent(controller.pDiode) < 0) {
+                diode.setHasCurrent(false);
+                double totalCurrent11 = union.getTotalCurrent();
+
+                union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() + controller.getDeltaV());
+                updateElementsCurrent();
+                double totalCurrent22 = union.getTotalCurrent();
+                setBackElementCurrent();
+
+                union.getFatherOfUnion().setVoltage( union.getFatherOfUnion().getVoltage() - controller.getDeltaV());
+
+                double voltage1 = union.getFatherOfUnion().getVoltage() +
+                        ( Math.abs(totalCurrent11) - Math.abs(totalCurrent22) ) / controller.getDeltaI() * controller.getDeltaV();
+
+                union.getFatherOfUnion().setSaveVoltage(voltage1);
+
+
+                double totalCurrent111 = diode.getNodeN().getTotalCurrent();
+
+                diode.getNodeN().setVoltage( diode.getNodeN().getVoltage() + controller.getDeltaV());
+                updateElementsCurrent();
+                double totalCurrent222 = diode.getNodeN().getTotalCurrent();
+                setBackElementCurrent();
+
+                diode.getNodeN().setVoltage( diode.getNodeN().getVoltage() - controller.getDeltaV());
+
+                double voltage11 = diode.getNodeN().getVoltage() +
+                        ( Math.abs(totalCurrent111) - Math.abs(totalCurrent222) ) / controller.getDeltaI() * controller.getDeltaV();
+
+                diode.getNodeN().setSaveVoltage(voltage11);
+                //diode.getNodeN().setSaveVoltage(0);
+            } else {
+                union.getFatherOfUnion().setVoltage(save);
+                controller.nDiode.setVoltage(controller.nDiode.getVoltage());
+                union.getFatherOfUnion().setSaveVoltage(voltage);
+                controller.nDiode.setSaveVoltage(controller.nDiode.getVoltage());
+                setBackElementCurrent();
+            }
+        }
     }
 
     private void setVoltages() {

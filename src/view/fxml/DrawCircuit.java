@@ -53,8 +53,8 @@ public abstract class DrawCircuit {
         setMaxHorizontalAndVerticalNodes();
 
 
-        System.out.println("max H is: "+maxHorizontalNodes);
-        System.out.println("max V is: "+maxVerticalNodes);
+        //System.out.println("max H is: "+maxHorizontalNodes);
+        //System.out.println("max V is: "+maxVerticalNodes);
 
         // It's NOT Use FULL (TRASH)  :D
         // drawTheNodes();
@@ -89,11 +89,11 @@ public abstract class DrawCircuit {
 
     private static void processDrawingTheBranches(Branch branch , PaneNode first , PaneNode second , Node upperNode)
     {
-        System.out.println("\n in branch"+branch.getName());
+        /*System.out.println("\n in branch"+branch.getName());
         System.out.println("first pane");
         System.out.println(first);
         System.out.println("second pane");
-        System.out.println(second);
+        System.out.println(second);*/
 
         if (branch.getHeight() == 1 && branch.getWidth() == 1)
         {
@@ -102,10 +102,10 @@ public abstract class DrawCircuit {
                 putWire(new PaneNode(first.nodeX , first.nodeY + 80) , second);
                 second.setNodeY(first.getNodeY()+drawingUnitLength);
             }
-            System.out.println("\nin base");
-            System.out.println("sec before " + second);
+            //System.out.println("\nin base");
+            //System.out.println("sec before " + second);
             second.setNodeY(first.getNodeY()+drawingUnitLength);
-            System.out.println("sec after " + second);
+            //System.out.println("sec after " + second);
 
             if (branch.getNodeP().equals(upperNode))
             {
@@ -168,14 +168,14 @@ public abstract class DrawCircuit {
             if ( branch.getSubBranches().get(0).getNodeN().equals(upperNode) ||
                       branch.getSubBranches().get(0).getNodeP().equals(upperNode)  )
             {
-                System.out.println("\nin branch " + branch.getName());
-                System.out.println("upper node is " + upperNode);
+                //System.out.println("\nin branch " + branch.getName());
+                //System.out.println("upper node is " + upperNode);
 
                 Node tempThisBranchUpperNode = upperNode.equals(branch.getNodeP()) ? branch.getNodeP() : branch.getNodeN();
 
                 for (int i = 0; i < branch.getSubBranches().size(); i++)
                 {
-                    System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
+                    //System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
 
                     PaneNode newFirst = new PaneNode( first.nodeX ,branches_Y);
                     PaneNode newSecond = new PaneNode( first.nodeX, branches_Y + branch.getSubBranches().get(i).getHeight()*drawingUnitLength);
@@ -189,13 +189,13 @@ public abstract class DrawCircuit {
             else if (branch.getSubBranches().get(branch.getSubBranches().size()-1).getNodeN().equals(upperNode) ||
                     branch.getSubBranches().get(branch.getSubBranches().size()-1).getNodeP().equals(upperNode)   )
             {
-                System.out.println("\nin branch " + branch.getName());
-                System.out.println("upper node is " + upperNode);
+                //System.out.println("\nin branch " + branch.getName());
+                //System.out.println("upper node is " + upperNode);
 
                 Node tempThisBranchUpperNode = upperNode.equals(branch.getNodeP()) ? branch.getNodeP() : branch.getNodeN();
                 for (int i = branch.getSubBranches().size() -1 ; i >= 0; i--)
                 {
-                    System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
+                    //System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
 
                     PaneNode newFirst = new PaneNode( first.nodeX ,branches_Y);
                     PaneNode newSecond = new PaneNode( first.nodeX, branches_Y + branch.getSubBranches().get(i).getHeight()*drawingUnitLength);
@@ -220,8 +220,8 @@ public abstract class DrawCircuit {
                 branches_Y += subBranch.getHeight();
             }
             */
-            System.out.println("finally branches_Y is " +  branches_Y );
-            System.out.println(second.nodeY);
+            //System.out.println("finally branches_Y is " +  branches_Y );
+            //System.out.println(second.nodeY);
             if (branches_Y != second.nodeY)
             {
                 putWire(new PaneNode(first.nodeX , branches_Y) , new PaneNode(first.nodeX , second.nodeY));
@@ -337,10 +337,8 @@ public abstract class DrawCircuit {
 
         while (allBranchesTemp.size() != 1)
         {
-            System.out.println("allBranchesTemp size befor parll incp\n" + allBranchesTemp.size());
-
             incorporateParallelBranchesToNewBranch();
-            System.out.println("allBranchesTemp size befor series incp\n" + allBranchesTemp.size());
+
             incorporateSeriesBranchesToNewBranch();
 
         }
@@ -398,9 +396,9 @@ public abstract class DrawCircuit {
     {
         for (Branch branch : allBranchesTemp)
         {
-            System.out.println("branch name is :"+branch.getName());
-            System.out.println("Nope p is: "+branch.getNodeP().getName());
-            System.out.println("Nope n is: "+branch.getNodeN().getName());
+            //System.out.println("branch name is :"+branch.getName());
+            //System.out.println("Nope p is: "+branch.getNodeP().getName());
+            //System.out.println("Nope n is: "+branch.getNodeN().getName());
         }
         System.out.println("");
 
@@ -408,8 +406,6 @@ public abstract class DrawCircuit {
 
     private static void incorporateParallelBranchesToNewBranch()
     {
-
-        System.out.println("we are in Parallel incorpo...");
         controller.setAllNodesNotVisited();
         processParallelIncorporationForEachNode(controller.getGround());
 
@@ -457,8 +453,7 @@ public abstract class DrawCircuit {
             {
                 ArrayList<Branch> branches;
                 branches = getBranchesBetweenTwoNeighborNodes(node, neighborNode);
-                System.out.println("branches between two node: "+node.getName()+" , "+neighborNode.getName());
-                System.out.println(branches);
+
 
                 if (branches.size() > 1) {
                     StringBuilder newBranchName = new StringBuilder();
@@ -517,8 +512,8 @@ public abstract class DrawCircuit {
         controller.setAllNodesNotVisited();
 
         setBranchesNotVisited(allBranchesTemp);
-        System.out.println("ALL BRANCHES TEMP.size : "+allBranchesTemp.size());
-
+        //System.out.println("ALL BRANCHES TEMP");
+        //System.out.println(allBranchesTemp);
 
         processSeriesIncorporationForEachNode(controller.getGround());
 
@@ -548,10 +543,8 @@ public abstract class DrawCircuit {
 
         for (Branch branch : getNeighborBranchesOfThisNode(node))
         {
-            System.out.println("newTempBranchStartNode is "+node);
-            System.out.println("neighbor branch: " + branch.getName());
-            System.out.println("another node of this neighbor branch is");
-            System.out.println(branch.getAnotherNodeOfBranch(node).getName());
+            //System.out.println("newTempBranchStartNode is "+node);
+            //System.out.println("neighbor branch: " + branch.getName());
             newTempBranch.clear();
             findConnectedSeriesBranches(node,branch);
         }
@@ -564,23 +557,20 @@ public abstract class DrawCircuit {
         {
             if (!branch.getIsVisited())
             {
-                System.out.println("notVisitedBranch: " + branch.getName());
+                //System.out.println("notVisitedBranch: " + branch.getName());
                 counter++;
             }
         }
 
 
-        System.out.println("conter: " + counter);
-
-
 
         if ( counter != 0 )
         {
-            System.out.println("conter: " + counter);
+            //System.out.println("conter: " + counter);
 
             for (Branch branch : getNeighborBranchesOfThisNode(node))
             {
-                System.out.println("branch: " + branch.getName() +"\n");
+                //System.out.println("branch: " + branch.getName() +"\n");
                 processSeriesIncorporationForEachNode(branch.getAnotherNodeOfBranch(node));
             }
 
@@ -642,8 +632,6 @@ public abstract class DrawCircuit {
         if (!branch.getIsVisited())
         {
             branch.setVisited();
-            System.out.println("this branch set visited\n"
-                                +branch.getName());
 
             if ( ( getNeighborBranchesOfThisNode( branch.getAnotherNodeOfBranch(node) ).size() == 2 ) &&
                     ( !newTempBranchStartNode.equals( branch.getAnotherNodeOfBranch(node) ) ) )
