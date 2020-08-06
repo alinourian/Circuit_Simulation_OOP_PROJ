@@ -1,7 +1,9 @@
 package view.fxml;
 
+import com.sun.org.apache.xpath.internal.objects.XNull;
 import controller.InputController;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -19,8 +21,8 @@ public abstract class DrawCircuit {
     private static ArrayList<Branch>    newTempBranch   = new ArrayList<>();
     private static Node newTempBranchStartNode;
     private static Node newTempBranchEndNode;
-    private static int maxHorizontalNodes;
-    private static int maxVerticalNodes;
+    private static double maxHorizontalNodes;
+    private static double maxVerticalNodes;
 
 
     private static final Image resistor = new Image("view/img/element/Resistor.png");
@@ -33,7 +35,8 @@ public abstract class DrawCircuit {
     private static final Image acSource = new Image("view/img/element/AcSource.png");
     private static final Image controlledVSource = new Image("view/img/element/ControlledVSource.png");
     private static final Image controlledCSource = new Image("view/img/element/ControlledCSource.png");
-    private static final Image wire = new Image("view/img/element/Wire.png");
+    private static final Image wireH = new Image("view/img/element/Wire-H.png");
+    private static final Image wireV = new Image("view/img/element/Wire-V.png");
 
     public static Pane drawCircuit() {
 
@@ -51,9 +54,13 @@ public abstract class DrawCircuit {
 
         System.out.println("max H is: "+maxHorizontalNodes);
         System.out.println("max V is: "+maxVerticalNodes);
-        drawTheNodes();
+
+        // It's NOT Use FULL (TRASH)  :D
+        // drawTheNodes();
 
         drawTheFuckingCircuitDiagram();
+
+
 
 
         ArrayList<Branch>   temp = new ArrayList<>();
@@ -73,19 +80,45 @@ public abstract class DrawCircuit {
         PaneNode second = new PaneNode( (maxHorizontalNodes-1)/2*drawingUnitLength + drawingUnitLength
                                             , (maxVerticalNodes-1)*drawingUnitLength + 80);
 
-        processDrawingTheBranches(controller.getFinalSuperiorBranch(), first , second);
+        processDrawingTheBranches(controller.getFinalSuperiorBranch(), first , second
+                , controller.getFinalSuperiorBranch().getAnotherNodeOfBranch(controller.getGround()));
 
 
     }
 
-    private static void processDrawingTheBranches(Branch branch , PaneNode first , PaneNode second )
+    private static void processDrawingTheBranches(Branch branch , PaneNode first , PaneNode second , Node upperNode)
     {
+        System.out.println("\n in branch"+branch.getName());
+        System.out.println("first pane");
+        System.out.println(first);
+        System.out.println("second pane");
+        System.out.println(second);
+
         if (branch.getHeight() == 1 && branch.getWidth() == 1)
         {
-            drawThisBranch(branch,first,second);
+            if (Math.abs(first.nodeY - second.nodeY) != 80)
+            {
+                putWire(new PaneNode(first.nodeX , first.nodeY + 80) , second);
+                second.setNodeY(first.getNodeY()+drawingUnitLength);
+            }
+            System.out.println("\nin base");
+            System.out.println("sec before " + second);
+            second.setNodeY(first.getNodeY()+drawingUnitLength);
+            System.out.println("sec after " + second);
+
+            if (branch.getNodeP().equals(upperNode))
+            {
+                drawThisBranch(branch,first,second);
+            }
+            else
+            {
+                drawThisBranch(branch,second,first);
+            }
+
         }
         else if (branch.IsItParallel())
         {
+
             double firstPaneNodeWire_X = first.nodeX - (branch.getWidth()-1)/2*drawingUnitLength
                     + (branch.getSubBranches().get(0).getWidth()-1)/2*drawingUnitLength;
 
@@ -95,12 +128,21 @@ public abstract class DrawCircuit {
 
             for (Branch subBranch : branch.getSubBranches())
             {
+                Node tempThisBranchUpperNode;
+                if (branch.getNodeN().equals(upperNode))
+                {
+                    tempThisBranchUpperNode = branch.getNodeN();
+                }
+                else
+                {
+                    tempThisBranchUpperNode = branch.getNodeP();
+                }
                 branches_X += (subBranch.getWidth()-1)/2*drawingUnitLength;
 
                 PaneNode newFirst = new PaneNode(branches_X ,first.nodeY);
                 PaneNode newSecond = new PaneNode(branches_X , second.nodeY);
 
-                processDrawingTheBranches(subBranch,newFirst,newSecond);
+                processDrawingTheBranches(subBranch,newFirst,newSecond , tempThisBranchUpperNode);
 
                 secondPaneNodeWire_X = branches_X;
 
@@ -116,17 +158,73 @@ public abstract class DrawCircuit {
             PaneNode secondWireSecondPaneNode = new PaneNode( secondPaneNodeWire_X , second.nodeY );
 
 
-            System.out.println("heree");
-            System.out.println("firstWireFirstPaneNode: "+firstWireFirstPaneNode);
-            System.out.println("firstWireSecondPaneNode: "+firstWireSecondPaneNode);
-            System.out.println("secondWireFirstPaneNode: "+secondWireFirstPaneNode);
-            System.out.println("secondWireSecondPaneNode: "+secondWireSecondPaneNode);
             putWire( firstWireFirstPaneNode , firstWireSecondPaneNode );
             putWire( secondWireFirstPaneNode , secondWireSecondPaneNode );
         }
         else
         {
+            double branches_Y = first.nodeY;
+            if ( branch.getSubBranches().get(0).getNodeN().equals(upperNode) ||
+                      branch.getSubBranches().get(0).getNodeP().equals(upperNode)  )
+            {
+                System.out.println("\nin branch " + branch.getName());
+                System.out.println("upper node is " + upperNode);
 
+                Node tempThisBranchUpperNode = upperNode.equals(branch.getNodeP()) ? branch.getNodeP() : branch.getNodeN();
+
+                for (int i = 0; i < branch.getSubBranches().size(); i++)
+                {
+                    System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
+
+                    PaneNode newFirst = new PaneNode( first.nodeX ,branches_Y);
+                    PaneNode newSecond = new PaneNode( first.nodeX, branches_Y + branch.getSubBranches().get(i).getHeight()*drawingUnitLength);
+                    processDrawingTheBranches(branch.getSubBranches().get(i) , newFirst , newSecond,tempThisBranchUpperNode);
+
+                    tempThisBranchUpperNode = branch.getSubBranches().get(i).getAnotherNodeOfBranch(tempThisBranchUpperNode);
+
+                    branches_Y += branch.getSubBranches().get(i).getHeight() * drawingUnitLength;
+                }
+            }
+            else if (branch.getSubBranches().get(branch.getSubBranches().size()-1).getNodeN().equals(upperNode) ||
+                    branch.getSubBranches().get(branch.getSubBranches().size()-1).getNodeP().equals(upperNode)   )
+            {
+                System.out.println("\nin branch " + branch.getName());
+                System.out.println("upper node is " + upperNode);
+
+                Node tempThisBranchUpperNode = upperNode.equals(branch.getNodeP()) ? branch.getNodeP() : branch.getNodeN();
+                for (int i = branch.getSubBranches().size() -1 ; i >= 0; i--)
+                {
+                    System.out.println("temo up branch is "+tempThisBranchUpperNode.getName());
+
+                    PaneNode newFirst = new PaneNode( first.nodeX ,branches_Y);
+                    PaneNode newSecond = new PaneNode( first.nodeX, branches_Y + branch.getSubBranches().get(i).getHeight()*drawingUnitLength);
+                    processDrawingTheBranches(branch.getSubBranches().get(i) , newFirst , newSecond, tempThisBranchUpperNode);
+
+                    tempThisBranchUpperNode = branch.getSubBranches().get(i).getAnotherNodeOfBranch(tempThisBranchUpperNode);
+
+                    branches_Y += branch.getSubBranches().get(i).getHeight()*drawingUnitLength;
+
+                }
+            }
+
+
+           /* for (Branch subBranch : branch.getSubBranches())
+            {
+
+
+                PaneNode newFirst = new PaneNode( first.nodeX ,branches_Y);
+                PaneNode newSecond = new PaneNode( first.nodeX, branches_Y + subBranch.getHeight());
+                //processDrawingTheBranches(subBranch , newFirst , newSecond,);
+
+                branches_Y += subBranch.getHeight();
+            }
+            */
+            System.out.println("finally branches_Y is " +  branches_Y );
+            System.out.println(second.nodeY);
+            if (branches_Y != second.nodeY)
+            {
+                putWire(new PaneNode(first.nodeX , branches_Y) , new PaneNode(first.nodeX , second.nodeY));
+            }
         }
 
 
@@ -140,19 +238,20 @@ public abstract class DrawCircuit {
         {
             if (branch instanceof Capacitor)
             {
-                putImage(capacitor,first,second);
+                putImage(capacitor,first,second,branch.getName());
+
             }
             if (branch instanceof Diode)
             {
-                putImage(diode,first,second);
+                putImage(diode,first,second,branch.getName());
             }
             if (branch instanceof Inductor)
             {
-                putImage(inductor,first,second);
+                putImage(inductor,first,second,branch.getName());
             }
             if (branch instanceof Resistor)
             {
-                putImage(resistor,first,second);
+                putImage(resistor,first,second,branch.getName());
             }
 
         }
@@ -163,12 +262,12 @@ public abstract class DrawCircuit {
                 if (branch instanceof VoltageControlledVoltageSource)
                 {
 
-                    putImage(controlledVSource,first,second);
+                    putImage(controlledVSource,first,second,branch.getName());
                 }
                 else if(branch instanceof CurrentControlledVoltageSource)
                 {
 
-                    putImage(controlledVSource,first,second);
+                    putImage(controlledVSource,first,second,branch.getName());
                 }
                 else
                 {
@@ -176,13 +275,13 @@ public abstract class DrawCircuit {
                     {
                         // DC VOLTAGE SOURCE
 
-                        putImage(vSource,first,second);
+                        putImage(vSource,first,second,branch.getName());
                     }
                     else
                     {
                         // AC VOLTAGE SOURCE
 
-                        putImage(acSource,first,second);
+                        putImage(acSource,first,second,branch.getName());
                     }
 
                 }
@@ -192,12 +291,12 @@ public abstract class DrawCircuit {
                 if (branch instanceof CurrentControlledCurrentSource)
                 {
 
-                    putImage(controlledCSource,first,second);
+                    putImage(controlledCSource,first,second,branch.getName());
                 }
                 else if (branch instanceof VoltageControlledCurrentSource)
                 {
 
-                    putImage(controlledCSource,first,second);
+                    putImage(controlledCSource,first,second,branch.getName());
                 }
                 else
                 {
@@ -205,13 +304,13 @@ public abstract class DrawCircuit {
                     {
                         // DC CURRENT SOURCE
 
-                        putImage(cSource,first,second);
+                        putImage(cSource,first,second,branch.getName());
                     }
                     else
                     {
                         // AC CURRENT SOURCE
 
-                        putImage(acSource,first,second);
+                        putImage(acSource,first,second,branch.getName());
                     }
                 }
             }
@@ -378,6 +477,8 @@ public abstract class DrawCircuit {
         controller.setAllNodesNotVisited();
 
         setBranchesNotVisited(allBranchesTemp);
+        System.out.println("ALL BRANCHES TEMP");
+        System.out.println(allBranchesTemp);
 
         processSeriesIncorporationForEachNode(controller.getGround());
 
@@ -396,10 +497,14 @@ public abstract class DrawCircuit {
     {
         newTempBranchStartNode = node;
 
-        for (Branch branch : getNeighborBranchesOfThisNode(node)) {
+        for (Branch branch : getNeighborBranchesOfThisNode(node))
+        {
+            System.out.println("newTempBranchStartNode is "+node);
+            System.out.println("neighbor branch: " + branch.getName());
             newTempBranch.clear();
             findConnectedSeriesBranches(node,branch);
         }
+
 
         int counter = 0;
 
@@ -407,15 +512,20 @@ public abstract class DrawCircuit {
         {
             if (!branch.getIsVisited())
             {
+                System.out.println("notVisitedBranch: " + branch.getName());
                 counter++;
             }
         }
 
+
+
         if ( counter != 0 )
         {
+            System.out.println("conter: " + counter);
 
             for (Branch branch : getNeighborBranchesOfThisNode(node))
             {
+                System.out.println("branch: " + branch.getName() +"\n");
                 processSeriesIncorporationForEachNode(branch.getAnotherNodeOfBranch(node));
             }
 
@@ -688,7 +798,7 @@ public abstract class DrawCircuit {
     private static void matchNodes(double... doubles) {
         double[] nodes = doubles.clone();
         for (int i = 1; i < nodes.length; i++) {
-            putImage2(wire, nodes[i], nodes[i - 1]);
+            putImage2(wireV, nodes[i], nodes[i - 1]);
         }
     }
 
@@ -724,21 +834,42 @@ public abstract class DrawCircuit {
     private static PaneNode getLayoutNode(PaneNode middlePoint) {
         return new PaneNode(middlePoint.nodeX - drawingUnitLength / 2, middlePoint.nodeY - drawingUnitLength / 2);
     }
+    private static PaneNode getWireLayoutNode(PaneNode middlePoint,double xLength , double yLength)
+    {
+        if (xLength == 0)
+        {
+            return new PaneNode(middlePoint.nodeX - drawingUnitLength / 2, middlePoint.nodeY - yLength/2);
+        }
+        else if (yLength == 0)
+        {
+            return new PaneNode(middlePoint.nodeX - xLength / 2, middlePoint.nodeY - drawingUnitLength / 2);
+
+        }
+        else
+        {
+            return null;
+        }
+
+    }
 
     private static void putGround() {
         ImageView imageView = new ImageView(gnd);
         imageView.setFitWidth(drawingUnitLength);
         imageView.setFitHeight(drawingUnitLength);
-        imageView.setLayoutX(getXY(maxHorizontalNodes/2));
+        imageView.setLayoutX(getXY((double) maxHorizontalNodes/2));
         imageView.setLayoutY(getXY(maxVerticalNodes));
         circuitPane.getChildren().add(imageView);
     }
 
-    private static void putImage(Image image, PaneNode first , PaneNode second )
+    private static void putImage(Image image, PaneNode first , PaneNode second , String name)
     {
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(drawingUnitLength);
         imageView.setFitHeight(drawingUnitLength);
+        Label labelName = new Label(name);
+        labelName.setPrefSize(40,40);
+        labelName.setStyle("-fx-font-size: 14px ;" +
+                "-fx-font-style: italic;");
 
         if (first.nodeX == second.nodeX && Math.abs(first.nodeY - second.nodeY) == getXY(1)) {
             if (first.nodeY > second.nodeY) {
@@ -746,9 +877,26 @@ public abstract class DrawCircuit {
             }
             PaneNode middlePoint = new PaneNode(first.nodeX, (first.nodeY + second.nodeY) / 2);
             PaneNode node = getLayoutNode(middlePoint);
+            if (image.equals(resistor) ||
+                image.equals(capacitor) ||
+                image.equals(inductor)  ||
+                image.equals(diode))
+            {
+                labelName.setLayoutY(node.nodeY+10);
+                labelName.setLayoutX(node.nodeX+5);
+                labelName.setStyle("-fx-text-fill: darkblue");
+            }
+            else
+            {
+                labelName.setLayoutY(node.nodeY-10);
+                labelName.setLayoutX(node.nodeX-10);
+                labelName.setStyle("-fx-text-fill: darkblue");
+            }
+
+
             imageView.setLayoutX(node.nodeX);
             imageView.setLayoutY(node.nodeY);
-            circuitPane.getChildren().add(imageView);
+            circuitPane.getChildren().addAll(imageView,labelName);
         } else if (first.nodeY == second.nodeY && Math.abs(first.nodeX - second.nodeX) == getXY(1)) {
             if (first.nodeX < second.nodeX) {
                 imageView.setRotate(-90);
@@ -772,39 +920,40 @@ public abstract class DrawCircuit {
     private static void putWire(PaneNode first , PaneNode second)
     {
 
-        ImageView imageView = new ImageView(wire);
+
         if (first.nodeX == second.nodeX)
         {
+            ImageView imageView = new ImageView(wireV);
             imageView.setFitWidth(drawingUnitLength);
             imageView.setFitHeight(Math.abs(first.nodeY - second.nodeY));
-        }
-        if (first.nodeY == second.nodeY)
-        {
-            imageView.setFitWidth(drawingUnitLength);
-            imageView.setFitHeight(Math.abs(first.nodeX - second.nodeX));
-        }
 
-        if (first.nodeX == second.nodeX && Math.abs(first.nodeY - second.nodeY) == getXY(1)) {
-            if (first.nodeY > second.nodeY) {
-                imageView.setRotate(180);
-            }
             PaneNode middlePoint = new PaneNode(first.nodeX, (first.nodeY + second.nodeY) / 2);
-            PaneNode node = getLayoutNode(middlePoint);
+
+            PaneNode node = getWireLayoutNode(middlePoint,0,Math.abs(first.nodeY - second.nodeY));
+
+            assert node != null;
             imageView.setLayoutX(node.nodeX);
             imageView.setLayoutY(node.nodeY);
             circuitPane.getChildren().add(imageView);
-        } else if (first.nodeY == second.nodeY && Math.abs(first.nodeX - second.nodeX) == getXY(1)) {
-            if (first.nodeX < second.nodeX) {
-                imageView.setRotate(-90);
-            } else {
-                imageView.setRotate(90);
-            }
+
+        }
+        else if (first.nodeY == second.nodeY)
+        {
+            ImageView imageView = new ImageView(wireH);
+            imageView.setFitWidth(Math.abs(first.nodeX - second.nodeX));
+            imageView.setFitHeight(drawingUnitLength);
+
             PaneNode middlePoint = new PaneNode((first.nodeX + second.nodeX) / 2, first.nodeY);
-            PaneNode node = getLayoutNode(middlePoint);
+
+            PaneNode node = getWireLayoutNode(middlePoint,Math.abs(first.nodeX - second.nodeX),0);
+
+            assert node != null;
             imageView.setLayoutX(node.nodeX);
             imageView.setLayoutY(node.nodeY);
             circuitPane.getChildren().add(imageView);
-        } else {
+
+        }
+        else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Not Possible!");
             alert.show();
@@ -874,6 +1023,22 @@ class PaneNode {
 
     public void setNodeNumber(int nodeNumber) {
         this.nodeNumber = nodeNumber;
+    }
+
+    public double getNodeX() {
+        return nodeX;
+    }
+
+    public double getNodeY() {
+        return nodeY;
+    }
+
+    public void setNodeX(double nodeX) {
+        this.nodeX = nodeX;
+    }
+
+    public void setNodeY(double nodeY) {
+        this.nodeY = nodeY;
     }
 
     @Override

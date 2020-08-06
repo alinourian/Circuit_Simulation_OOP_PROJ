@@ -9,8 +9,8 @@ public class Branch {
     private Branch superiorBranch;
     private ArrayList<Branch> subBranches = new ArrayList<>();
     private String structureType = new String();
-    private int width = 0;
-    private int height = 0;
+    private double width = 0;
+    private double height = 0;
     private int isVisited;
 
     public Branch(String name, Node nodeP, Node nodeN) {
@@ -42,9 +42,9 @@ public class Branch {
         return this.getStructureType().equals("Parallel");
     }
 
-    public void setWidth(int width) { this.width = width; }
+    public void setWidth(double width) { this.width = width; }
 
-    public void setHeight(int height) { this.height = height; }
+    public void setHeight(double height) { this.height = height; }
 
     public void setSuperiorBranch(Branch superiorBranch) { this.superiorBranch = superiorBranch; }
 
@@ -72,7 +72,7 @@ public class Branch {
 
     public String getName() { return name; }
 
-    public int getWidth() { return width; }
+    public double getWidth() { return width; }
 
-    public int getHeight() { return height; }
+    public double getHeight() { return height; }
 }
